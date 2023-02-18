@@ -14,74 +14,56 @@ import com.livelife.motolibrary.GameType;
 import com.livelife.motolibrary.MotoConnection;
 
 import java.util.ArrayList;
-import java.util.Random;
+import java.util.Collections;
 
 public class GameClass extends Game {
-
-    ArrayList<Integer> colourList = new ArrayList<Integer>();
-
     MotoConnection connection = MotoConnection.getInstance();
-
-    GameClass()
-    {
-        setName("Colour Race");
-
-        GameType gt = new GameType(1, GameType.GAME_TYPE_TIME, 3000, "Start game",1);
+    int baseColor, specialColor;
+    GameClass() {
+        setName("Group2Game");
+        GameType gt = new GameType(1, GameType.GAME_TYPE_TIME, 9999, "Start game", 1);
         addGameType(gt);
     }
 
-
-    public void onGameStart() {
-
-        super.onGameStart();
-
+    public void gameLogic() {
         connection.setAllTilesIdle(LED_COLOR_OFF);
 
-        colourList.add(LED_COLOR_BLUE);   //0
-        colourList.add(LED_COLOR_ORANGE);   //1
-        colourList.add(LED_COLOR_GREEN);    //2
-        colourList.add(LED_COLOR_RED);   //3
+        ArrayList<Integer> colorList = new ArrayList<Integer>();
+        colorList.add(LED_COLOR_BLUE);
+        colorList.add(LED_COLOR_ORANGE);
+        colorList.add(LED_COLOR_GREEN);
+        colorList.add(LED_COLOR_RED);
+        Collections.shuffle(colorList);
+        baseColor = colorList.get(0);
+        specialColor = colorList.get(1);
+
+        Log.d("tag", "baseColor: " + baseColor);
+        Log.d("tag", "specialColor: " + specialColor);
+
+        connection.setAllTilesColor(baseColor); // set all tiles to the random base color
 
         int randomTile = connection.randomIdleTile();
-        //Log.d("tag", "randomTile: " + randomTile);
-
-        Random rand = new Random();
-        int randomColour_base = rand.nextInt(colourList.size());
-        //Log.d("tag", "randomColour_base: " + randomColour_base);
-
-        connection.setAllTilesColor(colourList.get(randomColour_base));
-
-        int randomColour_special = rand.nextInt(colourList.size());
-
-        while (randomColour_base == randomColour_special) {
-            randomColour_special = rand.nextInt(colourList.size());
-        }
-
-        //Log.d("tag", "randomColour_special: " + randomColour_special);
-
-        connection.setTileColor(colourList.get(randomColour_special), randomTile);
+        connection.setTileColor(specialColor, randomTile); // set the random tile to the special color
     }
-
-    // Put game logic here
+    
+    public void onGameStart() {
+        super.onGameStart();
+        gameLogic();
+    }
+    
     @Override
-    public void onGameUpdate(byte[] message)
-    {
+    public void onGameUpdate(byte[] message) {
         super.onGameUpdate(message);
 
         int event = AntData.getCommand(message);
-        int pressedTileColor= AntData.getColorFromPress(message);
+        int pressedTileColor = AntData.getColorFromPress(message);
 
-        //Tile pressed
-        if (event == 22) {
-            if(colourList.get(randomColour_special))
-
+        if(event == 22) { // tile press event
+            if(pressedTileColor == specialColor) {
+                gameLogic(); // generate a new tile when the special one is pressed
+            }
         }
-
-        Log.d("tag", "event: " + event);
-        Log.d("tag", "colour: " + pressedTileColor);
-
     }
-
 
     // Some animation on the tiles once the game is over
     @Override
