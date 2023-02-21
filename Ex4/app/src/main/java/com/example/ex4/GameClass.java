@@ -1,5 +1,6 @@
-package com.example.ex3;
+package com.example.ex4;
 
+import static com.livelife.motolibrary.AntData.CMD_COUNTDOWN_TIMEUP;
 import static com.livelife.motolibrary.AntData.LED_COLOR_BLUE;
 import static com.livelife.motolibrary.AntData.LED_COLOR_GREEN;
 import static com.livelife.motolibrary.AntData.LED_COLOR_INDIGO;
@@ -25,31 +26,20 @@ public class GameClass extends Game {
     int baseColor, specialColor;
     GameClass() {
         setName("Group2Game");
-        GameType gt = new GameType(1, GameType.GAME_TYPE_TIME, 30, "Start game 30s", 1);
+        GameType gt = new GameType(1, GameType.GAME_TYPE_TIME, 9999, "Start game", 1);
         addGameType(gt);
     }
 
     public void gameLogic() {
-        connection.setAllTilesIdle(LED_COLOR_OFF);
+        connection.setAllTilesIdle(LED_COLOR_RED);
 
-        ArrayList<Integer> colorList = new ArrayList<>();
-        colorList.add(LED_COLOR_BLUE);
-        colorList.add(LED_COLOR_GREEN);
-        colorList.add(LED_COLOR_INDIGO);
-        colorList.add(LED_COLOR_ORANGE);
-        colorList.add(LED_COLOR_RED);
-        colorList.add(LED_COLOR_VIOLET);
-        colorList.add(LED_COLOR_WHITE);
-        Collections.shuffle(colorList);
-        baseColor = colorList.get(0);
-        specialColor = colorList.get(1);
+        //getGameTypes();
 
-        printColorFromNumber(baseColor);
-        printColorFromNumber(specialColor);
+        Log.d("tag", "getGameTypes(): " + getGameTypes());
 
-        int randomIdleTile = connection.randomIdleTile();
-        connection.setAllTilesColor(baseColor); // set all tiles to the random base color
-        connection.setTileColor(specialColor, randomIdleTile); // set the random tile to the special color
+
+
+        connection.setTileColorCountdown(LED_COLOR_BLUE, connection.randomIdleTile(), 40);
     }
 
     public void onGameStart() {
@@ -64,15 +54,17 @@ public class GameClass extends Game {
         int event = AntData.getCommand(message);
         int pressedTileColor = AntData.getColorFromPress(message);
 
+        Log.d("tag", "CMD_COUNTDOWN_TIMEUP: " + CMD_COUNTDOWN_TIMEUP);
+
         if(event == 22) { // tile press event
             Log.d("tag", "Tile pressed");
-            if (pressedTileColor == specialColor) {
+            /*if (pressedTileColor == specialColor) {
                 Log.d("tag", "Special tile pressed");
                 gameLogic(); // generate a new tile when the special one is pressed
             } else {
                 Log.d("tag", "Wrong tile pressed");
                 connection.setAllTilesBlink(4,LED_COLOR_RED);
-            }
+            }*/
         }
     }
 
