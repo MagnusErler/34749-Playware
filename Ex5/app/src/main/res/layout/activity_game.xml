@@ -26,4 +26,21 @@
         android:layout_marginBottom="22dp"
         android:text="PlayerScore: 0"
         android:textSize="32sp" />
+    <TextView
+        android:id="@+id/colorText"
+        android:layout_width="231dp"
+        android:layout_height="69dp"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="320dp"
+        android:layout_marginBottom="22dp"
+        android:text="Press this color:"
+        android:textSize="32sp" />
+
+    <View
+        android:id="@+id/targetColor"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_marginTop="380dp"
+        android:layout_marginBottom="22dp"
+        android:background="#DDDDDD" />
 </RelativeLayout>

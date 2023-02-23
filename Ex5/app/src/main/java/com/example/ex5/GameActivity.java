@@ -2,6 +2,7 @@ package com.example.ex5;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -24,6 +25,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     int playerScore = 0;
 
     TextView playerScore_TextView;
+    View targetColor;
 
     //Stop the game when we exit activity
     @Override
@@ -42,6 +44,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
 
         gt_container = findViewById(R.id.game_type_container);
         playerScore_TextView = findViewById(R.id.playerScore_TextView);
+        targetColor = findViewById(R.id.targetColor);
 
         for (final GameType gt : game_object.getGameTypes()) {
 
@@ -50,6 +53,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
             b.setOnClickListener(v -> {
                 game_object.clearPlayersScore();
                 runOnUiThread(() -> playerScore_TextView.setText("PlayerScore: " + 0));
+                runOnUiThread(() -> targetColor.setBackgroundColor(getColor(0)));
 
                 game_object.selectedGameType = gt;
                 game_object.startGame();
@@ -61,8 +65,19 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
 
         game_object.setOnGameEventListener(new Game.OnGameEventListener() {
             @Override
-
-            public void onGameTimerEvent(int i) {}
+            public void onGameTimerEvent(int i) {
+               /* if (i < 0) //means player pressed correct
+                {
+                    if (delay >= 2000) //minimum time is 2s
+                    {
+                        delay += i;
+                    }
+                }
+                else //When the player messed up they get extra time
+                {
+                    delay += i;
+                }*/
+            }
 
             @Override
             public void onGameScoreEvent(int i, int i1) {
