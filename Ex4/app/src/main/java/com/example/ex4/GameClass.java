@@ -1,14 +1,8 @@
 package com.example.ex4;
 
-import static com.livelife.motolibrary.AntData.CMD_COUNTDOWN_TIMEUP;
 import static com.livelife.motolibrary.AntData.LED_COLOR_BLUE;
-import static com.livelife.motolibrary.AntData.LED_COLOR_GREEN;
-import static com.livelife.motolibrary.AntData.LED_COLOR_INDIGO;
 import static com.livelife.motolibrary.AntData.LED_COLOR_OFF;
-import static com.livelife.motolibrary.AntData.LED_COLOR_ORANGE;
 import static com.livelife.motolibrary.AntData.LED_COLOR_RED;
-import static com.livelife.motolibrary.AntData.LED_COLOR_VIOLET;
-import static com.livelife.motolibrary.AntData.LED_COLOR_WHITE;
 
 import android.util.Log;
 
@@ -18,28 +12,33 @@ import com.livelife.motolibrary.GameType;
 import com.livelife.motolibrary.MotoConnection;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 
 public class GameClass extends Game {
     MotoConnection connection = MotoConnection.getInstance();
 
+    int[] playerScore;
+
     int baseColor, specialColor;
     GameClass() {
         setName("Group2Game");
-        GameType gt = new GameType(1, GameType.GAME_TYPE_TIME, 9999, "Start game", 1);
+        GameType gt = new GameType(1, GameType.GAME_TYPE_SCORE, 5, "Start game Score 5", 1);
         addGameType(gt);
     }
 
     public void gameLogic() {
-        connection.setAllTilesIdle(LED_COLOR_RED);
+        connection.setAllTilesIdle(LED_COLOR_OFF);
 
         //getGameTypes();
 
         Log.d("tag", "getGameTypes(): " + getGameTypes());
 
+        ArrayList<Integer> connectedTiles_list = connection.connectedTiles;
 
+        for (int i = 1; i <= connectedTiles_list.size(); i++) {
+            connection.setTileColorCountdown(LED_COLOR_BLUE, i, 40);
+        }
 
-        connection.setTileColorCountdown(LED_COLOR_BLUE, connection.randomIdleTile(), 40);
     }
 
     public void onGameStart() {
@@ -52,19 +51,34 @@ public class GameClass extends Game {
         super.onGameUpdate(message);
 
         int event = AntData.getCommand(message);
-        int pressedTileColor = AntData.getColorFromPress(message);
+        //int pressedTileColor = AntData.getColorFromPress(message);
 
-        Log.d("tag", "CMD_COUNTDOWN_TIMEUP: " + CMD_COUNTDOWN_TIMEUP);
+        Log.d("tag", "event: " + event);
 
-        if(event == 22) { // tile press event
-            Log.d("tag", "Tile pressed");
-            /*if (pressedTileColor == specialColor) {
-                Log.d("tag", "Special tile pressed");
-                gameLogic(); // generate a new tile when the special one is pressed
-            } else {
-                Log.d("tag", "Wrong tile pressed");
-                connection.setAllTilesBlink(4,LED_COLOR_RED);
-            }*/
+        switch(event) {
+            case 22:
+                Log.d("tag", "Tile pressed");
+                /*if (pressedTileColor == specialColor) {
+                    Log.d("tag", "Special tile pressed");
+                    gameLogic(); // generate a new tile when the special one is pressed
+                } else {
+                    Log.d("tag", "Wrong tile pressed");
+                    connection.setAllTilesBlink(4,LED_COLOR_RED);
+                }*/
+                break;
+            case 28:
+                Log.d("tag", "Timeup done");
+                stopGame();
+                break;
+            case 36:
+                Log.d("tag", "Tile released");
+                incrementPlayerScore(1, 1);
+                playerScore = getPlayerScore();
+                //Log.d("tag", "playerScore: " + playerScore);
+                break;
+            default:
+                Log.d("tag", "ERROR: event not found");
+                break;
         }
     }
 

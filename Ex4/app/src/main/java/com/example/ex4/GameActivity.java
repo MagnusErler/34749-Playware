@@ -1,8 +1,10 @@
 package com.example.ex4;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -11,11 +13,15 @@ import com.livelife.motolibrary.GameType;
 import com.livelife.motolibrary.MotoConnection;
 import com.livelife.motolibrary.OnAntEventListener;
 
+import java.util.Arrays;
+
 public class GameActivity extends AppCompatActivity implements OnAntEventListener {
 
     MotoConnection connection = MotoConnection.getInstance();
     GameClass game_object = new GameClass(); // Game object
     LinearLayout gt_container;
+
+    TextView playerScore;
 
     //Stop the game when we exit activity
     @Override
@@ -33,6 +39,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         connection.setAllTilesToInit();
 
         gt_container = findViewById(R.id.game_type_container);
+        playerScore = findViewById(R.id.playerScore);
 
         for (final GameType gt : game_object.getGameTypes()) {
             Button b = new Button(this);
@@ -44,13 +51,19 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
             gt_container.addView(b);
         }
 
+
+
         game_object.setOnGameEventListener(new Game.OnGameEventListener() {
             @Override
 
             public void onGameTimerEvent(int i) {}
 
             @Override
-            public void onGameScoreEvent(int i, int i1) {}
+            public void onGameScoreEvent(int i, int i1) {
+                Log.d("tag", "playerScore: " + Arrays.toString(game_object.getPlayerScore()));
+                Log.d("tag", "playerScore: " + game_object.getPlayerScore()[1]);
+                playerScore.setText("playerScore: " + game_object.getPlayerScore()[1]);
+            }
 
             @Override
             public void onGameStopEvent() {}
