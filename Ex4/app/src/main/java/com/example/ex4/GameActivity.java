@@ -21,7 +21,9 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     GameClass game_object = new GameClass(); // Game object
     LinearLayout gt_container;
 
-    TextView playerScore;
+    int playerScore = 0;
+
+    TextView playerScore_TextView;
 
     //Stop the game when we exit activity
     @Override
@@ -39,12 +41,16 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         connection.setAllTilesToInit();
 
         gt_container = findViewById(R.id.game_type_container);
-        playerScore = findViewById(R.id.playerScore);
+        playerScore_TextView = findViewById(R.id.playerScore_TextView);
 
         for (final GameType gt : game_object.getGameTypes()) {
+
             Button b = new Button(this);
             b.setText(gt.getName());
             b.setOnClickListener(v -> {
+                game_object.clearPlayersScore();
+                runOnUiThread(() -> playerScore_TextView.setText("PlayerScore: " + 0));
+
                 game_object.selectedGameType = gt;
                 game_object.startGame();
             });
@@ -60,9 +66,8 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
 
             @Override
             public void onGameScoreEvent(int i, int i1) {
-                Log.d("tag", "playerScore: " + Arrays.toString(game_object.getPlayerScore()));
-                Log.d("tag", "playerScore: " + game_object.getPlayerScore()[1]);
-                playerScore.setText("playerScore: " + game_object.getPlayerScore()[1]);
+                playerScore = game_object.getPlayerScore()[1];
+                runOnUiThread(() -> playerScore_TextView.setText("PlayerScore: " + playerScore));
             }
 
             @Override

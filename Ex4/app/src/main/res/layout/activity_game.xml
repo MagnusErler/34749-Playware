@@ -17,12 +17,13 @@
         android:orientation="horizontal" />
 
     <TextView
-        android:id="@+id/playerScore"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="PlayerScore"
-        android:layout_marginStart="220dp"
+        android:id="@+id/playerScore_TextView"
+        android:layout_width="231dp"
+        android:layout_height="69dp"
+        android:layout_marginStart="100dp"
         android:layout_marginTop="220dp"
         android:layout_marginEnd="22dp"
-        android:layout_marginBottom="22dp"/>
+        android:layout_marginBottom="22dp"
+        android:text="PlayerScore: 0"
+        android:textSize="32sp" />
 </RelativeLayout>
