@@ -2,7 +2,13 @@ package com.example.ex5;
 
 import static com.livelife.motolibrary.AntData.*;
 
+import android.app.Activity;
+import android.content.Context;
+import android.graphics.Color;
 import android.util.Log;
+import android.view.View;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.livelife.motolibrary.AntData;
 import com.livelife.motolibrary.Game;
@@ -15,24 +21,32 @@ import java.util.Arrays;
 import java.util.Collections;
 
 public class GameClass extends Game {
+    int tileColor1, tileColor2, tileColor3;
+    int tileID1, tileID2, tileID3;
+    int specialColor, specialTile;
+
+    View targetColor;
+
+    Context applicationContext;
+
     MotoConnection connection = MotoConnection.getInstance();
 
     GameType gt;
     ArrayList<Integer> colorList = new ArrayList<>();
-    int specialColor, specialTile;
     GameClass() {
         setName("Group2Game");
-        gt = new GameType(1, GameType.GAME_TYPE_SCORE, 5, "Start game Score 5", 1);
+        gt = new GameType(1, GameType.GAME_TYPE_SCORE, 30, "Start game Score 30", 1);
         addGameType(gt);
+        addColorsToList();
     }
-    public void addColours(){
+    public void addColorsToList(){
         colorList.add(LED_COLOR_BLUE);
         colorList.add(LED_COLOR_GREEN);
         colorList.add(LED_COLOR_INDIGO);
         colorList.add(LED_COLOR_ORANGE);
         colorList.add(LED_COLOR_RED);
-        colorList.add(LED_COLOR_VIOLET);
-        colorList.add(LED_COLOR_WHITE);
+        //colorList.add(LED_COLOR_VIOLET);
+        //colorList.add(LED_COLOR_WHITE);
     }
 
     public void gameLogic() {
@@ -40,28 +54,41 @@ public class GameClass extends Game {
 
         Collections.shuffle(colorList);
 
-        int color1,color2,color3;
-
         specialColor = colorList.get(0);
-        color1 = colorList.get(1);
-        color2 = colorList.get(2);
-        color3 = colorList.get(3);
+        tileColor1 = colorList.get(1);
+        tileColor2 = colorList.get(2);
+        tileColor3 = colorList.get(3);
 
         printColorFromNumber(specialColor);
-        printColorFromNumber(color1);
-        printColorFromNumber(color2);
-        printColorFromNumber(color3);
+        printColorFromNumber(tileColor1);
+        printColorFromNumber(tileColor2);
+        printColorFromNumber(tileColor3);
 
         //Our special tile
         specialTile = connection.randomIdleTile();
         connection.setTileColor(specialColor, specialTile);
 
+        /*do {
+            tileID1 = connection.randomIdleTile();
+            tileID2 = connection.randomIdleTile();
+            tileID3 = connection.randomIdleTile();
+        } while(tileID1 == tileID2 || tileID1 == tileID3 || tileID2 == tileID3);
+
+        Log.d("tag", "tileID1: " + tileID1);
+        Log.d("tag", "tileID2: " + tileID2);
+        Log.d("tag", "tileID3: " + tileID3);*/
+
         //Set the other 3 tiles to different colors
-        connection.setTileColor(color1, connection.randomIdleTile());
+        connection.setTileColor(tileColor1, connection.randomIdleTile());
+        connection.setTileColor(tileColor2, connection.randomIdleTile());
+        connection.setTileColor(tileColor3, connection.randomIdleTile());
 
-        connection.setTileColor(color2, connection.randomIdleTile());
+        //connection.printMessage("Convert Java String".getBytes());
 
-        connection.setTileColor(color3, connection.randomIdleTile());
+
+        //targetColor.setBackgroundColor(getColor(specialColor));
+
+        incrementPlayerScore(0,1);
     }
 
     public void onGameStart() {
@@ -75,9 +102,9 @@ public class GameClass extends Game {
 
         int tileId = AntData.getId(message);
         int event = AntData.getCommand(message);
-        //int pressedTileColor = AntData.getColorFromPress(message);
+        int pressedTileColor = AntData.getColorFromPress(message);
 
-        Log.d("tag", "event: " + event);
+
 
         switch(event) {
             case EVENT_PRESS:
@@ -85,22 +112,35 @@ public class GameClass extends Game {
                 // Correct tile block
                 if (tileId == specialTile) // Check if the special tile has been pressed
                 {
+                    Log.d("tag", "Correct tile pressed");
                     // Adding 10 points if the player presses a correct tile
                     incrementPlayerScore(10, 1);
                     // Player gets 500 ms less to hit the tile in the next round
                     this.getOnGameEventListener().onGameTimerEvent(-500);
                 }
-                else // Incorrect tile block
-                {
+                else {
+                    Log.d("tag", "Wrong tile pressed");
                     // Subtracting 5 points if the player presses a wrong tile
                     incrementPlayerScore(-5,1);
                     // Player gets 1000 ms more to hit the tile in the next round
                     this.getOnGameEventListener().onGameTimerEvent(1000);
                 }
+
+                /*if (getPlayerScore()[1] <= 0) {
+                    gameLost();
+                    break;
+                }*/
+
+                /*if (getPlayerScore()[1] >= gt.getGoal()) {
+                    gameWon();
+                    break;
+                }*/
+
+                gameLogic();
                 break;
             case CMD_COUNTDOWN_TIMEUP:
                 Log.d("tag", "Timeup done");
-                //gameLost();
+                gameLost();
                 // No change to the score
                 incrementPlayerScore(0,1);
                 // No change to the timing
@@ -108,11 +148,6 @@ public class GameClass extends Game {
                 break;
             case EVENT_RELEASE:
                 Log.d("tag", "Tile released");
-                /*
-                incrementPlayerScore(1, 1);
-                if (getPlayerScore()[1] >= gt.getGoal()) {
-                    gameWon();
-                }*/
                 break;
             default:
                 Log.d("tag", "ERROR: event not found");
@@ -171,36 +206,36 @@ public class GameClass extends Game {
         int androidColorCode = 0;
         switch (colorValue) {
             case 0:
-                Log.d("tag", "LED_COLOR_OFF");
-                androidColorCode = 0x666666;
+                //Log.d("tag", "LED_COLOR_OFF");
+                androidColorCode = 0xFFFFFFF;
                 break;
             case 1:
-                Log.d("tag", "LED_COLOR_RED");
-                androidColorCode = 0xFF0000;
+                //Log.d("tag", "LED_COLOR_RED");
+                androidColorCode = 0xFFFF0000;
                 break;
             case 2:
-                Log.d("tag", "LED_COLOR_BLUE");
-                androidColorCode = 0x0000FF;
+                //Log.d("tag", "LED_COLOR_BLUE");
+                androidColorCode = 0xFF0000FF;
                 break;
             case 3:
-                Log.d("tag", "LED_COLOR_GREEN");
-                androidColorCode = 0x00FF00;
+                //Log.d("tag", "LED_COLOR_GREEN");
+                androidColorCode = 0xFF00FF00;
                 break;
             case 4:
-                Log.d("tag", "LED_COLOR_INDIGO");
-                androidColorCode = 0x4b0082;
+                //Log.d("tag", "LED_COLOR_INDIGO");
+                androidColorCode = 0xFF4B0082;
                 break;
             case 5:
-                Log.d("tag", "LED_COLOR_ORANGE");
-                androidColorCode = 0xFFA500;
+                //Log.d("tag", "LED_COLOR_ORANGE");
+                androidColorCode = 0xFFFFA500;
                 break;
             case 6:
-                Log.d("tag", "LED_COLOR_WHITE");
-                androidColorCode = 0xFFFFFF;
+                //Log.d("tag", "LED_COLOR_WHITE");
+                androidColorCode = 0xFFFFFFFF;
                 break;
             case 7:
-                Log.d("tag", "LED_COLOR_VIOLET");
-                androidColorCode = 0x7F00FF;
+                //Log.d("tag", "LED_COLOR_VIOLET");
+                androidColorCode = 0xFF7F00FF;
                 break;
             default:
                 Log.d("tag", "ERROR: Color not found");
@@ -209,4 +244,7 @@ public class GameClass extends Game {
         return androidColorCode;
     }
 
+    public void test(View targetColor_temp) {
+        targetColor = targetColor_temp;
+    }
 }

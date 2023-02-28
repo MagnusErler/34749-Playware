@@ -1,7 +1,6 @@
 package com.example.ex5;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -14,8 +13,6 @@ import com.livelife.motolibrary.GameType;
 import com.livelife.motolibrary.MotoConnection;
 import com.livelife.motolibrary.OnAntEventListener;
 
-import java.util.Arrays;
-
 public class GameActivity extends AppCompatActivity implements OnAntEventListener {
 
     MotoConnection connection = MotoConnection.getInstance();
@@ -23,6 +20,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     LinearLayout gt_container;
 
     int playerScore = 0;
+    int specialColor;
 
     TextView playerScore_TextView;
     View targetColor;
@@ -46,6 +44,8 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         playerScore_TextView = findViewById(R.id.playerScore_TextView);
         targetColor = findViewById(R.id.targetColor);
 
+        game_object.test(targetColor);
+
         for (final GameType gt : game_object.getGameTypes()) {
 
             Button b = new Button(this);
@@ -53,15 +53,12 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
             b.setOnClickListener(v -> {
                 game_object.clearPlayersScore();
                 runOnUiThread(() -> playerScore_TextView.setText("PlayerScore: " + 0));
-                runOnUiThread(() -> targetColor.setBackgroundColor(getColor(0)));
 
                 game_object.selectedGameType = gt;
                 game_object.startGame();
             });
             gt_container.addView(b);
         }
-
-
 
         game_object.setOnGameEventListener(new Game.OnGameEventListener() {
             @Override
@@ -83,6 +80,8 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
             public void onGameScoreEvent(int i, int i1) {
                 playerScore = game_object.getPlayerScore()[1];
                 runOnUiThread(() -> playerScore_TextView.setText("PlayerScore: " + playerScore));
+                specialColor = game_object.specialColor;
+                runOnUiThread(() -> targetColor.setBackgroundColor(game_object.getColor(specialColor)));
             }
 
             @Override
@@ -97,11 +96,13 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
             @Override
             public void onSetupEnd() {}
         });
+
+
     }
 
     @Override
-    public void onMessageReceived(byte[] bytes, long l)
-    {
+    public void onMessageReceived(byte[] bytes, long l) {
+        //Log.d("tag", "Byte: " + new String(bytes, StandardCharsets.UTF_8));
         game_object.addEvent(bytes);
     }
 
