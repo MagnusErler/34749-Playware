@@ -5,6 +5,7 @@ import static com.livelife.motolibrary.AntData.*;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 
@@ -19,13 +20,20 @@ import com.livelife.motolibrary.MotoSound;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.logging.LogRecord;
 
 public class GameClass extends Game {
     int tileColor1, tileColor2, tileColor3;
     int tileID1, tileID2, tileID3;
     int specialColor, specialTile;
 
+    int correctTilesPressed = 0, wrongTilesPressed = 0;
+
     //double timePerRound = 5;
+
+    Handler handler = new Handler();
+
+    int speedPerRound = 2000;
 
     View targetColor;
 
@@ -37,7 +45,7 @@ public class GameClass extends Game {
     ArrayList<Integer> colorList = new ArrayList<>();
     GameClass() {
         setName("Group2Game");
-        gt = new GameType(1, GameType.GAME_TYPE_TIME, 9999, "Start game Score 30", 1);
+        gt = new GameType(1, GameType.GAME_TYPE_TIME, 20, "Start game Score 20", 1);
         addGameType(gt);
         addColorsToList();
     }
@@ -54,9 +62,9 @@ public class GameClass extends Game {
     public void gameLogic() {
         connection.setAllTilesIdle(LED_COLOR_OFF);
 
-        Collections.shuffle(colorList);
+        //Collections.shuffle(colorList);
 
-        specialColor = colorList.get(0);
+        /*specialColor = colorList.get(0);
         tileColor1 = colorList.get(1);
         tileColor2 = colorList.get(2);
         tileColor3 = colorList.get(3);
@@ -64,37 +72,29 @@ public class GameClass extends Game {
         printColorFromNumber(specialColor);
         printColorFromNumber(tileColor1);
         printColorFromNumber(tileColor2);
-        printColorFromNumber(tileColor3);
+        printColorFromNumber(tileColor3);*/
+
+
 
         //Our special tile
         specialTile = connection.randomIdleTile();
-        connection.setTileColor(specialColor, specialTile);
 
-        /*do {
-            tileID1 = connection.randomIdleTile();
-            tileID2 = connection.randomIdleTile();
-            tileID3 = connection.randomIdleTile();
-        } while(tileID1 == tileID2 || tileID1 == tileID3 || tileID2 == tileID3);
-
-        Log.d("tag", "tileID1: " + tileID1);
-        Log.d("tag", "tileID2: " + tileID2);
-        Log.d("tag", "tileID3: " + tileID3);*/
+        connection.setAllTilesColor(LED_COLOR_OFF);
+        connection.setTileColor(LED_COLOR_GREEN, specialTile);
 
         //Set the other 3 tiles to different colors
-        connection.setTileColor(tileColor1, connection.randomIdleTile());
+        /*connection.setTileColor(tileColor1, connection.randomIdleTile());
         connection.setTileColor(tileColor2, connection.randomIdleTile());
-        connection.setTileColor(tileColor3, connection.randomIdleTile());
-
-        //connection.printMessage("Convert Java String".getBytes());
-
-
-        //targetColor.setBackgroundColor(getColor(specialColor));
+        connection.setTileColor(tileColor3, connection.randomIdleTile());*/
 
         incrementPlayerScore(0,1);
     }
 
     public void onGameStart() {
         super.onGameStart();
+
+        correctTilesPressed = 0;
+        wrongTilesPressed = 0;
         gameLogic();
     }
 
@@ -114,18 +114,31 @@ public class GameClass extends Game {
                 // Correct tile block
                 if (tileId == specialTile) // Check if the special tile has been pressed
                 {
+                    correctTilesPressed++;
                     Log.d("tag", "Correct tile pressed");
                     // Adding 10 points if the player presses a correct tile
                     incrementPlayerScore(10, 1);
                     // Player gets 500 ms less to hit the tile in the next round
-                    this.getOnGameEventListener().onGameTimerEvent(1000);
+                    //this.getOnGameEventListener().onGameTimerEvent(1000);
+
+                    connection.setTileColor(LED_COLOR_OFF, specialTile);
+
+                    speedPerRound = speedPerRound - 100;
+                    final Runnable time = this::gameLogic;
+                    handler.postDelayed(time, speedPerRound);
+
                 }
                 else {
+                    wrongTilesPressed++;
                     Log.d("tag", "Wrong tile pressed");
                     // Subtracting 5 points if the player presses a wrong tile
                     incrementPlayerScore(-5,1);
                     // Player gets 1000 ms more to hit the tile in the next round
-                    this.getOnGameEventListener().onGameTimerEvent(2000);
+                    //this.getOnGameEventListener().onGameTimerEvent(2000);
+
+                    speedPerRound = speedPerRound + 100;
+                    final Runnable time = this::gameLogic;
+                    handler.postDelayed(time, speedPerRound);
                 }
 
                 /*if (getPlayerScore()[1] <= 0) {
@@ -138,7 +151,11 @@ public class GameClass extends Game {
                     break;
                 }*/
 
-                gameLogic();
+                if (speedPerRound <= 0) {
+                    gameWon();
+                }
+
+                //gameLogic();
                 break;
             case CMD_COUNTDOWN_TIMEUP:
                 Log.d("tag", "Timeup done");
@@ -244,9 +261,5 @@ public class GameClass extends Game {
                 break;
         }
         return androidColorCode;
-    }
-
-    public void test(View targetColor_temp) {
-        targetColor = targetColor_temp;
     }
 }

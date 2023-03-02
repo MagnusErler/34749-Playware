@@ -48,10 +48,6 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
 
         gt_container = findViewById(R.id.game_type_container);
         playerScore_TextView = findViewById(R.id.playerScore_TextView);
-        targetColor = findViewById(R.id.targetColor);
-        timePerRound = findViewById(R.id.timePerRound);
-
-        game_object.test(targetColor);
 
         for (final GameType gt : game_object.getGameTypes()) {
 
@@ -60,7 +56,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
             b.setOnClickListener(v -> {
                 game_object.clearPlayersScore();
                 runOnUiThread(() -> playerScore_TextView.setText("Score: " + 0));
-                runOnUiThread(() -> timePerRound.setText("Time: " + timePerRound_int));
+                //runOnUiThread(() -> timePerRound.setText("Time: " + timePerRound_int));
 
                 game_object.selectedGameType = gt;
                 game_object.startGame();
@@ -71,23 +67,6 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         game_object.setOnGameEventListener(new Game.OnGameEventListener() {
             @Override
             public void onGameTimerEvent(int i) {
-                //Log.d("tag", "time left: " + i);
-
-                if (i == 1000) {
-                    //Correct tile"
-                    timePerRound_int = timePerRound_int - 1;
-                } else if (i == 2000) {
-                    //Wrong tile
-                    timePerRound_int = timePerRound_int + 1;
-                } else {
-                    timePerRound_int = timePerRound_int - 1;
-                }
-
-                runOnUiThread(() -> timePerRound.setText("Time: " + timePerRound_int));
-
-                if (timePerRound_int <= 0) {
-                    game_object.gameLost();
-                }
             }
 
             @Override
@@ -95,13 +74,12 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
                 playerScore = game_object.getPlayerScore()[1];
                 runOnUiThread(() -> playerScore_TextView.setText("Score: " + playerScore));
                 specialColor = game_object.specialColor;
-                runOnUiThread(() -> targetColor.setBackgroundColor(game_object.getColor(specialColor)));
             }
 
             @Override
             public void onGameStopEvent() {
                 Log.d("tag", "onGameStopEvent");
-                game_object.gameLost();
+                game_object.gameWon();
             }
 
             @Override
