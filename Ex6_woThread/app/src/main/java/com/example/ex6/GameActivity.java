@@ -1,6 +1,7 @@
 package com.example.ex6;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -23,14 +24,11 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     LinearLayout gt_container;
 
     int playerScore = 0;
-    int specialColor;
-
-    int timePerRound_int = 10;
 
     TextView playerScore_TextView;
     TextView timePerRound;
     View targetColor;
-
+    int delay = 4000;
     //Stop the game when we exit activity
     @Override
     public void onBackPressed() {
@@ -48,6 +46,11 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
 
         gt_container = findViewById(R.id.game_type_container);
         playerScore_TextView = findViewById(R.id.playerScore_TextView);
+<<<<<<< HEAD:Ex6_woThread/app/src/main/java/com/example/ex6/GameActivity.java
+=======
+        targetColor = findViewById(R.id.targetColor);
+        timePerRound = findViewById(R.id.timePerRound);
+>>>>>>> 7ba8ce46e728b6f56ed225479a1c0523308bf1e9:Ex6/app/src/main/java/com/example/ex6/GameActivity.java
 
         for (final GameType gt : game_object.getGameTypes()) {
 
@@ -56,7 +59,11 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
             b.setOnClickListener(v -> {
                 game_object.clearPlayersScore();
                 runOnUiThread(() -> playerScore_TextView.setText("Score: " + 0));
+<<<<<<< HEAD:Ex6_woThread/app/src/main/java/com/example/ex6/GameActivity.java
                 //runOnUiThread(() -> timePerRound.setText("Time: " + timePerRound_int));
+=======
+                runOnUiThread(() -> timePerRound.setText("Time: " + (float)delay/1000 + "s"));
+>>>>>>> 7ba8ce46e728b6f56ed225479a1c0523308bf1e9:Ex6/app/src/main/java/com/example/ex6/GameActivity.java
 
                 game_object.selectedGameType = gt;
                 game_object.startGame();
@@ -67,14 +74,35 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         game_object.setOnGameEventListener(new Game.OnGameEventListener() {
             @Override
             public void onGameTimerEvent(int i) {
+<<<<<<< HEAD:Ex6_woThread/app/src/main/java/com/example/ex6/GameActivity.java
+=======
+                //Log.d("tag", "time left: " + i);
+                if (i < 0)
+                {
+                    if (delay >= 2000)
+                    {
+                        delay += i;
+                    }
+                }
+                else
+                {
+                    delay += i;
+                }
+                runOnUiThread(() -> timePerRound.setText("Time: " + (float)delay/1000));
+>>>>>>> 7ba8ce46e728b6f56ed225479a1c0523308bf1e9:Ex6/app/src/main/java/com/example/ex6/GameActivity.java
             }
 
             @Override
             public void onGameScoreEvent(int i, int i1) {
                 playerScore = game_object.getPlayerScore()[1];
+                game_object.gameLogic();
                 runOnUiThread(() -> playerScore_TextView.setText("Score: " + playerScore));
+<<<<<<< HEAD:Ex6_woThread/app/src/main/java/com/example/ex6/GameActivity.java
                 specialColor = game_object.specialColor;
             }
+=======
+                }
+>>>>>>> 7ba8ce46e728b6f56ed225479a1c0523308bf1e9:Ex6/app/src/main/java/com/example/ex6/GameActivity.java
 
             @Override
             public void onGameStopEvent() {
@@ -92,7 +120,26 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
             public void onSetupEnd() {}
         });
 
+        // Displaying each colour for a certain period of time (default - 4000 ms)
+        Thread my_thread = new Thread()
+        {
+            Handler h = new Handler();
+            Runnable r = new Runnable() {
+                @Override
+                public void run() {
+                    game_object.gameLogic();
+                    h.postDelayed(this,delay);
+                }
 
+            };
+            @Override
+            public void run(){
+                game_object.gameLogic();
+                h.postDelayed(r,delay);
+            }
+
+        };
+        my_thread.start();
     }
 
     @Override

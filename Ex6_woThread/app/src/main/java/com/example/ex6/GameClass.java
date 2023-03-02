@@ -23,10 +23,9 @@ import java.util.Collections;
 import java.util.logging.LogRecord;
 
 public class GameClass extends Game {
-    int tileColor1, tileColor2, tileColor3;
-    int tileID1, tileID2, tileID3;
     int specialColor, specialTile;
 
+<<<<<<< HEAD:Ex6_woThread/app/src/main/java/com/example/ex6/GameClass.java
     int correctTilesPressed = 0, wrongTilesPressed = 0;
 
     //double timePerRound = 5;
@@ -35,6 +34,8 @@ public class GameClass extends Game {
 
     int speedPerRound = 2000;
 
+=======
+>>>>>>> 7ba8ce46e728b6f56ed225479a1c0523308bf1e9:Ex6/app/src/main/java/com/example/ex6/GameClass.java
     View targetColor;
 
     Context applicationContext;
@@ -42,25 +43,21 @@ public class GameClass extends Game {
     MotoConnection connection = MotoConnection.getInstance();
 
     GameType gt;
-    ArrayList<Integer> colorList = new ArrayList<>();
+
     GameClass() {
+<<<<<<< HEAD:Ex6_woThread/app/src/main/java/com/example/ex6/GameClass.java
         setName("Group2Game");
         gt = new GameType(1, GameType.GAME_TYPE_TIME, 20, "Start game Score 20", 1);
+=======
+        setName("Colour Race");
+        gt = new GameType(1, GameType.GAME_TYPE_TIME, 30, "Start game Score 30", 1);
+>>>>>>> 7ba8ce46e728b6f56ed225479a1c0523308bf1e9:Ex6/app/src/main/java/com/example/ex6/GameClass.java
         addGameType(gt);
-        addColorsToList();
-    }
-    public void addColorsToList(){
-        colorList.add(LED_COLOR_BLUE);
-        colorList.add(LED_COLOR_GREEN);
-        colorList.add(LED_COLOR_INDIGO);
-        colorList.add(LED_COLOR_ORANGE);
-        colorList.add(LED_COLOR_RED);
-        //colorList.add(LED_COLOR_VIOLET);
-        //colorList.add(LED_COLOR_WHITE);
     }
 
     public void gameLogic() {
         connection.setAllTilesIdle(LED_COLOR_OFF);
+<<<<<<< HEAD:Ex6_woThread/app/src/main/java/com/example/ex6/GameClass.java
 
         //Collections.shuffle(colorList);
 
@@ -76,10 +73,14 @@ public class GameClass extends Game {
 
 
 
+=======
+>>>>>>> 7ba8ce46e728b6f56ed225479a1c0523308bf1e9:Ex6/app/src/main/java/com/example/ex6/GameClass.java
         //Our special tile
+        specialColor = LED_COLOR_GREEN;
         specialTile = connection.randomIdleTile();
 
         connection.setAllTilesColor(LED_COLOR_OFF);
+<<<<<<< HEAD:Ex6_woThread/app/src/main/java/com/example/ex6/GameClass.java
         connection.setTileColor(LED_COLOR_GREEN, specialTile);
 
         //Set the other 3 tiles to different colors
@@ -88,6 +89,10 @@ public class GameClass extends Game {
         connection.setTileColor(tileColor3, connection.randomIdleTile());*/
 
         incrementPlayerScore(0,1);
+=======
+
+        connection.setTileColor(specialColor, specialTile);
+>>>>>>> 7ba8ce46e728b6f56ed225479a1c0523308bf1e9:Ex6/app/src/main/java/com/example/ex6/GameClass.java
     }
 
     public void onGameStart() {
@@ -107,18 +112,18 @@ public class GameClass extends Game {
         int pressedTileColor = AntData.getColorFromPress(message);
 
 
-
-        switch(event) {
+        switch (event) {
             case EVENT_PRESS:
                 Log.d("tag", "Tile pressed");
                 // Correct tile block
-                if (tileId == specialTile) // Check if the special tile has been pressed
+                if (pressedTileColor != LED_COLOR_OFF) // Check if the special tile has been pressed
                 {
                     correctTilesPressed++;
                     Log.d("tag", "Correct tile pressed");
                     // Adding 10 points if the player presses a correct tile
                     incrementPlayerScore(10, 1);
                     // Player gets 500 ms less to hit the tile in the next round
+<<<<<<< HEAD:Ex6_woThread/app/src/main/java/com/example/ex6/GameClass.java
                     //this.getOnGameEventListener().onGameTimerEvent(1000);
 
                     connection.setTileColor(LED_COLOR_OFF, specialTile);
@@ -127,13 +132,17 @@ public class GameClass extends Game {
                     final Runnable time = this::gameLogic;
                     handler.postDelayed(time, speedPerRound);
 
+=======
+                    this.getOnGameEventListener().onGameTimerEvent(-500);
+>>>>>>> 7ba8ce46e728b6f56ed225479a1c0523308bf1e9:Ex6/app/src/main/java/com/example/ex6/GameClass.java
                 }
                 else {
                     wrongTilesPressed++;
                     Log.d("tag", "Wrong tile pressed");
                     // Subtracting 5 points if the player presses a wrong tile
-                    incrementPlayerScore(-5,1);
+                    incrementPlayerScore(-5, 1);
                     // Player gets 1000 ms more to hit the tile in the next round
+<<<<<<< HEAD:Ex6_woThread/app/src/main/java/com/example/ex6/GameClass.java
                     //this.getOnGameEventListener().onGameTimerEvent(2000);
 
                     speedPerRound = speedPerRound + 100;
@@ -155,13 +164,18 @@ public class GameClass extends Game {
                     gameWon();
                 }
 
+=======
+                    this.getOnGameEventListener().onGameTimerEvent(500);
+                }
+
+>>>>>>> 7ba8ce46e728b6f56ed225479a1c0523308bf1e9:Ex6/app/src/main/java/com/example/ex6/GameClass.java
                 //gameLogic();
                 break;
             case CMD_COUNTDOWN_TIMEUP:
                 Log.d("tag", "Timeup done");
                 gameLost();
                 // No change to the score
-                incrementPlayerScore(0,1);
+                incrementPlayerScore(0, 1);
                 // No change to the timing
                 this.getOnGameEventListener().onGameTimerEvent(0);
                 break;
@@ -191,7 +205,7 @@ public class GameClass extends Game {
     }
 
     void printColorFromNumber(int colorValue) {
-        switch(colorValue) {
+        switch (colorValue) {
             case 0:
                 Log.d("tag", "LED_COLOR_OFF");
                 break;
@@ -221,6 +235,7 @@ public class GameClass extends Game {
                 break;
         }
     }
+<<<<<<< HEAD:Ex6_woThread/app/src/main/java/com/example/ex6/GameClass.java
     int getColor(int colorValue) {
         int androidColorCode = 0;
         switch (colorValue) {
@@ -262,4 +277,6 @@ public class GameClass extends Game {
         }
         return androidColorCode;
     }
+=======
+>>>>>>> 7ba8ce46e728b6f56ed225479a1c0523308bf1e9:Ex6/app/src/main/java/com/example/ex6/GameClass.java
 }
