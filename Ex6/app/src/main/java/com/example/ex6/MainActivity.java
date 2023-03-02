@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
 
         connection=MotoConnection.getInstance();
         connection.startMotoConnection(MainActivity.this);
-        connection.saveRfFrequency(26);         // Check the back of your tiles for the RF
+        connection.saveRfFrequency(46);         // Check the back of your tiles for the RF
         connection.setDeviceId(2);              // Your group number
         connection.registerListener(MainActivity.this);
 

@@ -1,6 +1,7 @@
 package com.example.ex6;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -23,14 +24,11 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     LinearLayout gt_container;
 
     int playerScore = 0;
-    int specialColor;
-
-    int timePerRound_int = 10;
 
     TextView playerScore_TextView;
     TextView timePerRound;
     View targetColor;
-
+    int delay = 4000;
     //Stop the game when we exit activity
     @Override
     public void onBackPressed() {
@@ -51,8 +49,6 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         targetColor = findViewById(R.id.targetColor);
         timePerRound = findViewById(R.id.timePerRound);
 
-        game_object.test(targetColor);
-
         for (final GameType gt : game_object.getGameTypes()) {
 
             Button b = new Button(this);
@@ -60,7 +56,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
             b.setOnClickListener(v -> {
                 game_object.clearPlayersScore();
                 runOnUiThread(() -> playerScore_TextView.setText("Score: " + 0));
-                runOnUiThread(() -> timePerRound.setText("Time: " + timePerRound_int));
+                runOnUiThread(() -> timePerRound.setText("Time: " + (float)delay/1000 + "s"));
 
                 game_object.selectedGameType = gt;
                 game_object.startGame();
@@ -72,31 +68,26 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
             @Override
             public void onGameTimerEvent(int i) {
                 //Log.d("tag", "time left: " + i);
-
-                if (i == 1000) {
-                    //Correct tile"
-                    timePerRound_int = timePerRound_int - 1;
-                } else if (i == 2000) {
-                    //Wrong tile
-                    timePerRound_int = timePerRound_int + 1;
-                } else {
-                    timePerRound_int = timePerRound_int - 1;
+                if (i < 0)
+                {
+                    if (delay >= 2000)
+                    {
+                        delay += i;
+                    }
                 }
-
-                runOnUiThread(() -> timePerRound.setText("Time: " + timePerRound_int));
-
-                if (timePerRound_int <= 0) {
-                    game_object.gameLost();
+                else
+                {
+                    delay += i;
                 }
+                runOnUiThread(() -> timePerRound.setText("Time: " + (float)delay/1000));
             }
 
             @Override
             public void onGameScoreEvent(int i, int i1) {
                 playerScore = game_object.getPlayerScore()[1];
+                game_object.gameLogic();
                 runOnUiThread(() -> playerScore_TextView.setText("Score: " + playerScore));
-                specialColor = game_object.specialColor;
-                runOnUiThread(() -> targetColor.setBackgroundColor(game_object.getColor(specialColor)));
-            }
+                }
 
             @Override
             public void onGameStopEvent() {
@@ -114,7 +105,26 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
             public void onSetupEnd() {}
         });
 
+        // Displaying each colour for a certain period of time (default - 4000 ms)
+        Thread my_thread = new Thread()
+        {
+            Handler h = new Handler();
+            Runnable r = new Runnable() {
+                @Override
+                public void run() {
+                    game_object.gameLogic();
+                    h.postDelayed(this,delay);
+                }
 
+            };
+            @Override
+            public void run(){
+                game_object.gameLogic();
+                h.postDelayed(r,delay);
+            }
+
+        };
+        my_thread.start();
     }
 
     @Override
