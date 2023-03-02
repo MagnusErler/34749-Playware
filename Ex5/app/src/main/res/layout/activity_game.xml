@@ -22,17 +22,26 @@
         android:layout_below="@+id/game_type_container"
         android:layout_marginTop="10dp"
         android:layout_centerHorizontal="true"
-        android:text="PlayerScore: 0"
+        android:text="Score: 0"
+        android:textSize="32sp" />
+
+    <TextView
+        android:id="@+id/timePerRound"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/playerScore_TextView"
+        android:layout_marginTop="10dp"
+        android:layout_centerHorizontal="true"
         android:textSize="32sp" />
 
     <TextView
         android:id="@+id/colorText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/playerScore_TextView"
+        android:layout_below="@+id/timePerRound"
         android:layout_marginTop="10dp"
         android:layout_centerHorizontal="true"
-        android:text="Press this color:"
+        android:text="Press below color on the tiles"
         android:textSize="32sp" />
 
     <View

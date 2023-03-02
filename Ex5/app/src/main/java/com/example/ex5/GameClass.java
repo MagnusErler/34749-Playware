@@ -25,6 +25,8 @@ public class GameClass extends Game {
     int tileID1, tileID2, tileID3;
     int specialColor, specialTile;
 
+    //double timePerRound = 5;
+
     View targetColor;
 
     Context applicationContext;
@@ -35,7 +37,7 @@ public class GameClass extends Game {
     ArrayList<Integer> colorList = new ArrayList<>();
     GameClass() {
         setName("Group2Game");
-        gt = new GameType(1, GameType.GAME_TYPE_SCORE, 30, "Start game Score 30", 1);
+        gt = new GameType(1, GameType.GAME_TYPE_TIME, 9999, "Start game Score 30", 1);
         addGameType(gt);
         addColorsToList();
     }
@@ -116,14 +118,14 @@ public class GameClass extends Game {
                     // Adding 10 points if the player presses a correct tile
                     incrementPlayerScore(10, 1);
                     // Player gets 500 ms less to hit the tile in the next round
-                    this.getOnGameEventListener().onGameTimerEvent(-500);
+                    this.getOnGameEventListener().onGameTimerEvent(1000);
                 }
                 else {
                     Log.d("tag", "Wrong tile pressed");
                     // Subtracting 5 points if the player presses a wrong tile
                     incrementPlayerScore(-5,1);
                     // Player gets 1000 ms more to hit the tile in the next round
-                    this.getOnGameEventListener().onGameTimerEvent(1000);
+                    this.getOnGameEventListener().onGameTimerEvent(2000);
                 }
 
                 /*if (getPlayerScore()[1] <= 0) {
