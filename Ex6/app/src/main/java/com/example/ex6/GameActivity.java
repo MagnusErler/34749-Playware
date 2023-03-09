@@ -23,6 +23,19 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
 
     Handler h = new Handler();
 
+    int playerScore_old = 0;
+
+    Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            if (!running) return;
+            //h.postDelayed(this,delay);
+            game_object.gameLogic();
+        }
+    };
+
+    volatile boolean running = true;
+
     int playerScore = 0;
 
     TextView playerScore_TextView;
@@ -58,12 +71,27 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
             b.setText(gt.getName());
             b.setOnClickListener(v -> {
                 game_object.clearPlayersScore();
+                delay = 4000;
                 runOnUiThread(() -> playerScore_TextView.setText("Score: " + 0));
                 runOnUiThread(() -> timePerRound.setText("Time: " + (float)delay/1000 + "s"));
+
+
+                thread = new Thread(runnable);
+
+                running = true;
+
+
+
                 thread.start();
+
+                h.postDelayed(runnable, delay);
+
+
 
                 game_object.selectedGameType = gt;
                 game_object.startGame();
+
+
             });
             gt_container.addView(b);
         }
@@ -72,29 +100,58 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
             @Override
             public void onGameTimerEvent(int i) {
                 //Log.d("tag", "time left: " + i);
-                if (i < 0) {
-                    if (delay >= 2000) {
-                        delay += i;
-                    }
-                }
-                else {
-                    delay += i;
-                }
-                runOnUiThread(() -> timePerRound.setText("Time: " + delay));
+
             }
 
             @Override
             public void onGameScoreEvent(int i, int i1) {
-                playerScore = game_object.getPlayerScore()[1];
-                game_object.gameLogic();
+
+                Log.d("tag", "i: " + i);
+                Log.d("tag", "i1: " + i1);
+
+
+                playerScore = i;
+
+                if (playerScore - playerScore_old == 10) {
+                    //Correct tile
+                    if (delay >= 1000) {
+                        delay -= 500;
+                    }
+                } else if (playerScore - playerScore_old == -5) {
+                    //wrong tile
+                    delay += 500;
+                }
+
+                runOnUiThread(() -> timePerRound.setText("Time: " + (float)delay/1000 + "s"));
+
+
+
+                //playerScore = game_object.getPlayerScore()[1];
+
+                playerScore_old = playerScore;
+                //game_object.gameLogic();
+                //thread.start();
+
+
+
+
+
+
+
+                h.removeCallbacksAndMessages(null);
+                h.postDelayed(runnable, delay);
+
                 runOnUiThread(() -> playerScore_TextView.setText("Score: " + playerScore));
                 runOnUiThread(() -> correctTilesPressed_TextView.setText("Correct tiles pressed: " + game_object.correctPressedTiles));
+
+                //h.postDelayed(runnable, delay);
                 }
 
             @Override
             public void onGameStopEvent() {
                 Log.d("tag", "onGameStopEvent");
                 //my_thread.interrupt();
+                running = false;
                 thread.interrupt();
 
                 game_object.gameWon();
@@ -128,15 +185,9 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
 
         };*/
 
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                game_object.gameLogic();
-                h.postDelayed(this,delay);
-            }
-        };
 
-        thread = new Thread(runnable);
+
+        //thread = new Thread(runnable);
 
     }
 
