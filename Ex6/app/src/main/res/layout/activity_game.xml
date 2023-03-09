@@ -26,30 +26,22 @@
         android:textSize="32sp" />
 
     <TextView
-        android:id="@+id/timePerRound"
+        android:id="@+id/correctTilesPressed_TextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/playerScore_TextView"
         android:layout_marginTop="10dp"
         android:layout_centerHorizontal="true"
+        android:text="Correct tiles pressed: 0"
         android:textSize="32sp" />
 
     <TextView
-        android:id="@+id/colorText"
+        android:id="@+id/timePerRound"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/timePerRound"
+        android:layout_below="@+id/correctTilesPressed_TextView"
         android:layout_marginTop="10dp"
         android:layout_centerHorizontal="true"
-        android:text="Press below color on the tiles"
+        android:text="Time: 0s"
         android:textSize="32sp" />
-
-    <View
-        android:id="@+id/targetColor"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/colorText"
-        android:layout_marginTop="10dp"
-        android:layout_alignParentBottom="true"
-        android:background="#FFFFFF" />
 </RelativeLayout>

@@ -15,18 +15,21 @@ import com.livelife.motolibrary.GameType;
 import com.livelife.motolibrary.MotoConnection;
 import com.livelife.motolibrary.OnAntEventListener;
 
-import java.util.ArrayList;
-
 public class GameActivity extends AppCompatActivity implements OnAntEventListener {
 
     MotoConnection connection = MotoConnection.getInstance();
     GameClass game_object = new GameClass(); // Game object
     LinearLayout gt_container;
 
+    Handler h = new Handler();
+
     int playerScore = 0;
 
     TextView playerScore_TextView;
+    TextView correctTilesPressed_TextView;
     TextView timePerRound;
+    //Thread my_thread;
+    Thread thread;
     View targetColor;
     int delay = 4000;
     //Stop the game when we exit activity
@@ -46,7 +49,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
 
         gt_container = findViewById(R.id.game_type_container);
         playerScore_TextView = findViewById(R.id.playerScore_TextView);
-        targetColor = findViewById(R.id.targetColor);
+        correctTilesPressed_TextView = findViewById(R.id.correctTilesPressed_TextView);
         timePerRound = findViewById(R.id.timePerRound);
 
         for (final GameType gt : game_object.getGameTypes()) {
@@ -57,6 +60,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
                 game_object.clearPlayersScore();
                 runOnUiThread(() -> playerScore_TextView.setText("Score: " + 0));
                 runOnUiThread(() -> timePerRound.setText("Time: " + (float)delay/1000 + "s"));
+                thread.start();
 
                 game_object.selectedGameType = gt;
                 game_object.startGame();
@@ -68,18 +72,15 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
             @Override
             public void onGameTimerEvent(int i) {
                 //Log.d("tag", "time left: " + i);
-                if (i < 0)
-                {
-                    if (delay >= 2000)
-                    {
+                if (i < 0) {
+                    if (delay >= 2000) {
                         delay += i;
                     }
                 }
-                else
-                {
+                else {
                     delay += i;
                 }
-                runOnUiThread(() -> timePerRound.setText("Time: " + (float)delay/1000));
+                runOnUiThread(() -> timePerRound.setText("Time: " + delay));
             }
 
             @Override
@@ -87,12 +88,16 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
                 playerScore = game_object.getPlayerScore()[1];
                 game_object.gameLogic();
                 runOnUiThread(() -> playerScore_TextView.setText("Score: " + playerScore));
+                runOnUiThread(() -> correctTilesPressed_TextView.setText("Correct tiles pressed: " + game_object.correctPressedTiles));
                 }
 
             @Override
             public void onGameStopEvent() {
                 Log.d("tag", "onGameStopEvent");
-                game_object.gameLost();
+                //my_thread.interrupt();
+                thread.interrupt();
+
+                game_object.gameWon();
             }
 
             @Override
@@ -106,10 +111,8 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         });
 
         // Displaying each colour for a certain period of time (default - 4000 ms)
-        Thread my_thread = new Thread()
-        {
-            Handler h = new Handler();
-            Runnable r = new Runnable() {
+        /*my_thread = new Thread() {
+            final Runnable r = new Runnable() {
                 @Override
                 public void run() {
                     game_object.gameLogic();
@@ -117,14 +120,24 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
                 }
 
             };
-            @Override
+/*            @Override
             public void run(){
                 game_object.gameLogic();
                 h.postDelayed(r,delay);
             }
 
+        };*/
+
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                game_object.gameLogic();
+                h.postDelayed(this,delay);
+            }
         };
-        my_thread.start();
+
+        thread = new Thread(runnable);
+
     }
 
     @Override

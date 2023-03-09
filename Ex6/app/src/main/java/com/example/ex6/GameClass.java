@@ -1,24 +1,22 @@
 package com.example.ex6;
 
-import static com.livelife.motolibrary.AntData.*;
+import static com.livelife.motolibrary.AntData.CMD_COUNTDOWN_TIMEUP;
+import static com.livelife.motolibrary.AntData.EVENT_PRESS;
+import static com.livelife.motolibrary.AntData.EVENT_RELEASE;
+import static com.livelife.motolibrary.AntData.LED_COLOR_GREEN;
+import static com.livelife.motolibrary.AntData.LED_COLOR_OFF;
+import static com.livelife.motolibrary.AntData.LED_COLOR_RED;
 
-import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.util.Log;
 import android.view.View;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.livelife.motolibrary.AntData;
 import com.livelife.motolibrary.Game;
 import com.livelife.motolibrary.GameType;
 import com.livelife.motolibrary.MotoConnection;
 import com.livelife.motolibrary.MotoSound;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 
 public class GameClass extends Game {
     int specialColor, specialTile;
@@ -27,29 +25,34 @@ public class GameClass extends Game {
 
     Context applicationContext;
 
+    int correctPressedTiles = 0;
+    int wrongPressedTiles = 0;
+
     MotoConnection connection = MotoConnection.getInstance();
+    MotoSound sound = MotoSound.getInstance();
 
     GameType gt;
 
     GameClass() {
         setName("Colour Race");
-        gt = new GameType(1, GameType.GAME_TYPE_TIME, 30, "Start game Score 30", 1);
+        gt = new GameType(1, GameType.GAME_TYPE_TIME, 15, "Start game Score 30", 1);
         addGameType(gt);
     }
 
     public void gameLogic() {
         connection.setAllTilesIdle(LED_COLOR_OFF);
-        //Our special tile
-        specialColor = LED_COLOR_GREEN;
+
         specialTile = connection.randomIdleTile();
 
         connection.setAllTilesColor(LED_COLOR_OFF);
-
-        connection.setTileColor(specialColor, specialTile);
+        connection.setTileColor(LED_COLOR_GREEN, specialTile);
     }
 
     public void onGameStart() {
         super.onGameStart();
+
+        correctPressedTiles = 0;
+        wrongPressedTiles = 0;
         gameLogic();
     }
 
@@ -68,6 +71,10 @@ public class GameClass extends Game {
                 // Correct tile block
                 if (pressedTileColor != LED_COLOR_OFF) // Check if the special tile has been pressed
                 {
+                    correctPressedTiles++;
+                    //sound.playPianoSound(1);
+                    //sound.speak("hello");
+
                     Log.d("tag", "Correct tile pressed");
                     // Adding 10 points if the player presses a correct tile
                     incrementPlayerScore(10, 1);
@@ -75,6 +82,7 @@ public class GameClass extends Game {
                     this.getOnGameEventListener().onGameTimerEvent(-500);
                 }
                 else {
+                    wrongPressedTiles++;
                     Log.d("tag", "Wrong tile pressed");
                     // Subtracting 5 points if the player presses a wrong tile
                     incrementPlayerScore(-5, 1);
