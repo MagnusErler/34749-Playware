@@ -79,20 +79,21 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
 
         sharedPref = getSharedPreferences("Prefs", MODE_PRIVATE);
         // UI of active sessions
-        listview = findViewById(R.id.rcviewer);
+        listview = findViewById(R.id.gameSessions);
 
         adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, arrayGames){
+                android.R.layout.simple_list_item_1, arrayGames);
+      /*  {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
-                View view =super.getView(position, convertView, parent);
+                View view = super.getView(position, convertView, parent);
 
                 TextView textView=(TextView) view.findViewById(android.R.id.text1);
 
                 textView.setTextColor(Color.WHITE);
 
                 return view;}
-        };
+        };*/
         listview.setAdapter(adapter);
 
         apiOutput = findViewById(R.id.apiOutput);
@@ -148,11 +149,7 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
         simulatePostGameSession.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
                 postGameSession();
-
-
             }
         });
     }
@@ -219,8 +216,9 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
                 Log.i("sessions",message);
 
 
-                if(jsonObject.getString("method") == "getGameSessions") {
+                if(jsonObject.getString("method").equals("getGameSessions")) {
                     JSONArray sessions = jsonObject.getJSONArray("results");
+
                     for(int i = 0; i < sessions.length();i++) {
                         JSONObject session = sessions.getJSONObject(i);
                         Log.i("sessions",session.toString());
@@ -229,16 +227,17 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
                         sb.append("Game session ID:").append(session.getString("sid")).append(" Score: ").append(session.getString("game_score")).append(" Group ID:").append(session.getString("group_id")).append(" Number of tiles:").append(session.getString("num_tiles"));
                         listFromJson.add(sb.toString());
                         // get score example:
-                        // String score = session.getString("game_score");
-
+                        //String score = session.getString("game_score");
+                        //Log.i("game_score",score);
+                        //arrayGames.add(score);
                     }
+
                     arrayGames.addAll(listFromJson);
                     adapter.notifyDataSetChanged();
                 }
-                else if(jsonObject.getString("method") == "postGameSession") {
+                else if(jsonObject.getString("method").equals("postGameSession") ) {
 
                     Log.i("sessions",message);
-
                     // Update UI
 
 
