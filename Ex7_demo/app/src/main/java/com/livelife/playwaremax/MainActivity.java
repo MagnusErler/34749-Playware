@@ -62,8 +62,8 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
         sound = MotoSound.getInstance();
 
         connection.startMotoConnection(this);
-        connection.saveRfFrequency(76);
-        connection.setDeviceId(7);
+        connection.saveRfFrequency(66);
+        connection.setDeviceId(2);
         connection.registerListener(this);
 
 
@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
         requestPackage.setMethod("POST");
         requestPackage.setUrl(endpoint);
         requestPackage.setParam("method","postGameSession"); // The method name
-        requestPackage.setParam("group_id","99"); // Your group ID
+        requestPackage.setParam("group_id","2"); // Your group ID
         requestPackage.setParam("game_id","1"); // The game ID (From the Game class > setGameId() function
         requestPackage.setParam("game_type_id","1"); // The game type ID (From the GameType class creation > first parameter)
         requestPackage.setParam("game_score","30"); // The game score
@@ -151,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
         requestPackage.setMethod("GET");
         requestPackage.setUrl(endpoint);
         requestPackage.setParam("method","getGameSessions");
-        requestPackage.setParam("group_id","99");
+        requestPackage.setParam("group_id","2");
 
         Downloader downloader = new Downloader(); //Instantiation of the Async task
         //that’s defined below
