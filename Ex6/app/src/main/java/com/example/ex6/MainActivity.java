@@ -9,10 +9,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.livelife.motolibrary.MotoConnection;
 import com.livelife.motolibrary.OnAntEventListener;
+import com.livelife.motolibrary.MotoSound;
 
 public class MainActivity extends AppCompatActivity implements OnAntEventListener {
 
     MotoConnection connection;
+    MotoSound sound;
     Button pairingButton, startGameButton;
 
     boolean isPairing;
@@ -26,9 +28,12 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
 
         connection=MotoConnection.getInstance();
         connection.startMotoConnection(MainActivity.this);
-        connection.saveRfFrequency(46);         // Check the back of your tiles for the RF
+        connection.saveRfFrequency(66);         // Check the back of your tiles for the RF
         connection.setDeviceId(2);              // Your group number
         connection.registerListener(MainActivity.this);
+
+        sound = MotoSound.getInstance();
+        sound.initializeSounds(MainActivity.this);
 
         numberOfConnectedTiles = findViewById(R.id.numberOfConnectedTiles);
         pairingButton = findViewById(R.id.pairingButton);
@@ -36,6 +41,13 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
 
 
         pairingButton.setOnClickListener(view -> {
+
+            //sound.playAnimalSound(1);
+            //sound.playCountdown();
+            //sound.playPianoSound(1);
+            sound.playStart();
+            //sound.playError();
+
             if(!isPairing) {
                 connection.pairTilesStart();
                 pairingButton.setText("Stop pairing!");

@@ -35,7 +35,7 @@ public class GameClass extends Game {
 
     GameClass() {
         setName("Colour Race");
-        gt = new GameType(1, GameType.GAME_TYPE_TIME, 15, "Start game Score 30", 1);
+        gt = new GameType(1, GameType.GAME_TYPE_TIME, 30, "Start game Score 30", 1);
         addGameType(gt);
     }
 
@@ -53,7 +53,7 @@ public class GameClass extends Game {
 
         correctPressedTiles = 0;
         wrongPressedTiles = 0;
-        gameLogic();
+        //gameLogic();
     }
 
     @Override
@@ -71,6 +71,8 @@ public class GameClass extends Game {
                 // Correct tile block
                 if (pressedTileColor != LED_COLOR_OFF) // Check if the special tile has been pressed
                 {
+                    connection.setTileColor(LED_COLOR_OFF, specialTile);
+
                     correctPressedTiles++;
                     //sound.playPianoSound(1);
                     //sound.speak("hello");
@@ -79,7 +81,7 @@ public class GameClass extends Game {
                     // Adding 10 points if the player presses a correct tile
                     incrementPlayerScore(10, 1);
                     // Player gets 500 ms less to hit the tile in the next round
-                    this.getOnGameEventListener().onGameTimerEvent(-500);
+                    //this.getOnGameEventListener().onGameTimerEvent(-500);
                 }
                 else {
                     wrongPressedTiles++;
@@ -87,7 +89,7 @@ public class GameClass extends Game {
                     // Subtracting 5 points if the player presses a wrong tile
                     incrementPlayerScore(-5, 1);
                     // Player gets 1000 ms more to hit the tile in the next round
-                    this.getOnGameEventListener().onGameTimerEvent(500);
+                    //this.getOnGameEventListener().onGameTimerEvent(500);
                 }
 
                 //gameLogic();
