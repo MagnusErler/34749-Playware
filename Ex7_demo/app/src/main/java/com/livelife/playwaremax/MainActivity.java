@@ -3,12 +3,16 @@ package com.livelife.playwaremax;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Debug;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.livelife.motolibrary.AntData;
@@ -19,6 +23,8 @@ import com.livelife.motolibrary.OnAntEventListener;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import android.widget.ArrayAdapter;
+import java.util.ArrayList;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -40,7 +46,11 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
 
     MotoConnection connection;
     MotoSound sound;
-
+    // For game session layout
+    ArrayAdapter<String> adapter;
+    ListView listview;
+    ArrayList<String> arrayGames = new ArrayList<>();
+    ArrayList<String> listFromJson = new ArrayList<>();
     Button pairingButton;
     Button startGameButton;
     Button simulateGetGameSessions,simulatePostGameSession;
@@ -68,6 +78,22 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
         connection.registerListener(this);
 
         sharedPref = getSharedPreferences("Prefs", MODE_PRIVATE);
+        // UI of active sessions
+        listview = findViewById(R.id.rcviewer);
+
+        adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1, arrayGames){
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View view =super.getView(position, convertView, parent);
+
+                TextView textView=(TextView) view.findViewById(android.R.id.text1);
+
+                textView.setTextColor(Color.WHITE);
+
+                return view;}
+        };
+        listview.setAdapter(adapter);
 
         apiOutput = findViewById(R.id.apiOutput);
         connectedTextView = findViewById(R.id.connectedTextView);
@@ -194,17 +220,20 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
 
 
                 if(jsonObject.getString("method") == "getGameSessions") {
-
                     JSONArray sessions = jsonObject.getJSONArray("results");
                     for(int i = 0; i < sessions.length();i++) {
                         JSONObject session = sessions.getJSONObject(i);
                         Log.i("sessions",session.toString());
 
+                        StringBuilder sb = new StringBuilder();
+                        sb.append("Game session ID:").append(session.getString("sid")).append(" Score: ").append(session.getString("game_score")).append(" Group ID:").append(session.getString("group_id")).append(" Number of tiles:").append(session.getString("num_tiles"));
+                        listFromJson.add(sb.toString());
                         // get score example:
                         // String score = session.getString("game_score");
 
                     }
-
+                    arrayGames.addAll(listFromJson);
+                    adapter.notifyDataSetChanged();
                 }
                 else if(jsonObject.getString("method") == "postGameSession") {
 
