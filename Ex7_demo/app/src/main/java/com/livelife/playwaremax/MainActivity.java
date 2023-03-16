@@ -2,6 +2,7 @@ package com.livelife.playwaremax;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Debug;
@@ -27,6 +28,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -44,10 +46,9 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
     Button simulateGetGameSessions,simulatePostGameSession;
     TextView connectedTextView;
 
-
     Boolean isPairing = false;
     Boolean isPlaying = false;
-
+    SharedPreferences sharedPref;
     TextView apiOutput;
     String endpoint = "https://centerforplayware.com/api/index.php";
 
@@ -66,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
         connection.setDeviceId(2);
         connection.registerListener(this);
 
+        sharedPref = getSharedPreferences("Prefs", MODE_PRIVATE);
 
         apiOutput = findViewById(R.id.apiOutput);
         connectedTextView = findViewById(R.id.connectedTextView);
@@ -134,12 +136,13 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
         requestPackage.setMethod("POST");
         requestPackage.setUrl(endpoint);
         requestPackage.setParam("method","postGameSession"); // The method name
-        requestPackage.setParam("group_id","2"); // Your group ID
+        requestPackage.setParam("group_id","420"); // Your group ID
         requestPackage.setParam("game_id","1"); // The game ID (From the Game class > setGameId() function
         requestPackage.setParam("game_type_id","1"); // The game type ID (From the GameType class creation > first parameter)
         requestPackage.setParam("game_score","30"); // The game score
         requestPackage.setParam("game_time","60"); // The game elapsed time in seconds
         requestPackage.setParam("num_tiles","4"); // The number of tiles used
+        requestPackage.setParam("device_token",getDeviceToken());
 
         Downloader downloader = new Downloader(); //Instantiation of the Async task
         //that’s defined below
@@ -151,12 +154,23 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
         requestPackage.setMethod("GET");
         requestPackage.setUrl(endpoint);
         requestPackage.setParam("method","getGameSessions");
-        requestPackage.setParam("group_id","2");
+        requestPackage.setParam("device_token",getDeviceToken());
+        requestPackage.setParam("group_id","420");
 
         Downloader downloader = new Downloader(); //Instantiation of the Async task
         //that’s defined below
 
         downloader.execute(requestPackage);
+    }
+
+    private String getDeviceToken() {
+        //Get Device Token
+        String device_token = sharedPref.getString("device_token",null);
+        if (device_token == null) {
+            device_token = UUID.randomUUID().toString();
+            sharedPref.edit().putString("device_token",device_token).apply();
+        }
+        return device_token;
     }
 
     private class Downloader extends AsyncTask<RemoteHttpRequest, String, String> {
