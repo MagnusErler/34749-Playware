@@ -1,14 +1,21 @@
 package com.example.ex7;
 
-import androidx.appcompat.app.AppCompatActivity;
+import static com.livelife.motolibrary.AntData.EVENT_PRESS;
+import static com.livelife.motolibrary.AntData.LED_COLOR_OFF;
+import static com.livelife.motolibrary.AntData.LED_COLOR_RED;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Debug;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.livelife.motolibrary.AntData;
 import com.livelife.motolibrary.MotoConnection;
@@ -18,21 +25,6 @@ import com.livelife.motolibrary.OnAntEventListener;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import javax.net.ssl.HttpsURLConnection;
-
-import static com.livelife.motolibrary.AntData.EVENT_PRESS;
-import static com.livelife.motolibrary.AntData.LED_COLOR_OFF;
-import static com.livelife.motolibrary.AntData.LED_COLOR_RED;
 
 public class MainActivity extends AppCompatActivity implements OnAntEventListener {
 
@@ -66,75 +58,67 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
         connection.setDeviceId(2);
         connection.registerListener(this);
 
+        if (!isDeviceConnectedToInternet()) {
+            Toast.makeText(MainActivity.this, "You are not connected to the internet!", Toast.LENGTH_LONG).show();
+        }
+
 
         apiOutput = findViewById(R.id.apiOutput);
         connectedTextView = findViewById(R.id.connectedTextView);
         pairingButton = findViewById(R.id.pairingButton);
-        pairingButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        pairingButton.setOnClickListener(v -> {
 
-                if(isPlaying) {
-                    return;
-                }
-
-                Log.i("ButtonStuff","You clicked the button!");
-                if(isPairing) {
-                    connection.pairTilesStop();
-                    pairingButton.setText("START PAIRING");
-                } else {
-                    connection.pairTilesStart();
-                    pairingButton.setText("STOP PAIRING");
-                }
-                isPairing = !isPairing;
+            if(isPlaying) {
+                return;
             }
+
+            Log.i("ButtonStuff","You clicked the button!");
+            if(isPairing) {
+                connection.pairTilesStop();
+                pairingButton.setText("START PAIRING");
+            } else {
+                connection.pairTilesStart();
+                pairingButton.setText("STOP PAIRING");
+            }
+            isPairing = !isPairing;
         });
 
         startGameButton = findViewById(R.id.startGameButton);
-        startGameButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!isPlaying) {
-                    startGameButton.setText("STOP GAME");
-                    isPlaying = true;
-                    connection.setAllTilesIdle(LED_COLOR_OFF);
-                    selectedTile = connection.randomIdleTile();
-                    connection.setTileColor(LED_COLOR_RED,selectedTile);
-                } else {
-                    startGameButton.setText("START GAME");
-                    isPlaying = false;
-                    connection.setAllTilesToInit();
-                }
+        startGameButton.setOnClickListener(v -> {
+            if(!isPlaying) {
+                startGameButton.setText("STOP GAME");
+                isPlaying = true;
+                connection.setAllTilesIdle(LED_COLOR_OFF);
+                selectedTile = connection.randomIdleTile();
+                connection.setTileColor(LED_COLOR_RED,selectedTile);
+            } else {
+                startGameButton.setText("START GAME");
+                isPlaying = false;
+                connection.setAllTilesToInit();
             }
         });
 
         simulateGetGameSessions = findViewById(R.id.simulateGetGameSessions);
-        simulateGetGameSessions.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getGameSessions();
-            }
-        });
+        simulateGetGameSessions.setOnClickListener(v -> getGameSessions());
 
         simulatePostGameSession = findViewById(R.id.simulatePostGameSession);
-        simulatePostGameSession.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-
-                postGameSession();
-
-
-            }
-        });
+        simulatePostGameSession.setOnClickListener(v -> postGameSession());
     }
+
+    private boolean isDeviceConnectedToInternet() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
 
     private void postGameSession() {
         RemoteHttpRequest requestPackage = new RemoteHttpRequest();
         requestPackage.setMethod("POST");
         requestPackage.setUrl(endpoint);
         requestPackage.setParam("method","postGameSession"); // The method name
-        requestPackage.setParam("group_id","99"); // Your group ID
+        requestPackage.setParam("group_id","2"); // Your group ID
         requestPackage.setParam("game_id","1"); // The game ID (From the Game class > setGameId() function
         requestPackage.setParam("game_type_id","1"); // The game type ID (From the GameType class creation > first parameter)
         requestPackage.setParam("game_score","30"); // The game score
@@ -151,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
         requestPackage.setMethod("GET");
         requestPackage.setUrl(endpoint);
         requestPackage.setParam("method","getGameSessions");
-        requestPackage.setParam("group_id","99");
+        requestPackage.setParam("group_id","2");
 
         Downloader downloader = new Downloader(); //Instantiation of the Async task
         //that’s defined below
