@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <GridLayout
+        android:id="@+id/actionButtons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="12dp"
+        android:columnCount="2"
+        android:rowCount="4">
+
+        <Button
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/pairingButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="START PAIRING"/>
+
+        <Button
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/startGameButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="START GAME"
+            android:layout_marginTop="12dp"
+            />
+
+        <Button
+            android:id="@+id/simulatePostGameSession"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="POST GAME SESSION"
+            android:layout_marginTop="12dp"
+            />
+
+
+
+
+        <Button
+            android:id="@+id/simulateGetGameSessions"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="GET GAME SESSIONS"
+            android:layout_marginTop="12dp"
+            />
+
+        <Button
+            android:id="@+id/simulatePostGameChallenge"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_height="wrap_content"
+            android:text="POST GAME CHALLENGE"
+            android:layout_marginTop="12dp"
+            />
+
+
+
+
+        <Button
+            android:id="@+id/simulateGetGameChallenge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="GET GAME CHALLENGES"
+            android:layout_marginTop="12dp"
+            />
+
+        <TextView
+            android:id="@+id/apiOutput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_columnSpan="2"
+            android:layout_gravity="center_horizontal"
+            android:text="JSON out..."/>
+
+    </GridLayout>
+
+
+    <TextView
+        android:id="@+id/connectedTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="12dp"
+        android:layout_marginBottom="12dp"
+        android:text="Tiles connected: 0"/>
+
+
+
+
+</RelativeLayout>
