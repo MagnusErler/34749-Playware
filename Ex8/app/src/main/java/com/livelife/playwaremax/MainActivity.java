@@ -11,7 +11,9 @@ import android.os.Bundle;
 import android.os.Debug;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +34,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -51,6 +54,14 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
     Button startGameButton;
     Button simulateGetGameSessions,simulatePostGameSession, simulatePostGameChallenge, simulateGetGameChallenge;
     TextView connectedTextView;
+
+    // ------ Added by us ------
+    ListView gameSessions_ListView;
+    ArrayAdapter<String> gameSessions_ArrayAdapter;
+    ArrayList<String> games_ArrayList = new ArrayList<>();
+    ArrayList<String> listFromJson_ArrayList = new ArrayList<>();
+    String groupID = "420";
+    // -------------------------
 
 
     Boolean isPairing = false;
@@ -73,6 +84,13 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
         }
 
         sharedPref = this.getApplicationContext().getSharedPreferences("PLAYWARE_COURSE", Context.MODE_PRIVATE);
+
+        gameSessions_ListView = findViewById(R.id.gameSessions_ListView);
+
+        gameSessions_ArrayAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1, games_ArrayList);
+
+        gameSessions_ListView.setAdapter(gameSessions_ArrayAdapter);
 
         connection = MotoConnection.getInstance();
         sound = MotoSound.getInstance();
@@ -170,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
         requestPackage.setUrl(endpoint);
         requestPackage.setParam("method","postGameSession"); // The method name
         requestPackage.setParam("device_token",getDeviceToken()); // Your device token
-        requestPackage.setParam("group_id","99"); // Your group ID
+        requestPackage.setParam("group_id", groupID); // Your group ID
         requestPackage.setParam("game_id","1"); // The game ID (From the Game class > setGameId() function
         requestPackage.setParam("game_type_id","1"); // The game type ID (From the GameType class creation > first parameter)
         requestPackage.setParam("game_score","30"); // The game score
@@ -192,7 +210,7 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
         requestPackage.setUrl(endpoint);
         requestPackage.setParam("method","getGameSessions"); // The method name
         requestPackage.setParam("device_token",getDeviceToken()); // Your device token
-        requestPackage.setParam("group_id","99"); // Your group ID
+        requestPackage.setParam("group_id",groupID); // Your group ID
 
         Downloader downloader = new Downloader(); //Instantiation of the Async task
         //that’s defined below
@@ -287,7 +305,10 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
 
 
 
-                if(jsonObject.getString("method") == "getGameSessions") {
+                if(jsonObject.getString("method").equals("getGameSessions")) {
+
+                    listFromJson_ArrayList.clear();
+                    games_ArrayList.clear();
 
                     JSONArray sessions = jsonObject.getJSONArray("results");
                     for(int i = 0; i < sessions.length();i++) {
@@ -297,10 +318,13 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
                         // get score example:
                         // String score = session.getString("game_score");
 
+                        listFromJson_ArrayList.add("Game session ID:" + session.getString("sid") + " Score: " + session.getString("game_score") + " Group ID:" + session.getString("group_id") + " Number of tiles:" + session.getString("num_tiles"));
                     }
 
+                    games_ArrayList.addAll(listFromJson_ArrayList);
+                    gameSessions_ArrayAdapter.notifyDataSetChanged();
                 }
-                else if(jsonObject.getString("method") == "postGameSession") {
+                else if(jsonObject.getString("method").equals("postGameSession")) {
 
                     Log.i("sessions",message);
 
@@ -308,7 +332,7 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
 
 
                 }
-                else if(jsonObject.getString("method") == "postGameChallenge") {
+                else if(jsonObject.getString("method").equals("postGameChallenge")) {
 
                     Log.i("challenge",message);
 
@@ -316,7 +340,7 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
 
 
                 }
-                else if(jsonObject.getString("method") == "getGameChallenge") {
+                else if(jsonObject.getString("method").equals("getGameChallenge")) {
 
                     JSONArray challenges = jsonObject.getJSONArray("results");
                     for(int i = 0; i < challenges.length();i++) {

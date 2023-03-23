@@ -215,7 +215,6 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
                 apiOutput.setText(message);
                 Log.i("sessions",message);
 
-
                 if(jsonObject.getString("method").equals("getGameSessions")) {
                     JSONArray sessions = jsonObject.getJSONArray("results");
 
