@@ -33,6 +33,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 import static com.livelife.motolibrary.AntData.EVENT_PRESS;
@@ -55,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
     ArrayList<String> games_ArrayList = new ArrayList<>();
     ArrayList<String> listFromJson_ArrayList = new ArrayList<>();
     String groupID = "420";
+    String myName = "AndersBjarklev";
     Button createChallenge_Btn;
     // -------------------------
 
@@ -177,12 +180,23 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
             }
         });
 
-        gameSessions_ListView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
-            @Override
-            public void onItemClick(AdapterView<?>adapter,View v, int position){
-                ItemClicked item = adapter.getItemAtPosition(position);
-            }
-        });
+
+        gameSessions_ListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                public void onItemClick(AdapterView<?> adapterView, View arg1, int position, long arg3) {
+                    String content = (String)adapterView.getItemAtPosition(position);
+
+                    List<String> content_ArrayList = new ArrayList<>(Arrays.asList(content.split(" ")));
+
+                    Log.d("tag", "content_ArrayList: " + content_ArrayList);
+
+                    int challengeID = Integer.parseInt(content_ArrayList.get(1));
+                    //String challengeName = content_ArrayList.get(3);
+                    //int challengeGameType = Integer.parseInt(content_ArrayList.get(5));
+                    //int challengeStatus = Integer.parseInt(content_ArrayList.get(7));
+
+                    postGameChallengeAccept(challengeID);
+                }
+            });
     }
 
     private boolean isDeviceConnectedToInternet() {
@@ -292,7 +306,7 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
         requestPackage.setParam("device_token",getDeviceToken()); // Your device token
         requestPackage.setParam("game_id", "1"); // The game ID (From the Game class > setGameId() function
         requestPackage.setParam("game_type_id", challengeGameType); // The game type ID (From the GameType class creation > first parameter)
-        requestPackage.setParam("challenger_name","Max"); // The challenger name
+        requestPackage.setParam("challenger_name",myName); // The challenger name
         requestPackage.setParam("group_id",groupID); // Your group ID
 
         Downloader downloader = new Downloader(); //Instantiation of the Async task
@@ -315,15 +329,14 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
         downloader.execute(requestPackage);
     }
 
-    private void postGameChallengeAccept() {
+    private void postGameChallengeAccept(int challengeID) {
         RemoteHttpRequest requestPackage = new RemoteHttpRequest();
         requestPackage.setMethod("POST");
         requestPackage.setUrl(endpoint);
         requestPackage.setParam("method","postGameChallengeAccept"); // The method name
         requestPackage.setParam("device_token",getDeviceToken()); // Your device token
-        requestPackage.setParam("challenged_name","1"); // The name of the person accepting the challenge
-        requestPackage.setParam("gcid","1"); // The game challenge id you want to accept
-
+        requestPackage.setParam("challenged_name",myName); // The name of the person accepting the challenge
+        requestPackage.setParam("gcid", String.valueOf(challengeID)); // The game challenge id you want to accept
 
         Downloader downloader = new Downloader(); //Instantiation of the Async task
         //that’s defined below
@@ -402,7 +415,7 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
                         // get score example:
                         // String score = session.getString("game_score");
 
-                        listFromJson_ArrayList.add("Challenge ID: " + challenge.getString("gcid") + " Name: " + challenge.getString("challenger_name") + " Game ID: " + challenge.getString("game_id") + " Game Type ID: " + challenge.getString("game_type_id") + " Status: " + challenge.getString("c_status"));
+                        listFromJson_ArrayList.add("ChallengeID: " + challenge.getString("gcid") + " Name: " + challenge.getString("challenger_name") + " GameID: " + challenge.getString("game_id") + " GameTypeID: " + challenge.getString("game_type_id") + " Status: " + challenge.getString("c_status"));
                     }
 
                     games_ArrayList.addAll(listFromJson_ArrayList);
@@ -419,6 +432,14 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
                 else if(jsonObject.getString("method").equals("postGameChallenge")) {
 
                     Log.i("challenge",message);
+
+                    // Update UI
+
+
+                }
+                else if(jsonObject.getString("method").equals("postGameChallengeAccept")) {
+
+                    Log.i("challengeAccept",message);
 
                     // Update UI
 
