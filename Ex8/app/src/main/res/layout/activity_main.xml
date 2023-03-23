@@ -13,7 +13,7 @@
         android:gravity="center"
         android:padding="12dp"
         android:columnCount="2"
-        android:rowCount="4">
+        android:rowCount="5">
 
         <Button
             android:layout_gravity="center_horizontal"
@@ -29,8 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="START GAME"
-            android:layout_marginTop="12dp"
-            />
+            android:layout_marginTop="12dp" />
 
         <Button
             android:id="@+id/simulatePostGameSession"
@@ -38,11 +37,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="POST GAME SESSION"
-            android:layout_marginTop="12dp"
-            />
-
-
-
+            android:layout_marginTop="12dp" />
 
         <Button
             android:id="@+id/simulateGetGameSessions"
@@ -50,8 +45,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="GET GAME SESSIONS"
-            android:layout_marginTop="12dp"
-            />
+            android:layout_marginTop="12dp" />
 
         <Button
             android:id="@+id/simulatePostGameChallenge"
@@ -59,11 +53,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_height="wrap_content"
             android:text="POST GAME CHALLENGE"
-            android:layout_marginTop="12dp"
-            />
-
-
-
+            android:layout_marginTop="12dp" />
 
         <Button
             android:id="@+id/simulateGetGameChallenge"
@@ -71,8 +61,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:text="GET GAME CHALLENGES"
-            android:layout_marginTop="12dp"
-            />
+            android:layout_marginTop="12dp" />
 
         <TextView
             android:id="@+id/apiOutput"
@@ -83,6 +72,14 @@
             android:layout_gravity="center_horizontal"
             android:text="JSON out..."/>
 
+        <Button
+            android:id="@+id/createChallenge_Btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="CREATE CHALLENGE"
+            android:layout_marginTop="12dp" />
+
     </GridLayout>
 
     <ListView
@@ -90,7 +87,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/actionButtons" />
-
 
     <TextView
         android:id="@+id/connectedTextView"

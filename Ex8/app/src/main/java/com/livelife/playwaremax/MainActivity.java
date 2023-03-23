@@ -2,24 +2,25 @@ package com.livelife.playwaremax;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Debug;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.livelife.motolibrary.AntData;
-import com.livelife.motolibrary.Game;
-import com.livelife.motolibrary.GameType;
 import com.livelife.motolibrary.MotoConnection;
 import com.livelife.motolibrary.MotoSound;
 import com.livelife.motolibrary.OnAntEventListener;
@@ -28,18 +29,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.UUID;
-
-import javax.net.ssl.HttpsURLConnection;
 
 import static com.livelife.motolibrary.AntData.EVENT_PRESS;
 import static com.livelife.motolibrary.AntData.LED_COLOR_OFF;
@@ -61,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
     ArrayList<String> games_ArrayList = new ArrayList<>();
     ArrayList<String> listFromJson_ArrayList = new ArrayList<>();
     String groupID = "420";
+    Button createChallenge_Btn;
     // -------------------------
 
 
@@ -100,6 +92,14 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
         connection.setDeviceId(7);
         connection.registerListener(this);
 
+        createChallenge_Btn = findViewById(R.id.createChallenge_Btn);
+
+        createChallenge_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createChallenge();
+            }
+        });
 
         apiOutput = findViewById(R.id.apiOutput);
         connectedTextView = findViewById(R.id.connectedTextView);
@@ -180,6 +180,43 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    private void createChallenge() {
+        final Dialog dialog = new Dialog(this); // Context, this, etc.
+        dialog.setContentView(R.layout.createchallenge_dialog);
+        dialog.setTitle("R.string.dialog_title");
+        dialog.show();
+
+        findViewById(R.id.createChallenge_NormalMode_Btn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createChallenge();
+            }
+        });
+
+        findViewById(R.id.createChallenge_HardMode_Btn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createChallenge();
+            }
+        });
+
+        findViewById(R.id.createChallenge_NormalTimeMode_Btn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createChallenge();
+            }
+        });
+
+        findViewById(R.id.createChallenge_HardTimeMode_Btn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createChallenge();
+            }
+        });
+
+
     }
 
     private void postGameSession(String challengeId) {
