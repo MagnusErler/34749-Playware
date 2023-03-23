@@ -53,6 +53,9 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
     ArrayList<String> listFromJson_ArrayList = new ArrayList<>();
     String groupID = "420";
     Button createChallenge_Btn;
+    String createChallenge_GameScore = "Null";
+    String createChallenge_GameTime = "Null";
+    String createChallenge_NumTile = "Null";
     // -------------------------
 
 
@@ -162,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
         simulatePostGameChallenge.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                postGameChallenge();
+                postGameChallenge("1");
             }
         });
 
@@ -183,40 +186,59 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
     }
 
     private void createChallenge() {
-        final Dialog dialog = new Dialog(this); // Context, this, etc.
+        /*final Dialog dialog = new Dialog(this); // Context, this, etc.
         dialog.setContentView(R.layout.createchallenge_dialog);
-        dialog.setTitle("R.string.dialog_title");
+        dialog.setTitle("Choose Challenge");
         dialog.show();
 
         findViewById(R.id.createChallenge_NormalMode_Btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                createChallenge();
+                Log.d("tag", "Normal Mode chosen");
             }
-        });
+        });*/
 
-        findViewById(R.id.createChallenge_HardMode_Btn).setOnClickListener(new View.OnClickListener() {
+        // setup the alert builder
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Choose Challenge");
+
+        // add a list
+        String[] challenges = {"Normal mode", "Hard mode", "Normal Time mode", "Hard Time mode"};
+        builder.setItems(challenges, new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                createChallenge();
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case 0:
+                        Log.d("tag", "Normal Mode chosen");
+                        Toast.makeText(MainActivity.this, "Normal Mode chosen", Toast.LENGTH_LONG).show();
+                        postGameChallenge("1");
+                        break;
+                    case 1:
+                        Log.d("tag", "Hard Mode chosen");
+                        Toast.makeText(MainActivity.this, "Hard Mode chosen", Toast.LENGTH_LONG).show();
+                        postGameChallenge("2");
+                        break;
+                    case 2:
+                        Log.d("tag", "Normal Time Mode chosen");
+                        Toast.makeText(MainActivity.this, "Normal Time Mode chosen", Toast.LENGTH_LONG).show();
+                        postGameChallenge("3");
+                        break;
+                    case 3:
+                        Log.d("tag", "Hard Time Mode chosen");
+                        Toast.makeText(MainActivity.this, "Hard Time Mode chosen", Toast.LENGTH_LONG).show();
+                        postGameChallenge("4");
+                        break;
+                    default:
+                        Log.d("tag", "ERROR: No Game mode chosen");
+                        postGameChallenge("1");
+                        break;
+                }
             }
         });
 
-        findViewById(R.id.createChallenge_NormalTimeMode_Btn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                createChallenge();
-            }
-        });
-
-        findViewById(R.id.createChallenge_HardTimeMode_Btn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                createChallenge();
-            }
-        });
-
-
+        // create and show the alert dialog
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     private void postGameSession(String challengeId) {
@@ -255,18 +277,16 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
         downloader.execute(requestPackage);
     }
 
-    private void postGameChallenge() {
-
-
+    private void postGameChallenge(String challengeGameType) {
         RemoteHttpRequest requestPackage = new RemoteHttpRequest();
         requestPackage.setMethod("POST");
         requestPackage.setUrl(endpoint);
         requestPackage.setParam("method","postGameChallenge"); // The method name
         requestPackage.setParam("device_token",getDeviceToken()); // Your device token
-        requestPackage.setParam("game_id","1"); // The game ID (From the Game class > setGameId() function
-        requestPackage.setParam("game_type_id","1"); // The game type ID (From the GameType class creation > first parameter)
+        requestPackage.setParam("game_id", "1"); // The game ID (From the Game class > setGameId() function
+        requestPackage.setParam("game_type_id", challengeGameType); // The game type ID (From the GameType class creation > first parameter)
         requestPackage.setParam("challenger_name","Max"); // The challenger name
-
+        requestPackage.setParam("group_id",groupID); // Your group ID
 
         Downloader downloader = new Downloader(); //Instantiation of the Async task
         //that’s defined below
@@ -280,6 +300,7 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
         requestPackage.setUrl(endpoint);
         requestPackage.setParam("method","getGameChallenge"); // The method name
         requestPackage.setParam("device_token",getDeviceToken()); // Your device token
+        requestPackage.setParam("group_id",groupID); // Your group ID
 
         Downloader downloader = new Downloader(); //Instantiation of the Async task
         //that’s defined below
@@ -361,6 +382,25 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
                     games_ArrayList.addAll(listFromJson_ArrayList);
                     gameSessions_ArrayAdapter.notifyDataSetChanged();
                 }
+                else if(jsonObject.getString("method").equals("getGameChallenge")) {
+
+                    listFromJson_ArrayList.clear();
+                    games_ArrayList.clear();
+
+                    JSONArray challenges = jsonObject.getJSONArray("results");
+                    for(int i = 0; i < challenges.length();i++) {
+                        JSONObject challenge = challenges.getJSONObject(i);
+                        Log.i("challenge:",challenge.toString());
+
+                        // get score example:
+                        // String score = session.getString("game_score");
+
+                        listFromJson_ArrayList.add("Challenge ID: " + challenge.getString("gcid") + " Name: " + challenge.getString("challenger_name") + " Game ID: " + challenge.getString("game_id") + " Game Type ID: " + challenge.getString("game_type_id") + " Status: " + challenge.getString("c_status"));
+                    }
+
+                    games_ArrayList.addAll(listFromJson_ArrayList);
+                    gameSessions_ArrayAdapter.notifyDataSetChanged();
+                }
                 else if(jsonObject.getString("method").equals("postGameSession")) {
 
                     Log.i("sessions",message);
@@ -377,7 +417,7 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
 
 
                 }
-                else if(jsonObject.getString("method").equals("getGameChallenge")) {
+                /*else if(jsonObject.getString("method").equals("getGameChallenge")) {
 
                     JSONArray challenges = jsonObject.getJSONArray("results");
                     for(int i = 0; i < challenges.length();i++) {
@@ -391,7 +431,7 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
 
 
                     // Update UI
-                }
+                }*/
 
 
             } catch (JSONException e) {
