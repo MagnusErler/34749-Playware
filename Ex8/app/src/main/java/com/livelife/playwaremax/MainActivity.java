@@ -2,10 +2,12 @@ package com.livelife.playwaremax;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -13,6 +15,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -53,9 +56,6 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
     ArrayList<String> listFromJson_ArrayList = new ArrayList<>();
     String groupID = "420";
     Button createChallenge_Btn;
-    String createChallenge_GameScore = "Null";
-    String createChallenge_GameTime = "Null";
-    String createChallenge_NumTile = "Null";
     // -------------------------
 
 
@@ -174,6 +174,13 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
             @Override
             public void onClick(View v) {
                 getGameChallenge();
+            }
+        });
+
+        gameSessions_ListView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?>adapter,View v, int position){
+                ItemClicked item = adapter.getItemAtPosition(position);
             }
         });
     }
