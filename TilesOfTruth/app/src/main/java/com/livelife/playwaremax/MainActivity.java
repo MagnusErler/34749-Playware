@@ -1,11 +1,12 @@
 package com.livelife.playwaremax;
 
-import androidx.appcompat.app.AppCompatActivity;
+import static com.livelife.motolibrary.AntData.EVENT_PRESS;
+import static com.livelife.motolibrary.AntData.LED_COLOR_OFF;
+import static com.livelife.motolibrary.AntData.LED_COLOR_RED;
 
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -17,6 +18,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.livelife.motolibrary.AntData;
 import com.livelife.motolibrary.MotoConnection;
 import com.livelife.motolibrary.MotoSound;
@@ -27,24 +30,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
-
-import com.opencsv.CSVReader;
-
-import static com.livelife.motolibrary.AntData.EVENT_PRESS;
-import static com.livelife.motolibrary.AntData.LED_COLOR_OFF;
-import static com.livelife.motolibrary.AntData.LED_COLOR_RED;
 
 public class MainActivity extends AppCompatActivity implements OnAntEventListener {
 
@@ -57,6 +52,12 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
     TextView connectedTextView;
 
     // ------ Added by us ------
+
+    int numberOfQuestions = 1000;
+
+    int randomQuestionNr;
+
+    ArrayList<Integer> answeredQuestionsNr= new ArrayList<>(numberOfQuestions);
 
     InputStream inputStream;
     private TextToSpeech textToSpeechSystem;
@@ -85,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        checkIfDeviceConnectedToInternet();
+        checkIfDeviceIsConnectedToInternet();
 
         sharedPref = this.getApplicationContext().getSharedPreferences("PLAYWARE_COURSE", Context.MODE_PRIVATE);
 
@@ -142,9 +143,17 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
                 connection.setAllTilesToInit();
             }
 
-            //textToSpeech("Fuck you");
-            String questionAndAnswer = getQuestionFromCSV(2);
-            Log.d("tag", questionAndAnswer);
+            do  {
+                randomQuestionNr = getRandomNumber(numberOfQuestions);
+            } while (answeredQuestionsNr.contains(randomQuestionNr));
+
+            answeredQuestionsNr.add(randomQuestionNr);
+
+            String[] separated = getQuestionFromCSV(randomQuestionNr).split(",");
+            String Question = separated[0];
+            boolean Answer = Boolean.parseBoolean(separated[1]);
+            Toast.makeText(MainActivity.this, "Question: " + Question + ", Answer: " + Answer, Toast.LENGTH_LONG).show();
+            textToSpeech(Question);
 
         });
 
@@ -177,6 +186,10 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
         });
     }
 
+    public int getRandomNumber(int max) {
+        return new Random().nextInt((max - 1) + 1) + 1;
+    }
+
     public void textToSpeech(String textToSay) {
         textToSpeechSystem = new TextToSpeech(this, status -> {
             if (status == TextToSpeech.SUCCESS) {
@@ -197,11 +210,9 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
         } catch (Resources.NotFoundException | IOException e) {
             throw new RuntimeException(e);
         }
-
-
     }
 
-    public void checkIfDeviceConnectedToInternet() {
+    public boolean checkIfDeviceIsConnectedToInternet() {
 
         try {
             InetAddress ipAddr = InetAddress.getByName("google.com");
@@ -209,10 +220,13 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
             if(!ipAddr.equals("")) {
                 //coneccted
                 Log.d("tag", "Connected");
+                return true;
             }
         } catch (Exception e) {
             Toast.makeText(MainActivity.this, "You are not connected to the internet!", Toast.LENGTH_LONG).show();
+            return false;
         }
+        return true;
     }
 
     private void createChallenge() {
@@ -372,6 +386,11 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
         // onPostExecute() method below. The String should contain JSON data.
         @Override
         protected void onPostExecute(String result) {
+
+            if(!checkIfDeviceIsConnectedToInternet()) {
+                return;
+            }
+
             try {
                 //We need to convert the string in result to a JSONObject
                 JSONObject jsonObject = new JSONObject(result);
@@ -473,7 +492,6 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
             }
         }
     }
-
     @Override
     public void onMessageReceived(byte[] bytes, long l) {
 
