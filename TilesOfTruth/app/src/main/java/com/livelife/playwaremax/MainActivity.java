@@ -2,23 +2,17 @@ package com.livelife.playwaremax;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.content.res.AssetManager;
+import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,10 +26,21 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.InetAddress;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+
+import com.opencsv.CSVReader;
 
 import static com.livelife.motolibrary.AntData.EVENT_PRESS;
 import static com.livelife.motolibrary.AntData.LED_COLOR_OFF;
@@ -52,6 +57,9 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
     TextView connectedTextView;
 
     // ------ Added by us ------
+
+    InputStream inputStream;
+    private TextToSpeech textToSpeechSystem;
     ListView gameSessions_ListView;
     ArrayAdapter<String> gameSessions_ArrayAdapter;
     ArrayList<String> games_ArrayList = new ArrayList<>();
@@ -77,9 +85,7 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (!isDeviceConnectedToInternet()) {
-            Toast.makeText(MainActivity.this, "You are not connected to the internet!", Toast.LENGTH_LONG).show();
-        }
+        checkIfDeviceConnectedToInternet();
 
         sharedPref = this.getApplicationContext().getSharedPreferences("PLAYWARE_COURSE", Context.MODE_PRIVATE);
 
@@ -100,111 +106,113 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
 
         createChallenge_Btn = findViewById(R.id.createChallenge_Btn);
 
-        createChallenge_Btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                createChallenge();
-            }
-        });
+        createChallenge_Btn.setOnClickListener(v -> createChallenge());
 
         apiOutput = findViewById(R.id.apiOutput);
         connectedTextView = findViewById(R.id.connectedTextView);
         pairingButton = findViewById(R.id.pairingButton);
-        pairingButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        pairingButton.setOnClickListener(v -> {
 
-                if(isPlaying) {
-                    return;
-                }
-
-                Log.i("ButtonStuff","You clicked the button!");
-                if(isPairing) {
-                    connection.pairTilesStop();
-                    pairingButton.setText("START PAIRING");
-                } else {
-                    connection.pairTilesStart();
-                    pairingButton.setText("STOP PAIRING");
-                }
-                isPairing = !isPairing;
+            if(isPlaying) {
+                return;
             }
+
+            Log.i("ButtonStuff","You clicked the button!");
+            if(isPairing) {
+                connection.pairTilesStop();
+                pairingButton.setText("START PAIRING");
+            } else {
+                connection.pairTilesStart();
+                pairingButton.setText("STOP PAIRING");
+            }
+            isPairing = !isPairing;
         });
 
         startGameButton = findViewById(R.id.startGameButton);
-        startGameButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!isPlaying) {
-                    startGameButton.setText("STOP GAME");
-                    isPlaying = true;
-                    connection.setAllTilesIdle(LED_COLOR_OFF);
-                    selectedTile = connection.randomIdleTile();
-                    connection.setTileColor(LED_COLOR_RED,selectedTile);
-                } else {
-                    startGameButton.setText("START GAME");
-                    isPlaying = false;
-                    connection.setAllTilesToInit();
-                }
+        startGameButton.setOnClickListener(v -> {
+            if(!isPlaying) {
+                startGameButton.setText("STOP GAME");
+                isPlaying = true;
+                connection.setAllTilesIdle(LED_COLOR_OFF);
+                selectedTile = connection.randomIdleTile();
+                connection.setTileColor(LED_COLOR_RED,selectedTile);
+            } else {
+                startGameButton.setText("START GAME");
+                isPlaying = false;
+                connection.setAllTilesToInit();
             }
+
+            //textToSpeech("Fuck you");
+            String questionAndAnswer = getQuestionFromCSV(2);
+            Log.d("tag", questionAndAnswer);
+
         });
 
         simulateGetGameSessions = findViewById(R.id.simulateGetGameSessions);
-        simulateGetGameSessions.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getGameSessions();
-            }
-        });
+        simulateGetGameSessions.setOnClickListener(v -> getGameSessions());
 
         simulatePostGameSession = findViewById(R.id.simulatePostGameSession);
-        simulatePostGameSession.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                postGameSession(null);
-            }
-        });
+        simulatePostGameSession.setOnClickListener(v -> postGameSession(null));
 
         simulatePostGameChallenge = findViewById(R.id.simulatePostGameChallenge);
-        simulatePostGameChallenge.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                postGameChallenge("1");
-            }
-        });
+        simulatePostGameChallenge.setOnClickListener(v -> postGameChallenge("1"));
 
         simulateGetGameChallenge = findViewById(R.id.simulateGetGameChallenge);
-        simulateGetGameChallenge.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getGameChallenge();
-            }
+        simulateGetGameChallenge.setOnClickListener(v -> getGameChallenge());
+
+
+        gameSessions_ListView.setOnItemClickListener((adapterView, arg1, position, arg3) -> {
+            String content = (String)adapterView.getItemAtPosition(position);
+
+            List<String> content_ArrayList = new ArrayList<>(Arrays.asList(content.split(" ")));
+
+            Log.d("tag", "content_ArrayList: " + content_ArrayList);
+
+            int challengeID = Integer.parseInt(content_ArrayList.get(1));
+            //String challengeName = content_ArrayList.get(3);
+            //int challengeGameType = Integer.parseInt(content_ArrayList.get(5));
+            //int challengeStatus = Integer.parseInt(content_ArrayList.get(7));
+
+            postGameChallengeAccept(challengeID);
         });
+    }
 
-
-        gameSessions_ListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            public void onItemClick(AdapterView<?> adapterView, View arg1, int position, long arg3) {
-                String content = (String)adapterView.getItemAtPosition(position);
-
-                List<String> content_ArrayList = new ArrayList<>(Arrays.asList(content.split(" ")));
-
-                Log.d("tag", "content_ArrayList: " + content_ArrayList);
-
-                int challengeID = Integer.parseInt(content_ArrayList.get(1));
-                //String challengeName = content_ArrayList.get(3);
-                //int challengeGameType = Integer.parseInt(content_ArrayList.get(5));
-                //int challengeStatus = Integer.parseInt(content_ArrayList.get(7));
-
-                postGameChallengeAccept(challengeID);
+    public void textToSpeech(String textToSay) {
+        textToSpeechSystem = new TextToSpeech(this, status -> {
+            if (status == TextToSpeech.SUCCESS) {
+                textToSpeechSystem.speak(textToSay, TextToSpeech.QUEUE_ADD, null);
             }
         });
     }
 
-    private boolean isDeviceConnectedToInternet() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    public String getQuestionFromCSV(int lineNr) {
+        try {
+            InputStream is = getResources().openRawResource(R.raw.questions);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+
+            for(int i = 0; i < lineNr-1; ++i)
+                reader.readLine();
+            return reader.readLine();
+
+        } catch (Resources.NotFoundException | IOException e) {
+            throw new RuntimeException(e);
+        }
+
+
+    }
+
+    public void checkIfDeviceConnectedToInternet() {
+
+        try {
+            InetAddress ipAddr = InetAddress.getByName("google.com");
+
+            if(!ipAddr.equals("")) {
+                //coneccted
+                Log.d("tag", "Connected");
+            }
+        } catch (Exception e) {
+            Toast.makeText(MainActivity.this, "You are not connected to the internet!", Toast.LENGTH_LONG).show();
+        }
     }
 
     private void createChallenge() {
@@ -226,35 +234,32 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
 
         // add a list
         String[] challenges = {"Normal mode", "Hard mode", "Normal Time mode", "Hard Time mode"};
-        builder.setItems(challenges, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which) {
-                    case 0:
-                        Log.d("tag", "Normal Mode chosen");
-                        Toast.makeText(MainActivity.this, "Normal Mode chosen", Toast.LENGTH_LONG).show();
-                        postGameChallenge("1");
-                        break;
-                    case 1:
-                        Log.d("tag", "Hard Mode chosen");
-                        Toast.makeText(MainActivity.this, "Hard Mode chosen", Toast.LENGTH_LONG).show();
-                        postGameChallenge("2");
-                        break;
-                    case 2:
-                        Log.d("tag", "Normal Time Mode chosen");
-                        Toast.makeText(MainActivity.this, "Normal Time Mode chosen", Toast.LENGTH_LONG).show();
-                        postGameChallenge("3");
-                        break;
-                    case 3:
-                        Log.d("tag", "Hard Time Mode chosen");
-                        Toast.makeText(MainActivity.this, "Hard Time Mode chosen", Toast.LENGTH_LONG).show();
-                        postGameChallenge("4");
-                        break;
-                    default:
-                        Log.d("tag", "ERROR: No Game mode chosen");
-                        postGameChallenge("1");
-                        break;
-                }
+        builder.setItems(challenges, (dialog, which) -> {
+            switch (which) {
+                case 0:
+                    Log.d("tag", "Normal Mode chosen");
+                    Toast.makeText(MainActivity.this, "Normal Mode chosen", Toast.LENGTH_LONG).show();
+                    postGameChallenge("1");
+                    break;
+                case 1:
+                    Log.d("tag", "Hard Mode chosen");
+                    Toast.makeText(MainActivity.this, "Hard Mode chosen", Toast.LENGTH_LONG).show();
+                    postGameChallenge("2");
+                    break;
+                case 2:
+                    Log.d("tag", "Normal Time Mode chosen");
+                    Toast.makeText(MainActivity.this, "Normal Time Mode chosen", Toast.LENGTH_LONG).show();
+                    postGameChallenge("3");
+                    break;
+                case 3:
+                    Log.d("tag", "Hard Time Mode chosen");
+                    Toast.makeText(MainActivity.this, "Hard Time Mode chosen", Toast.LENGTH_LONG).show();
+                    postGameChallenge("4");
+                    break;
+                default:
+                    Log.d("tag", "ERROR: No Game mode chosen");
+                    postGameChallenge("1");
+                    break;
             }
         });
 
