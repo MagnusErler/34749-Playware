@@ -36,6 +36,9 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     ArrayList<Integer> answeredQuestionsNr= new ArrayList<>(numberOfQuestions);
     private TextToSpeech textToSpeechSystem;
 
+    //Setup info
+    int numberOfPlayers = 1;
+    int difficulty = 1;
     int player1_trueTile, player2_trueTile, player3_trueTile, player4_trueTile;
     int player1_falseTile, player2_falseTile, player3_falseTile, player4_falseTile;
 
@@ -47,13 +50,19 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         // Back-button
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
+        // Moto Connection
+        connection.registerListener(this);
+        //connection.setAllTilesToInit();
+
+        // Data from SetupActivity
         int setup[] = getIntent().getIntArrayExtra("setup_data");
+        numberOfPlayers = setup[0];
+        difficulty = setup[1];
+
         int tileIDs[] = getIntent().getIntArrayExtra("tileIDs");
         Toast.makeText(GameActivity.this, "Number of players: " + setup[0] + " Difficulty: " + setup[1], Toast.LENGTH_LONG).show();
 
-        connection.registerListener(this);
-        connection.setAllTilesToInit();
-
+        setupTiles(numberOfPlayers, tileIDs);
 
         do  {
             randomQuestionNr = getRandomNumber(numberOfQuestions);
@@ -66,18 +75,6 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         boolean Answer = Boolean.parseBoolean(separated[1]);
         Toast.makeText(GameActivity.this, "Question: " + Question + ", Answer: " + Answer, Toast.LENGTH_LONG).show();
         textToSpeech(Question);
-
-        player1_trueTile = connection.randomIdleTile();
-        player2_trueTile = connection.randomIdleTile();
-        player3_trueTile = connection.randomIdleTile();
-        player4_trueTile = connection.randomIdleTile();
-        player1_falseTile = connection.randomIdleTile();
-        player2_falseTile = connection.randomIdleTile();
-        player3_falseTile = connection.randomIdleTile();
-        player4_falseTile = connection.randomIdleTile();
-
-        int numberOfPlayers = 1;
-        setupTilesPosition(numberOfPlayers);
     }
 
     // ------------------------------- //
@@ -97,21 +94,33 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         return true;
     }
 
-    public void setupTilesPosition(int numberOfPlayers) {
-        connection.setAllTilesIdle(LED_COLOR_OFF);
+    public void setupTiles(int numberOfPlayers,int[]tileID) {
+        //connection.setAllTilesIdle(LED_COLOR_OFF);
 
         switch (numberOfPlayers) {
             case 1:
+                player1_trueTile = tileID[0];
+                player1_falseTile = tileID[1];
                 connection.setTileNumLeds(LED_COLOR_GREEN, player1_trueTile, 1);
                 connection.setTileNumLeds(LED_COLOR_RED, player1_falseTile, 1);
                 break;
             case 2:
+                player1_trueTile = tileID[0];
+                player1_falseTile = tileID[1];
+                player2_trueTile = tileID[2];
+                player2_falseTile = tileID[3];
                 connection.setTileNumLeds(LED_COLOR_GREEN, player1_trueTile, 1);
                 connection.setTileNumLeds(LED_COLOR_RED, player1_falseTile, 1);
                 connection.setTileNumLeds(LED_COLOR_GREEN, player2_trueTile, 2);
                 connection.setTileNumLeds(LED_COLOR_RED, player2_falseTile, 2);
                 break;
             case 3:
+                player1_trueTile = tileID[0];
+                player1_falseTile = tileID[1];
+                player2_trueTile = tileID[2];
+                player2_falseTile = tileID[3];
+                player3_trueTile = tileID[4];
+                player3_falseTile = tileID[5];
                 connection.setTileNumLeds(LED_COLOR_GREEN, player1_trueTile, 1);
                 connection.setTileNumLeds(LED_COLOR_RED, player1_falseTile, 1);
                 connection.setTileNumLeds(LED_COLOR_GREEN, player2_trueTile, 2);
@@ -120,6 +129,14 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
                 connection.setTileNumLeds(LED_COLOR_RED, player3_falseTile, 3);
                 break;
             case 4:
+                player1_trueTile = tileID[0];
+                player1_falseTile = tileID[1];
+                player2_trueTile = tileID[2];
+                player2_falseTile = tileID[3];
+                player3_trueTile = tileID[4];
+                player3_falseTile = tileID[5];
+                player4_trueTile = tileID[6];
+                player4_falseTile = tileID[7];
                 connection.setTileNumLeds(LED_COLOR_GREEN, player1_trueTile, 1);
                 connection.setTileNumLeds(LED_COLOR_RED, player1_falseTile, 1);
                 connection.setTileNumLeds(LED_COLOR_GREEN, player2_trueTile, 2);
