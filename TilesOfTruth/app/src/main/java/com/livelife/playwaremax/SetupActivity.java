@@ -65,12 +65,6 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
     int player1_trueTile, player2_trueTile, player3_trueTile, player4_trueTile;
     int player1_falseTile, player2_falseTile, player3_falseTile, player4_falseTile;
 
-    int numberOfQuestions = 1000;
-
-    int randomQuestionNr;
-
-    ArrayList<Integer> answeredQuestionsNr= new ArrayList<>(numberOfQuestions);
-
     InputStream inputStream;
     private TextToSpeech textToSpeechSystem;
     ListView gameSessions_ListView;
@@ -100,6 +94,7 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup);
 
+        // Back-button
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         checkIfDeviceIsConnectedToInternet();
@@ -193,7 +188,9 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         });
 
         startGameButton.setOnClickListener(v -> {
-            if(!isPlaying) {
+            startActivity(new Intent(SetupActivity.this, GameActivity.class));
+
+            /*if(!isPlaying) {
                 startGameButton.setText("STOP GAME");
                 isPlaying = true;
                 connection.setAllTilesIdle(LED_COLOR_OFF);
@@ -202,23 +199,8 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
                 startGameButton.setText("START GAME");
                 isPlaying = false;
                 connection.setAllTilesToInit();
-            }
-
-            do  {
-                randomQuestionNr = getRandomNumber(numberOfQuestions);
-            } while (answeredQuestionsNr.contains(randomQuestionNr));
-
-            answeredQuestionsNr.add(randomQuestionNr);
-
-            String[] separated = getQuestionFromCSV(randomQuestionNr).split(",");
-            String Question = separated[0];
-            boolean Answer = Boolean.parseBoolean(separated[1]);
-            Toast.makeText(SetupActivity.this, "Question: " + Question + ", Answer: " + Answer, Toast.LENGTH_LONG).show();
-            textToSpeech(Question);
-
+            }*/
         });
-
-
     }
 
     @Override
@@ -236,31 +218,12 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         return true;
     }
 
-
-    public int getRandomNumber(int max) {
-        return new Random().nextInt(max) + 1;
-    }
-
     public void textToSpeech(String textToSay) {
         textToSpeechSystem = new TextToSpeech(this, status -> {
             if (status == TextToSpeech.SUCCESS) {
                 textToSpeechSystem.speak(textToSay, TextToSpeech.QUEUE_ADD, null);
             }
         });
-    }
-
-    public String getQuestionFromCSV(int lineNr) {
-        try {
-            InputStream is = getResources().openRawResource(R.raw.questions);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
-
-            for(int i = 0; i < lineNr-1; ++i)
-                reader.readLine();
-            return reader.readLine();
-
-        } catch (Resources.NotFoundException | IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public void setupTilesPosition(int numberOfPlayers) {
