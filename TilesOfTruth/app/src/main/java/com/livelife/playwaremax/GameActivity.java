@@ -78,7 +78,16 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         //connection.setDeviceId(2);
         //connection.registerListener(this);
 
-        setupTiles(numberOfPlayers, tileIDs);
+        //setupTiles(numberOfPlayers, tileIDs);
+
+        player1_trueTile = tileIDs[0];
+        player1_falseTile = tileIDs[1];
+        player2_trueTile = tileIDs[2];
+        player2_falseTile = tileIDs[3];
+        player3_trueTile = tileIDs[4];
+        player3_falseTile = tileIDs[5];
+        player4_trueTile = tileIDs[6];
+        player4_falseTile = tileIDs[7];
     }
 
     // ------------------------------- //
@@ -152,6 +161,26 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
 
         if(command == EVENT_PRESS) {
             Log.d("tag", "tileID: " + tileId);
+
+            if (tileId == player1_trueTile) {
+                Log.d("tag", "Player 1 True Tile pressed");
+            } else if (tileId == player1_falseTile) {
+                Log.d("tag", "Player 1 False Tile pressed");
+            } else if (tileId == player2_trueTile) {
+                Log.d("tag", "Player 2 True Tile pressed");
+            } else if (tileId == player2_falseTile) {
+                Log.d("tag", "Player 2 False Tile pressed");
+            } else if (tileId == player3_trueTile) {
+                Log.d("tag", "Player 3 True Tile pressed");
+            } else if (tileId == player3_falseTile) {
+                Log.d("tag", "Player 3 False Tile pressed");
+            } else if (tileId == player4_trueTile) {
+                Log.d("tag", "Player 4 True Tile pressed");
+            } else if (tileId == player4_falseTile) {
+                Log.d("tag", "Player 4 False Tile pressed");
+            } else {
+                Log.d("tag", "ERROR: Tile not found");
+            }
         }
     }
 
