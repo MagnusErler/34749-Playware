@@ -54,8 +54,6 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
     MotoConnection connection;
     MotoSound sound;
 
-    Button pairingButton;
-    Button startGameButton;
     Button simulateGetGameSessions,simulatePostGameSession, simulatePostGameChallenge, simulateGetGameChallenge;
     TextView connectedTextView;
 
@@ -130,9 +128,51 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         apiOutput = findViewById(R.id.apiOutput);
         connectedTextView = findViewById(R.id.connectedTextView);*/
 
-
-
+        Button pairingButton = findViewById(R.id.pairButton);
         RadioGroup playersRadioGroup = findViewById(R.id.playersRadioGroup);
+        Button startGameButton = findViewById(R.id.startGameButton);
+
+        pairingButton.setOnClickListener(v -> {
+            switch(setupMode) {
+                case 1:
+                    //Starting pairing tiles -> tiles a spinning
+                    connection.pairTilesStart();
+                    textToSpeech("Press the tiles you want to use. Press next when you are done.");
+                    pairingButton.setText("Next");
+                    setupMode = 2;
+                    break;
+                case 2:
+                    //Stopping pairing tiles -> tiles are OFF
+                    connection.pairTilesStop();
+                    setupTilesPosition(numberOfPlayers);
+                    pairingButton.setText("Next");
+                    setupMode = 3;
+                    break;
+                case 3:
+                    pairingButton.setText("");
+                    break;
+                default:
+                    pairingButton.setText("Error");
+                    break;
+            }
+
+            /*if(isPlaying) {
+                return;
+            }
+            if (isPairing) {
+                connection.pairTilesStop();
+                pairingButton.setText("Setup Tiles");
+            } else {
+                connection.pairTilesStart();
+                pairingButton.setText("Next");
+                setupTilesPosition();
+            }
+            isPairing = !isPairing;*/
+        });
+
+
+
+
         playersRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             ImageView tilesPositioning = findViewById(R.id.positioningImageView);
             switch(checkedId) {
@@ -148,6 +188,32 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
                 default:
                     tilesPositioning.setImageResource(R.drawable.one_players);
             }
+        });
+
+        startGameButton.setOnClickListener(v -> {
+            if(!isPlaying) {
+                startGameButton.setText("STOP GAME");
+                isPlaying = true;
+                connection.setAllTilesIdle(LED_COLOR_OFF);
+
+            } else {
+                startGameButton.setText("START GAME");
+                isPlaying = false;
+                connection.setAllTilesToInit();
+            }
+
+            do  {
+                randomQuestionNr = getRandomNumber(numberOfQuestions);
+            } while (answeredQuestionsNr.contains(randomQuestionNr));
+
+            answeredQuestionsNr.add(randomQuestionNr);
+
+            String[] separated = getQuestionFromCSV(randomQuestionNr).split(",");
+            String Question = separated[0];
+            boolean Answer = Boolean.parseBoolean(separated[1]);
+            Toast.makeText(SetupActivity.this, "Question: " + Question + ", Answer: " + Answer, Toast.LENGTH_LONG).show();
+            textToSpeech(Question);
+
         });
 
 
@@ -271,7 +337,7 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
                 break;
         }
 
-        textToSpeech("Place the two tiles 3 meters apart and stand between them");
+        textToSpeech("Place the two tiles 3 meters apart and stand between them. Press next when you are done.");
     }
 
     public boolean checkIfDeviceIsConnectedToInternet() {
