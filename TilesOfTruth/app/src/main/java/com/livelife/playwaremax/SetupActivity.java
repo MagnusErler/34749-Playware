@@ -111,8 +111,8 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
 
         createChallenge_Btn.setOnClickListener(v -> createChallenge());
 
-        apiOutput = findViewById(R.id.apiOutput);
-        connectedTextView = findViewById(R.id.connectedTextView);*/
+        apiOutput = findViewById(R.id.apiOutput);*/
+        connectedTextView = findViewById(R.id.connectedTextView);
 
         Button pairingButton = findViewById(R.id.pairButton);
         RadioGroup playersRadioGroup = findViewById(R.id.playersRadioGroup);
@@ -219,7 +219,7 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
     public void textToSpeech(String textToSay) {
         textToSpeechSystem = new TextToSpeech(this, status -> {
             if (status == TextToSpeech.SUCCESS) {
-                textToSpeechSystem.speak(textToSay, TextToSpeech.QUEUE_ADD, null);
+                textToSpeechSystem.speak(textToSay, TextToSpeech.QUEUE_FLUSH, null);
             }
         });
     }
@@ -618,7 +618,7 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
 
     @Override
     public void onNumbersOfTilesConnected(int i) {
-        //connectedTextView.setText("Tiles connected: "+i);
+        connectedTextView.setText("Tiles connected: "+i);
     }
 
     @Override
