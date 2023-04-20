@@ -13,6 +13,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.playwaremax">
         <activity
+            android:name=".ScoreboardActivity"
+            android:exported="false" />
+        <activity
             android:name=".GameActivity"
             android:exported="false" />
         <activity
