@@ -660,22 +660,22 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
     @Override
     protected void onPause() {
         super.onPause();
-        connection.stopMotoConnection();
-        connection.unregisterListener(this);
+        //connection.stopMotoConnection();
+        //connection.unregisterListener(this);
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
-        connection.startMotoConnection(this);
-        connection.registerListener(this);
+        //connection.startMotoConnection(this);
+        //connection.registerListener(this);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        connection.stopMotoConnection();
-        connection.unregisterListener(this);
+        //connection.stopMotoConnection();
+        //connection.unregisterListener(this);
     }
 
 }
