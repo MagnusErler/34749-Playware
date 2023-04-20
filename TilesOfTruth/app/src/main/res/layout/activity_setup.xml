@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:context=".SetupActivity">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.1" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.9" />
+
+        <TextView
+            android:id="@+id/difficultyTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/difficulty"
+            android:textSize="25sp"
+            app:layout_constraintBottom_toTopOf="@+id/difficultyRadioGroup"
+            app:layout_constraintStart_toStartOf="@+id/guideline1"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.1"
+            app:layout_constraintVertical_chainStyle="packed"
+            android:layout_marginBottom="10dp"
+            />
+
+        <RadioGroup
+            android:id="@+id/difficultyRadioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@+id/pairTextView"
+            app:layout_constraintStart_toStartOf="@+id/guideline1"
+            app:layout_constraintTop_toBottomOf="@+id/difficultyTextView"
+            android:layout_marginBottom="15dp">
+
+            <RadioButton
+                android:id="@+id/easyDifficultyButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@drawable/radio_button_selector"
+                android:button="@android:color/transparent"
+                android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:text="@string/easy"
+                android:textColor="@color/white"
+                android:textSize="25sp"
+                app:layout_constraintHorizontal_weight="1" />
+
+            <RadioButton
+                android:id="@+id/normalDifficultyButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@drawable/radio_button_selector"
+                android:button="@android:color/transparent"
+                android:checked="true"
+                android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:text="@string/normal"
+                android:textColor="@color/white"
+                android:textSize="25sp"
+                app:layout_constraintHorizontal_weight="1" />
+
+            <RadioButton
+                android:id="@+id/hardDifficultyButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@drawable/radio_button_selector"
+                android:button="@android:color/transparent"
+                android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:text="@string/hard"
+                android:textColor="@color/white"
+                android:textSize="25sp"
+                app:layout_constraintHorizontal_weight="1" />
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/pairTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tiles_pairing"
+            android:textSize="25sp"
+            app:layout_constraintBottom_toTopOf="@+id/pairButton"
+            app:layout_constraintStart_toStartOf="@+id/guideline1"
+            app:layout_constraintTop_toBottomOf="@+id/difficultyRadioGroup"
+            android:layout_marginBottom="10dp"/>
+
+        <Button
+            android:id="@+id/pairButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@drawable/button_selector"
+            android:stateListAnimator="@null"
+            android:text="@string/start_pairing"
+            android:textSize="25sp"
+            android:typeface="sans"
+            app:cornerRadius="15dp"
+            app:layout_constraintBottom_toTopOf="@+id/numberOfPlayersTextView"
+            app:layout_constraintStart_toStartOf="@+id/guideline1"
+            app:layout_constraintTop_toBottomOf="@+id/pairTextView"
+            android:layout_marginBottom="15dp"/>
+
+        <TextView
+            android:id="@+id/numberOfPlayersTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/number_of_players"
+            android:textSize="25sp"
+            app:layout_constraintBottom_toTopOf="@+id/playersRadioGroup"
+            app:layout_constraintStart_toStartOf="@+id/guideline1"
+            app:layout_constraintTop_toBottomOf="@+id/pairButton"
+            android:layout_marginBottom="10dp"/>
+
+        <RadioGroup
+            android:id="@+id/playersRadioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@+id/tilesPositioningTextView"
+            app:layout_constraintStart_toStartOf="@+id/guideline1"
+            app:layout_constraintTop_toBottomOf="@+id/numberOfPlayersTextView"
+            android:layout_marginBottom="15dp">
+
+            <RadioButton
+                android:id="@+id/onePlayersButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@drawable/radio_button_selector"
+                android:button="@android:color/transparent"
+                android:checked="true"
+                android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:text="@string/one_players"
+                android:textColor="@color/white"
+                android:textSize="25sp" />
+
+            <RadioButton
+                android:id="@+id/twoPlayersButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@drawable/radio_button_selector"
+                android:button="@android:color/transparent"
+                android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:text="@string/two_players"
+                android:textColor="@color/white"
+                android:textSize="25sp" />
+
+            <RadioButton
+                android:id="@+id/threePlayersButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@drawable/radio_button_selector"
+                android:button="@android:color/transparent"
+                android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:text="@string/three_players"
+                android:textColor="@color/white"
+                android:textSize="25sp" />
+
+            <RadioButton
+                android:id="@+id/fourPlayersButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@drawable/radio_button_selector"
+                android:button="@android:color/transparent"
+                android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:text="@string/four_players"
+                android:textColor="@color/white"
+                android:textSize="25sp" />
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/tilesPositioningTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tiles_positioning"
+            android:textSize="25sp"
+            app:layout_constraintBottom_toTopOf="@+id/positioningImageView"
+            app:layout_constraintStart_toStartOf="@+id/guideline1"
+            app:layout_constraintTop_toBottomOf="@+id/playersRadioGroup"
+            android:layout_marginBottom="10dp"/>
+
+        <ImageView
+            android:id="@+id/positioningImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/tiles_positioning"
+            android:scaleType="fitCenter"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline1"
+            app:layout_constraintTop_toBottomOf="@+id/tilesPositioningTextView"
+            app:srcCompat="@drawable/one_players" />
+
+        <Button
+            android:id="@+id/startGameButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@drawable/button_selector"
+            android:stateListAnimator="@null"
+            android:text="@string/start_game"
+            android:textSize="25sp"
+            android:typeface="sans"
+            app:cornerRadius="15dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintStart_toStartOf="@+id/guideline1"
+            app:layout_constraintTop_toBottomOf="@+id/positioningImageView"
+            app:layout_constraintVertical_bias="0.9"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

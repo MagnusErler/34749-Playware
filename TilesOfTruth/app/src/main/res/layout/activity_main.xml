@@ -1,136 +1,127 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
-
-    <GridLayout
-        android:id="@+id/actionButtons"
+    android:fillViewport="true">
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:padding="12dp"
-        android:columnCount="2"
-        android:rowCount="5">
+        tools:context=".MainActivity"
+        tools:layout_editor_absoluteY="89dp">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.1" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.9" />
+
+        <Space
+            android:id="@+id/space1"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintHeight_percent="0.1"
+            app:layout_constraintBottom_toTopOf="@+id/logoImageView"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintStart_toStartOf="@+id/guideline1"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"/>
+
+        <ImageView
+            android:id="@+id/logoImageView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/logo"
+            android:scaleType="fitCenter"
+            app:layout_constraintBottom_toTopOf="@+id/space2"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintHeight_percent="0.2"
+            app:layout_constraintStart_toStartOf="@+id/guideline1"
+            app:layout_constraintTop_toBottomOf="@+id/space1"
+            app:srcCompat="@drawable/logoalternative" />
+
+        <Space
+            android:id="@+id/space2"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/playButton"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintHeight_percent="0.05"
+            app:layout_constraintStart_toStartOf="@+id/guideline1"
+            app:layout_constraintTop_toBottomOf="@+id/logoImageView" />
 
         <Button
-            android:layout_gravity="center_horizontal"
-            android:id="@+id/pairingButton"
-            android:layout_width="wrap_content"
+            android:id="@+id/playButton"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="START SETUP TILES"/>
+            android:backgroundTint="@drawable/button_selector"
+            android:stateListAnimator="@null"
+            android:text="@string/play"
+            android:textSize="25sp"
+            android:typeface="sans"
+            app:cornerRadius="15dp"
+            app:layout_constraintBottom_toTopOf="@+id/scoreboardButton"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintStart_toStartOf="@+id/guideline1"
+            app:layout_constraintTop_toBottomOf="@+id/space2" />
 
         <Button
-            android:layout_gravity="center_horizontal"
-            android:id="@+id/startGameButton"
-            android:layout_width="wrap_content"
+            android:id="@+id/scoreboardButton"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="START GAME"
-            android:layout_marginTop="12dp" />
+            android:backgroundTint="@drawable/button_selector"
+            android:stateListAnimator="@null"
+            android:text="@string/scoreboard"
+            android:textSize="25sp"
+            android:typeface="sans"
+            app:cornerRadius="15dp"
+            app:layout_constraintBottom_toTopOf="@+id/space3"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintStart_toStartOf="@+id/guideline1"
+            app:layout_constraintTop_toBottomOf="@+id/playButton" />
 
-        <Button
-            android:id="@+id/simulatePostGameSession"
-            android:layout_gravity="center_horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="POST GAME SESSION"
-            android:layout_marginTop="12dp" />
+        <Space
+            android:id="@+id/space3"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintHeight_percent="0.1"
+            app:layout_constraintBottom_toTopOf="@+id/illustrationImageView"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintStart_toStartOf="@+id/guideline1"
+            app:layout_constraintTop_toBottomOf="@+id/scoreboardButton" />
 
-        <Button
-            android:id="@+id/simulateGetGameSessions"
-            android:layout_gravity="center_horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="GET GAME SESSIONS"
-            android:layout_marginTop="12dp" />
+        <ImageView
+            android:id="@+id/illustrationImageView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/illustration"
+            android:scaleType="fitCenter"
+            app:layout_constraintBottom_toTopOf="@+id/space4"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintHeight_percent="0.25"
+            app:layout_constraintStart_toStartOf="@+id/guideline1"
+            app:layout_constraintTop_toBottomOf="@+id/space3"
+            app:srcCompat="@drawable/illustrationandroid" />
 
-        <Button
-            android:id="@+id/simulatePostGameChallenge"
-            android:layout_width="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_height="wrap_content"
-            android:text="POST GAME CHALLENGE"
-            android:layout_marginTop="12dp" />
-
-        <Button
-            android:id="@+id/simulateGetGameChallenge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="GET GAME CHALLENGES"
-            android:layout_marginTop="12dp" />
-
-        <TextView
-            android:id="@+id/apiOutput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:layout_columnSpan="2"
-            android:layout_gravity="center_horizontal"
-            android:text="JSON out..."/>
-
-        <Button
-            android:id="@+id/createChallenge_Btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="CREATE CHALLENGE"
-            android:layout_marginTop="12dp" />
-
-        <RadioGroup
-            android:id="@+id/numberOfPlayers_RG"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal" >
-
-            <RadioButton
-                android:id="@+id/radio1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:text="1" />
-
-            <RadioButton
-                android:id="@+id/radio2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="2" />
-
-            <RadioButton
-                android:id="@+id/radio3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="3" />
-
-            <RadioButton
-                android:id="@+id/radio4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="4" />
-        </RadioGroup>
-
-    </GridLayout>
-
-    <ListView
-        android:id="@+id/gameSessions_ListView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/actionButtons" />
-
-    <TextView
-        android:id="@+id/connectedTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginEnd="12dp"
-        android:layout_marginBottom="12dp"
-        android:text="Tiles connected: 0"/>
-
-
-
-
-</RelativeLayout>
+        <Space
+            android:id="@+id/space4"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintStart_toStartOf="@+id/guideline1"
+            app:layout_constraintTop_toBottomOf="@+id/illustrationImageView"
+            app:layout_constraintHeight_percent="0.1" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

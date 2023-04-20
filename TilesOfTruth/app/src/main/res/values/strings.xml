@@ -1,3 +1,20 @@
 <resources>
-    <string name="app_name">Tiles of Truth</string>
+    <string name="app_name">Tiles Test</string>
+    <string name="play">Play</string>
+    <string name="scoreboard">Scoreboard</string>
+    <string name="logo">logo</string>
+    <string name="illustration">Tiles main page</string>
+    <string name="tiles_pairing">Tiles pairing</string>
+    <string name="start_pairing">Start pairing</string>
+    <string name="difficulty">Difficulty</string>
+    <string name="easy">EASY</string>
+    <string name="normal">NORMAL</string>
+    <string name="hard">HARD</string>
+    <string name="number_of_players">Number of players</string>
+    <string name="one_players">1</string>
+    <string name="two_players">2</string>
+    <string name="three_players">3</string>
+    <string name="four_players">4</string>
+    <string name="tiles_positioning">Tiles positioning</string>
+    <string name="start_game">START GAME</string>
 </resources>
