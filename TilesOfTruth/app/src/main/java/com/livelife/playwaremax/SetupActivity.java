@@ -15,6 +15,7 @@ import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -49,6 +50,11 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
     TextView connectedTextView;
 
     // ------ Added by us ------
+
+    RadioGroup playersRadioGroup;
+    TextView numberOfPlayersTextView;
+    TextView tilesPositioningTextView;
+    ImageView positioningImageView;
 
     int numberOfPlayers = 1;
 
@@ -115,7 +121,7 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         connectedTextView = findViewById(R.id.connectedTextView);
 
         Button pairingButton = findViewById(R.id.pairButton);
-        RadioGroup playersRadioGroup = findViewById(R.id.playersRadioGroup);
+
         Button startGameButton = findViewById(R.id.startGameButton);
 
         pairingButton.setOnClickListener(v -> {
@@ -130,6 +136,10 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
                 case 2:
                     //Stopping pairing tiles -> tiles are OFF
                     connection.pairTilesStop();
+                    playersRadioGroup.setVisibility(View.VISIBLE);
+                    numberOfPlayersTextView.setVisibility(View.VISIBLE);
+                    tilesPositioningTextView.setVisibility(View.VISIBLE);
+                    positioningImageView.setVisibility(View.VISIBLE);
                     setupTilesPosition(numberOfPlayers);
                     pairingButton.setText("Next");
                     setupMode = 3;
@@ -159,23 +169,39 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         });
 
 
+        numberOfPlayersTextView = findViewById(R.id.numberOfPlayersTextView);
+        numberOfPlayersTextView.setVisibility(View.INVISIBLE);
+
+        playersRadioGroup = findViewById(R.id.playersRadioGroup);
+        playersRadioGroup.setVisibility(View.INVISIBLE);
+
+        tilesPositioningTextView = findViewById(R.id.tilesPositioningTextView);
+        tilesPositioningTextView.setVisibility(View.INVISIBLE);
+
+        positioningImageView = findViewById(R.id.positioningImageView);
+        positioningImageView.setVisibility(View.INVISIBLE);
+
 
 
         playersRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
-            ImageView tilesPositioning = findViewById(R.id.positioningImageView);
             switch(checkedId) {
                 case R.id.twoPlayersButton:
-                    tilesPositioning.setImageResource(R.drawable.two_players);
+                    positioningImageView.setImageResource(R.drawable.two_players);
+                    numberOfPlayers = 2;
                     break;
                 case R.id.threePlayersButton:
-                    tilesPositioning.setImageResource(R.drawable.three_players);
+                    positioningImageView.setImageResource(R.drawable.three_players);
+                    numberOfPlayers = 3;
                     break;
                 case R.id.fourPlayersButton:
-                    tilesPositioning.setImageResource(R.drawable.four_players);
+                    positioningImageView.setImageResource(R.drawable.four_players);
+                    numberOfPlayers = 4;
                     break;
                 default:
-                    tilesPositioning.setImageResource(R.drawable.one_players);
+                    positioningImageView.setImageResource(R.drawable.one_players);
+                    numberOfPlayers = 1;
             }
+            setupTilesPosition(numberOfPlayers);
         });
 
         startGameButton.setOnClickListener(v -> {
@@ -594,7 +620,8 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         int color = AntData.getColorFromPress(bytes);
 
         if(command == EVENT_PRESS) {
-            if(tileId == selectedTile) {
+            Log.d("tag", "tileID: " + tileId);
+            /*if(tileId == selectedTile) {
                 sound.playMatched();
                 int randTile = connection.randomIdleTile();
                 connection.setAllTilesIdle(LED_COLOR_OFF);
@@ -607,7 +634,7 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
                     }
                 });
 
-            }
+            }*/
         }
 
     }
