@@ -149,7 +149,9 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
                     setupMode = 3;
                     break;
                 case 3:
-                    pairingButton.setText("");
+                    textToSpeech("Setup complete. You are now ready to play. Press start game");
+                    pairingButton.setText("Start Pairing");
+                    setupMode = 1;
                     break;
                 default:
                     pairingButton.setText("Error");
