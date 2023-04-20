@@ -41,59 +41,57 @@
 
         <RadioGroup
             android:id="@+id/difficultyRadioGroup"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
             android:orientation="horizontal"
             app:layout_constraintBottom_toTopOf="@+id/pairTextView"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintStart_toStartOf="@+id/guideline1"
-            app:layout_constraintTop_toBottomOf="@+id/difficultyTextView"
-            android:layout_marginBottom="15dp">
+            app:layout_constraintTop_toBottomOf="@+id/difficultyTextView">
 
             <RadioButton
                 android:id="@+id/easyDifficultyButton"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:background="@drawable/radio_button_selector"
                 android:button="@android:color/transparent"
                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                android:paddingStart="20dp"
-                android:paddingEnd="20dp"
                 android:text="@string/easy"
                 android:textColor="@color/white"
                 android:textSize="25sp"
-                app:layout_constraintHorizontal_weight="1" />
+                android:layout_weight="1"
+                android:gravity="center"/>
 
             <RadioButton
                 android:id="@+id/normalDifficultyButton"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:background="@drawable/radio_button_selector"
                 android:button="@android:color/transparent"
                 android:checked="true"
                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                android:paddingStart="20dp"
-                android:paddingEnd="20dp"
                 android:text="@string/normal"
                 android:textColor="@color/white"
                 android:textSize="25sp"
-                app:layout_constraintHorizontal_weight="1" />
+                android:layout_weight="1"
+                android:gravity="center"/>
 
             <RadioButton
                 android:id="@+id/hardDifficultyButton"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:background="@drawable/radio_button_selector"
                 android:button="@android:color/transparent"
                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                android:paddingStart="20dp"
-                android:paddingEnd="20dp"
                 android:text="@string/hard"
                 android:textColor="@color/white"
                 android:textSize="25sp"
-                app:layout_constraintHorizontal_weight="1" />
+                android:layout_weight="1"
+                android:gravity="center"/>
         </RadioGroup>
 
         <TextView
@@ -109,8 +107,9 @@
 
         <Button
             android:id="@+id/pairButton"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
             android:backgroundTint="@drawable/button_selector"
             android:stateListAnimator="@null"
             android:text="@string/start_pairing"
@@ -118,13 +117,13 @@
             android:typeface="sans"
             app:cornerRadius="15dp"
             app:layout_constraintBottom_toTopOf="@+id/numberOfPlayersTextView"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintStart_toStartOf="@+id/guideline1"
-            app:layout_constraintTop_toBottomOf="@+id/pairTextView"
-            android:layout_marginBottom="15dp"/>
+            app:layout_constraintTop_toBottomOf="@+id/pairTextView" />
 
         <TextView
             android:id="@+id/numberOfPlayersTextView"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/number_of_players"
             android:textSize="25sp"
@@ -135,51 +134,54 @@
 
         <RadioGroup
             android:id="@+id/playersRadioGroup"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
             android:orientation="horizontal"
             app:layout_constraintBottom_toTopOf="@+id/tilesPositioningTextView"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintStart_toStartOf="@+id/guideline1"
-            app:layout_constraintTop_toBottomOf="@+id/numberOfPlayersTextView"
-            android:layout_marginBottom="15dp">
+            app:layout_constraintTop_toBottomOf="@+id/numberOfPlayersTextView">
 
             <RadioButton
                 android:id="@+id/onePlayersButton"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
+                android:layout_weight="1"
                 android:background="@drawable/radio_button_selector"
                 android:button="@android:color/transparent"
                 android:checked="true"
                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                android:paddingStart="20dp"
-                android:paddingEnd="20dp"
+                android:gravity="center"
                 android:text="@string/one_players"
                 android:textColor="@color/white"
                 android:textSize="25sp" />
 
             <RadioButton
                 android:id="@+id/twoPlayersButton"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
+                android:layout_weight="1"
                 android:background="@drawable/radio_button_selector"
                 android:button="@android:color/transparent"
                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                android:paddingStart="20dp"
-                android:paddingEnd="20dp"
+                android:gravity="center"
                 android:text="@string/two_players"
                 android:textColor="@color/white"
                 android:textSize="25sp" />
 
             <RadioButton
                 android:id="@+id/threePlayersButton"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
+                android:layout_weight="1"
                 android:background="@drawable/radio_button_selector"
                 android:button="@android:color/transparent"
                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                android:gravity="center"
                 android:paddingStart="20dp"
                 android:paddingEnd="20dp"
                 android:text="@string/three_players"
@@ -188,14 +190,14 @@
 
             <RadioButton
                 android:id="@+id/fourPlayersButton"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
+                android:layout_weight="1"
                 android:background="@drawable/radio_button_selector"
                 android:button="@android:color/transparent"
                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                android:paddingStart="20dp"
-                android:paddingEnd="20dp"
+                android:gravity="center"
                 android:text="@string/four_players"
                 android:textColor="@color/white"
                 android:textSize="25sp" />
