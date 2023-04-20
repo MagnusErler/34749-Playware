@@ -203,6 +203,8 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         });
     }
 
+    // ------------------------------- //
+    // For going back to previous activity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -218,6 +220,8 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         return true;
     }
 
+    // ------------------------------- //
+    // Text To Speech
     public void textToSpeech(String textToSay) {
         textToSpeechSystem = new TextToSpeech(this, status -> {
             if (status == TextToSpeech.SUCCESS) {
@@ -226,6 +230,8 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         });
     }
 
+    // ------------------------------- //
+    // Setup of the tiles
     public void setupTilesPosition(int numberOfPlayers) {
         connection.setAllTilesIdle(LED_COLOR_OFF);
 
@@ -305,6 +311,8 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         textToSpeech("Place the two tiles 3 meters apart and stand between them. Press next when you are done.");
     }
 
+    // ------------------------------- //
+    // Checking Internet Connection
     public boolean checkIfDeviceIsConnectedToInternet() {
 
         try {
@@ -322,6 +330,8 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         return true;
     }
 
+    // ------------------------------- //
+    // Challenges
     private void createChallenge() {
         /*final Dialog dialog = new Dialog(this); // Context, this, etc.
         dialog.setContentView(R.layout.createchallenge_dialog);
@@ -374,7 +384,22 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         AlertDialog dialog = builder.create();
         dialog.show();
     }
+    private void getGameChallenge() {
+        RemoteHttpRequest requestPackage = new RemoteHttpRequest();
+        requestPackage.setMethod("GET");
+        requestPackage.setUrl(endpoint);
+        requestPackage.setParam("method","getGameChallenge"); // The method name
+        requestPackage.setParam("device_token",getDeviceToken()); // Your device token
+        requestPackage.setParam("group_id",groupID); // Your group ID
 
+        SetupActivity.Downloader downloader = new SetupActivity.Downloader(); //Instantiation of the Async task
+        //that’s defined below
+
+        downloader.execute(requestPackage);
+    }
+
+    // ------------------------------- //
+    // Sessions
     private void postGameSession(String challengeId) {
         RemoteHttpRequest requestPackage = new RemoteHttpRequest();
         requestPackage.setMethod("POST");
@@ -396,7 +421,6 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
 
         downloader.execute(requestPackage);
     }
-
     private void getGameSessions() {
         RemoteHttpRequest requestPackage = new RemoteHttpRequest();
         requestPackage.setMethod("GET");
@@ -410,7 +434,6 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
 
         downloader.execute(requestPackage);
     }
-
     private void postGameChallenge(String challengeGameType) {
         RemoteHttpRequest requestPackage = new RemoteHttpRequest();
         requestPackage.setMethod("POST");
@@ -427,21 +450,6 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
 
         downloader.execute(requestPackage);
     }
-
-    private void getGameChallenge() {
-        RemoteHttpRequest requestPackage = new RemoteHttpRequest();
-        requestPackage.setMethod("GET");
-        requestPackage.setUrl(endpoint);
-        requestPackage.setParam("method","getGameChallenge"); // The method name
-        requestPackage.setParam("device_token",getDeviceToken()); // Your device token
-        requestPackage.setParam("group_id",groupID); // Your group ID
-
-        SetupActivity.Downloader downloader = new SetupActivity.Downloader(); //Instantiation of the Async task
-        //that’s defined below
-
-        downloader.execute(requestPackage);
-    }
-
     private void postGameChallengeAccept(int challengeID) {
         RemoteHttpRequest requestPackage = new RemoteHttpRequest();
         requestPackage.setMethod("POST");
@@ -468,7 +476,6 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
 
         return device_token;
     }
-
     private class Downloader extends AsyncTask<RemoteHttpRequest, String, String> {
         @Override
         protected String doInBackground(RemoteHttpRequest... params) {
@@ -610,11 +617,9 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         }
 
     }
-
     @Override
     public void onAntServiceConnected() {
         connection.setAllTilesToInit();
-
     }
 
     @Override

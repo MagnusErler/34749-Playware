@@ -53,7 +53,5 @@ public class MainActivity extends AppCompatActivity {
 
         Button play_Btn = findViewById(R.id.playButton);
         play_Btn.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, SetupActivity.class)));
-
     }
-
 }

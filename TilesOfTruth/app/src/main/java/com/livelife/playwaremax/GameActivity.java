@@ -36,7 +36,6 @@ public class GameActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
 
-
         do  {
             randomQuestionNr = getRandomNumber(numberOfQuestions);
         } while (answeredQuestionsNr.contains(randomQuestionNr));
