@@ -43,17 +43,19 @@ import java.util.UUID;
 
 public class SetupActivity extends AppCompatActivity implements OnAntEventListener {
 
+    // ------ Moto ------
     MotoConnection connection;
     MotoSound sound;
 
-    Button simulateGetGameSessions,simulatePostGameSession, simulatePostGameChallenge, simulateGetGameChallenge;
-    TextView connectedTextView;
+    // ------ Button ------
+    Button simulateGetGameSessions, simulatePostGameSession, simulatePostGameChallenge, simulateGetGameChallenge;
 
-    // ------ Added by us ------
-
-    RadioGroup playersRadioGroup;
+    // ------ TextView ------
     TextView numberOfPlayersTextView;
     TextView tilesPositioningTextView;
+
+    RadioGroup playersRadioGroup;
+
     ImageView positioningImageView;
 
     int numberOfPlayers = 1;
@@ -84,8 +86,6 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
     String endpoint = "https://centerforplayware.com/api/index.php";
 
     SharedPreferences sharedPref;
-
-    int selectedTile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,9 +122,6 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         connectedTextView = findViewById(R.id.connectedTextView);
 
         Button pairingButton = findViewById(R.id.pairButton);
-
-        Button startGameButton = findViewById(R.id.startGameButton);
-
         pairingButton.setOnClickListener(v -> {
             switch(setupMode) {
                 case 1:
@@ -142,6 +139,7 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
                     tilesPositioningTextView.setVisibility(View.VISIBLE);
                     positioningImageView.setVisibility(View.VISIBLE);
                     setupTilesPosition(numberOfPlayers);
+                    textToSpeech("Place the two tiles 3 meters apart and stand between them. Press next when you are done.");
                     pairingButton.setText("Next");
                     setupMode = 3;
                     break;
@@ -169,7 +167,7 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
             isPairing = !isPairing;*/
         });
 
-
+        // ------ Number of players ------
         numberOfPlayersTextView = findViewById(R.id.numberOfPlayersTextView);
         numberOfPlayersTextView.setVisibility(View.INVISIBLE);
 
@@ -181,8 +179,6 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
 
         positioningImageView = findViewById(R.id.positioningImageView);
         positioningImageView.setVisibility(View.INVISIBLE);
-
-
 
         playersRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             switch(checkedId) {
@@ -206,12 +202,11 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
             setupTilesPosition(numberOfPlayers);
         });
 
+        Button startGameButton = findViewById(R.id.startGameButton);
         startGameButton.setOnClickListener(v -> {
-            int setup[] = {numberOfPlayers,difficulty};
-            int tileIDs[] = {player1_trueTile,player1_falseTile,player2_trueTile,player2_falseTile,player3_trueTile,player3_falseTile,player4_trueTile,player4_falseTile};
             Intent intent = new Intent(SetupActivity.this, GameActivity.class);
-            intent.putExtra("setup_data",setup);
-            intent.putExtra("tile_ids",tileIDs);
+            intent.putExtra("setup_data", new int[]{numberOfPlayers, difficulty});
+            intent.putExtra("tile_ids", new int[]{player1_trueTile, player1_falseTile, player2_trueTile, player2_falseTile, player3_trueTile, player3_falseTile, player4_trueTile, player4_falseTile});
             startActivity(intent);
 
             /*if(!isPlaying) {
@@ -231,10 +226,9 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
     // For going back to previous activity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                return true;
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -331,8 +325,6 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
                 Log.d("tag", "ERROR: Wrong amount of players");
                 break;
         }
-
-        textToSpeech("Place the two tiles 3 meters apart and stand between them. Press next when you are done.");
     }
 
     // ------------------------------- //
@@ -490,7 +482,7 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
 
         if(device_token == null) { // If device_token was never saved and null create one
             device_token =  UUID.randomUUID().toString(); // Get a new device_token
-            sharedPref.edit().putString("device_token",device_token).apply(); // save it to shared preferences so next time will be used
+            sharedPref.edit().putString("device_token", device_token).apply(); // save it to shared preferences so next time will be used
         }
 
         return device_token;
@@ -644,6 +636,7 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
 
     @Override
     public void onNumbersOfTilesConnected(int i) {
+        TextView connectedTextView = findViewById(R.id.connectedTextView);
         connectedTextView.setText("Tiles connected: "+i);
     }
 
