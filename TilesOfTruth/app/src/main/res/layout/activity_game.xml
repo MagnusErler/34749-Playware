@@ -6,4 +6,15 @@
     android:layout_height="match_parent"
     tools:context=".GameActivity">
 
+    <TextView
+        android:id="@+id/connectedTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="56dp"
+        android:text="Tiles connected: 0"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
