@@ -1,6 +1,7 @@
 package com.livelife.playwaremax;
 
 import static com.livelife.motolibrary.AntData.EVENT_PRESS;
+import static com.livelife.motolibrary.AntData.LED_COLOR_GREEN;
 import static com.livelife.motolibrary.AntData.LED_COLOR_OFF;
 import static com.livelife.motolibrary.AntData.LED_COLOR_RED;
 
@@ -15,6 +16,7 @@ import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,6 +55,12 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
 
     // ------ Added by us ------
 
+    int numberOfPlayers = 1;
+
+    int trueTile, falseTile;
+    int player1_trueTile, player2_trueTile, player3_trueTile, player4_trueTile;
+    int player1_falseTile, player2_falseTile, player3_falseTile, player4_falseTile;
+
     int numberOfQuestions = 1000;
 
     int randomQuestionNr;
@@ -73,6 +81,8 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
 
     Boolean isPairing = false;
     Boolean isPlaying = false;
+
+    int setupMode = 1;
 
     TextView apiOutput;
     String endpoint = "https://centerforplayware.com/api/index.php";
@@ -101,8 +111,8 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
         sound = MotoSound.getInstance();
 
         connection.startMotoConnection(this);
-        connection.saveRfFrequency(76);
-        connection.setDeviceId(7);
+        connection.saveRfFrequency(66);
+        connection.setDeviceId(2);
         connection.registerListener(this);
 
         createChallenge_Btn = findViewById(R.id.createChallenge_Btn);
@@ -112,21 +122,64 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
         apiOutput = findViewById(R.id.apiOutput);
         connectedTextView = findViewById(R.id.connectedTextView);
         pairingButton = findViewById(R.id.pairingButton);
-        pairingButton.setOnClickListener(v -> {
 
-            if(isPlaying) {
+        RadioGroup radioGroup = findViewById(R.id.numberOfPlayers_RG);
+        radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            switch(checkedId) {
+                case R.id.radio1:
+                    numberOfPlayers = 1;
+                    break;
+                case R.id.radio2:
+                    numberOfPlayers = 2;
+                    break;
+                case R.id.radio3:
+                    numberOfPlayers = 3;
+                    break;
+                case R.id.radio4:
+                    numberOfPlayers = 4;
+                    break;
+            }
+            Log.d("tag", String.valueOf(numberOfPlayers));
+        });
+
+        pairingButton.setOnClickListener(v -> {
+            switch(setupMode) {
+                case 1:
+                    //Starting pairing tiles -> tiles a spinning
+                    connection.pairTilesStart();
+                    pairingButton.setText("Next1");
+                    setupMode = 2;
+                    break;
+                case 2:
+                    //Stopping pairing tiles -> tiles are OFF
+                    connection.pairTilesStop();
+
+                    setupTilesPosition(numberOfPlayers);
+                    pairingButton.setText("Next2");
+                    setupMode = 3;
+                    break;
+                case 3:
+                    pairingButton.setText("");
+                    break;
+                default:
+                    pairingButton.setText("Error");
+                    break;
+            }
+
+            /*if(isPlaying) {
                 return;
             }
 
-            Log.i("ButtonStuff","You clicked the button!");
-            if(isPairing) {
+            if (isPairing) {
                 connection.pairTilesStop();
-                pairingButton.setText("START PAIRING");
+                pairingButton.setText("Setup Tiles");
             } else {
                 connection.pairTilesStart();
-                pairingButton.setText("STOP PAIRING");
+                pairingButton.setText("Next");
+
+                setupTilesPosition();
             }
-            isPairing = !isPairing;
+            isPairing = !isPairing;*/
         });
 
         startGameButton = findViewById(R.id.startGameButton);
@@ -135,8 +188,7 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
                 startGameButton.setText("STOP GAME");
                 isPlaying = true;
                 connection.setAllTilesIdle(LED_COLOR_OFF);
-                selectedTile = connection.randomIdleTile();
-                connection.setTileColor(LED_COLOR_RED,selectedTile);
+
             } else {
                 startGameButton.setText("START GAME");
                 isPlaying = false;
@@ -187,7 +239,7 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
     }
 
     public int getRandomNumber(int max) {
-        return new Random().nextInt((max - 1) + 1) + 1;
+        return new Random().nextInt(max) + 1;
     }
 
     public void textToSpeech(String textToSay) {
@@ -210,6 +262,85 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
         } catch (Resources.NotFoundException | IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void setupTilesPosition(int numberOfPlayers) {
+        connection.setAllTilesIdle(LED_COLOR_OFF);
+
+        switch (numberOfPlayers) {
+            case 1:
+                player1_trueTile = connection.randomIdleTile();
+                connection.setTileNumLeds(LED_COLOR_GREEN, player1_trueTile, 1);
+
+                player1_falseTile = connection.randomIdleTile();
+                connection.setTileNumLeds(LED_COLOR_RED, player1_falseTile, 1);
+                break;
+            case 2:
+                player1_trueTile = connection.randomIdleTile();
+                connection.setTileNumLeds(LED_COLOR_GREEN, player1_trueTile, 1);
+
+                player1_falseTile = connection.randomIdleTile();
+                connection.setTileNumLeds(LED_COLOR_RED, player1_falseTile, 1);
+
+                player2_trueTile = connection.randomIdleTile();
+                connection.setTileNumLeds(LED_COLOR_GREEN, player2_trueTile, 2);
+
+                player2_falseTile = connection.randomIdleTile();
+                connection.setTileNumLeds(LED_COLOR_RED, player2_falseTile, 2);
+
+                break;
+            case 3:
+                player1_trueTile = connection.randomIdleTile();
+                connection.setTileNumLeds(LED_COLOR_GREEN, player1_trueTile, 1);
+
+                player1_falseTile = connection.randomIdleTile();
+                connection.setTileNumLeds(LED_COLOR_RED, player1_falseTile, 1);
+
+                player2_trueTile = connection.randomIdleTile();
+                connection.setTileNumLeds(LED_COLOR_GREEN, player2_trueTile, 2);
+
+                player2_falseTile = connection.randomIdleTile();
+                connection.setTileNumLeds(LED_COLOR_RED, player2_falseTile, 2);
+
+                player3_trueTile = connection.randomIdleTile();
+                connection.setTileNumLeds(LED_COLOR_GREEN, player3_trueTile, 3);
+
+                player3_falseTile = connection.randomIdleTile();
+                connection.setTileNumLeds(LED_COLOR_RED, player3_falseTile, 3);
+
+                break;
+            case 4:
+                player1_trueTile = connection.randomIdleTile();
+                connection.setTileNumLeds(LED_COLOR_GREEN, player1_trueTile, 1);
+
+                player1_falseTile = connection.randomIdleTile();
+                connection.setTileNumLeds(LED_COLOR_RED, player1_falseTile, 1);
+
+                player2_trueTile = connection.randomIdleTile();
+                connection.setTileNumLeds(LED_COLOR_GREEN, player2_trueTile, 2);
+
+                player2_falseTile = connection.randomIdleTile();
+                connection.setTileNumLeds(LED_COLOR_RED, player2_falseTile, 2);
+
+                player3_trueTile = connection.randomIdleTile();
+                connection.setTileNumLeds(LED_COLOR_GREEN, player3_trueTile, 3);
+
+                player3_falseTile = connection.randomIdleTile();
+                connection.setTileNumLeds(LED_COLOR_RED, player3_falseTile, 3);
+
+                player4_trueTile = connection.randomIdleTile();
+                connection.setTileNumLeds(LED_COLOR_GREEN, player4_trueTile, 4);
+
+                player4_falseTile = connection.randomIdleTile();
+                connection.setTileNumLeds(LED_COLOR_RED, player4_falseTile, 4);
+
+                break;
+            default:
+                Log.d("tag", "ERROR: Wrong amount of players");
+                break;
+        }
+
+        textToSpeech("Place the two tiles 3 meters apart and stand between them");
     }
 
     public boolean checkIfDeviceIsConnectedToInternet() {
