@@ -33,6 +33,8 @@ public class GameActivity extends AppCompatActivity {
         // Back-button
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
+        int setup_ga[] = getIntent().getIntArrayExtra("setup_data");
+        Toast.makeText(GameActivity.this, "Setup_ga[0]: " + setup_ga[0] + " Setup_ga[1]: " + setup_ga[1] + " Setup_ga[2]: " + setup_ga[2], Toast.LENGTH_LONG).show();
 
         do  {
             randomQuestionNr = getRandomNumber(numberOfQuestions);

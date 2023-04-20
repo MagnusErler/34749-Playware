@@ -179,7 +179,10 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         });
 
         startGameButton.setOnClickListener(v -> {
-            startActivity(new Intent(SetupActivity.this, GameActivity.class));
+            int setup[] = {1,1,1};
+            Intent intent = new Intent(SetupActivity.this, GameActivity.class);
+            intent.putExtra("setup_data",setup);
+            startActivity(intent);
 
             /*if(!isPlaying) {
                 startGameButton.setText("STOP GAME");
