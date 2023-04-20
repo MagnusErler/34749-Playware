@@ -11,6 +11,7 @@ import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,7 +31,8 @@ import java.util.Random;
 
 public class GameActivity extends AppCompatActivity implements OnAntEventListener {
 
-    MotoConnection connection = MotoConnection.getInstance();;
+    MotoConnection connection = MotoConnection.getInstance();
+
     int randomQuestionNr;
     int numberOfQuestions = 1000;
     ArrayList<Integer> answeredQuestionsNr= new ArrayList<>(numberOfQuestions);
@@ -50,19 +52,13 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         // Back-button
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
-        // Moto Connection
-        connection.registerListener(this);
-        //connection.setAllTilesToInit();
-
         // Data from SetupActivity
-        int setup[] = getIntent().getIntArrayExtra("setup_data");
+        int[] setup = getIntent().getIntArrayExtra("setup_data");
         numberOfPlayers = setup[0];
         difficulty = setup[1];
 
-        int tileIDs[] = getIntent().getIntArrayExtra("tileIDs");
+        int[] tileIDs = getIntent().getIntArrayExtra("tile_ids");
         Toast.makeText(GameActivity.this, "Number of players: " + setup[0] + " Difficulty: " + setup[1], Toast.LENGTH_LONG).show();
-
-        setupTiles(numberOfPlayers, tileIDs);
 
         do  {
             randomQuestionNr = getRandomNumber(numberOfQuestions);
@@ -75,16 +71,23 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         boolean Answer = Boolean.parseBoolean(separated[1]);
         Toast.makeText(GameActivity.this, "Question: " + Question + ", Answer: " + Answer, Toast.LENGTH_LONG).show();
         textToSpeech(Question);
+
+        // Moto Connection
+        //connection.startMotoConnection(this);
+        //connection.saveRfFrequency(66);
+        //connection.setDeviceId(2);
+        //connection.registerListener(this);
+
+        setupTiles(numberOfPlayers, tileIDs);
     }
 
     // ------------------------------- //
     // For going back to previous activity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                return true;
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -94,33 +97,29 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         return true;
     }
 
-    public void setupTiles(int numberOfPlayers,int[]tileID) {
-        //connection.setAllTilesIdle(LED_COLOR_OFF);
+    public void setupTiles(int numberOfPlayers, int[]tileID) {
+
+        player1_trueTile = tileID[0];
+        player1_falseTile = tileID[1];
+        player2_trueTile = tileID[2];
+        player2_falseTile = tileID[3];
+        player3_trueTile = tileID[4];
+        player3_falseTile = tileID[5];
+        player4_trueTile = tileID[6];
+        player4_falseTile = tileID[7];
 
         switch (numberOfPlayers) {
             case 1:
-                player1_trueTile = tileID[0];
-                player1_falseTile = tileID[1];
                 connection.setTileNumLeds(LED_COLOR_GREEN, player1_trueTile, 1);
                 connection.setTileNumLeds(LED_COLOR_RED, player1_falseTile, 1);
                 break;
             case 2:
-                player1_trueTile = tileID[0];
-                player1_falseTile = tileID[1];
-                player2_trueTile = tileID[2];
-                player2_falseTile = tileID[3];
                 connection.setTileNumLeds(LED_COLOR_GREEN, player1_trueTile, 1);
                 connection.setTileNumLeds(LED_COLOR_RED, player1_falseTile, 1);
                 connection.setTileNumLeds(LED_COLOR_GREEN, player2_trueTile, 2);
                 connection.setTileNumLeds(LED_COLOR_RED, player2_falseTile, 2);
                 break;
             case 3:
-                player1_trueTile = tileID[0];
-                player1_falseTile = tileID[1];
-                player2_trueTile = tileID[2];
-                player2_falseTile = tileID[3];
-                player3_trueTile = tileID[4];
-                player3_falseTile = tileID[5];
                 connection.setTileNumLeds(LED_COLOR_GREEN, player1_trueTile, 1);
                 connection.setTileNumLeds(LED_COLOR_RED, player1_falseTile, 1);
                 connection.setTileNumLeds(LED_COLOR_GREEN, player2_trueTile, 2);
@@ -129,14 +128,6 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
                 connection.setTileNumLeds(LED_COLOR_RED, player3_falseTile, 3);
                 break;
             case 4:
-                player1_trueTile = tileID[0];
-                player1_falseTile = tileID[1];
-                player2_trueTile = tileID[2];
-                player2_falseTile = tileID[3];
-                player3_trueTile = tileID[4];
-                player3_falseTile = tileID[5];
-                player4_trueTile = tileID[6];
-                player4_falseTile = tileID[7];
                 connection.setTileNumLeds(LED_COLOR_GREEN, player1_trueTile, 1);
                 connection.setTileNumLeds(LED_COLOR_RED, player1_falseTile, 1);
                 connection.setTileNumLeds(LED_COLOR_GREEN, player2_trueTile, 2);
@@ -162,17 +153,6 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         if(command == EVENT_PRESS) {
             Log.d("tag", "tileID: " + tileId);
         }
-
-    }
-
-    @Override
-    public void onAntServiceConnected() {
-
-    }
-
-    @Override
-    public void onNumbersOfTilesConnected(int i) {
-
     }
 
     // ------------------------------- //
@@ -203,5 +183,16 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
                 textToSpeechSystem.speak(textToSay, TextToSpeech.QUEUE_FLUSH, null);
             }
         });
+    }
+
+    @Override
+    public void onAntServiceConnected() {
+        connection.setAllTilesToInit();
+    }
+
+    @Override
+    public void onNumbersOfTilesConnected(int i) {
+        TextView connectedTextView = findViewById(R.id.connectedTextView);
+        connectedTextView.setText("Tiles connected: "+i);
     }
 }
