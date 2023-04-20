@@ -119,8 +119,25 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         createChallenge_Btn.setOnClickListener(v -> createChallenge());
 
         apiOutput = findViewById(R.id.apiOutput);*/
-        connectedTextView = findViewById(R.id.connectedTextView);
 
+        // ------ Difficulty ------
+        Button easyDifficultyButton = findViewById(R.id.easyDifficultyButton);
+        Button normalDifficultyButton = findViewById(R.id.normalDifficultyButton);
+        Button hardDifficultyButton = findViewById(R.id.hardDifficultyButton);
+
+        easyDifficultyButton.setOnClickListener(v -> {
+            difficulty = 1;
+        });
+
+        normalDifficultyButton.setOnClickListener(v -> {
+            difficulty = 2;
+        });
+
+        hardDifficultyButton.setOnClickListener(v -> {
+            difficulty = 3;
+        });
+
+        // ------ Pairing Tiles ------
         Button pairingButton = findViewById(R.id.pairButton);
         pairingButton.setOnClickListener(v -> {
             switch(setupMode) {
