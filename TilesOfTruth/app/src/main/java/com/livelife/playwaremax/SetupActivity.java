@@ -173,13 +173,6 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
 
     }
 
-    //Going back to previous activity
-    /*public boolean onOptionsItemSelected(MenuItem item){
-        Intent myIntent = new Intent(getApplicationContext(), MainActivity.class);
-        startActivityForResult(myIntent, 0);
-        return true;
-    }*/
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
