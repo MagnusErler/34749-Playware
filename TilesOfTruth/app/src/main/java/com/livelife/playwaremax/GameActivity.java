@@ -1,15 +1,13 @@
 package com.livelife.playwaremax;
 
-import static com.livelife.motolibrary.AntData.LED_COLOR_OFF;
-
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.BufferedReader;
 import java.io.IOException;
