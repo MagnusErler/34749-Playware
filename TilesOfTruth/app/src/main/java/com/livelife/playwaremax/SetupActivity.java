@@ -57,10 +57,11 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
     ImageView positioningImageView;
 
     int numberOfPlayers = 1;
+    int difficulty = 1;
 
     int trueTile, falseTile;
-    int player1_trueTile, player2_trueTile, player3_trueTile, player4_trueTile;
-    int player1_falseTile, player2_falseTile, player3_falseTile, player4_falseTile;
+    int player1_trueTile = 0, player2_trueTile = 0, player3_trueTile = 0, player4_trueTile = 0;
+    int player1_falseTile = 0, player2_falseTile = 0, player3_falseTile = 0, player4_falseTile = 0;
 
     InputStream inputStream;
     private TextToSpeech textToSpeechSystem;
@@ -200,14 +201,17 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
                 default:
                     positioningImageView.setImageResource(R.drawable.one_players);
                     numberOfPlayers = 1;
+                    break;
             }
             setupTilesPosition(numberOfPlayers);
         });
 
         startGameButton.setOnClickListener(v -> {
-            int setup[] = {1,1,1};
+            int setup[] = {numberOfPlayers,difficulty};
+            int tileIDs[] = {player1_trueTile,player1_falseTile,player2_trueTile,player2_falseTile,player3_trueTile,player3_falseTile,player4_trueTile,player4_falseTile};
             Intent intent = new Intent(SetupActivity.this, GameActivity.class);
             intent.putExtra("setup_data",setup);
+            intent.putExtra("tile_ids",tileIDs);
             startActivity(intent);
 
             /*if(!isPlaying) {
@@ -370,32 +374,27 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         builder.setTitle("Choose Challenge");
 
         // add a list
-        String[] challenges = {"Normal mode", "Hard mode", "Normal Time mode", "Hard Time mode"};
+        String[] challenges = {"Easy mode","Normal mode", "Hard mode"};
         builder.setItems(challenges, (dialog, which) -> {
             switch (which) {
                 case 0:
-                    Log.d("tag", "Normal Mode chosen");
-                    Toast.makeText(SetupActivity.this, "Normal Mode chosen", Toast.LENGTH_LONG).show();
+                    Log.d("tag", "Easy Mode chosen");
+                    Toast.makeText(SetupActivity.this, "Easy Mode chosen", Toast.LENGTH_LONG).show();
                     postGameChallenge("1");
                     break;
                 case 1:
-                    Log.d("tag", "Hard Mode chosen");
-                    Toast.makeText(SetupActivity.this, "Hard Mode chosen", Toast.LENGTH_LONG).show();
+                    Log.d("tag", "Normal Mode chosen");
+                    Toast.makeText(SetupActivity.this, "Normal Mode chosen", Toast.LENGTH_LONG).show();
                     postGameChallenge("2");
                     break;
                 case 2:
-                    Log.d("tag", "Normal Time Mode chosen");
-                    Toast.makeText(SetupActivity.this, "Normal Time Mode chosen", Toast.LENGTH_LONG).show();
+                    Log.d("tag", "Hard Mode chosen");
+                    Toast.makeText(SetupActivity.this, "Hard Mode chosen", Toast.LENGTH_LONG).show();
                     postGameChallenge("3");
-                    break;
-                case 3:
-                    Log.d("tag", "Hard Time Mode chosen");
-                    Toast.makeText(SetupActivity.this, "Hard Time Mode chosen", Toast.LENGTH_LONG).show();
-                    postGameChallenge("4");
                     break;
                 default:
                     Log.d("tag", "ERROR: No Game mode chosen");
-                    postGameChallenge("1");
+                    postGameChallenge("2");
                     break;
             }
         });
