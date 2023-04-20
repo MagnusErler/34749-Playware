@@ -45,6 +45,7 @@ import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Random;
 import java.util.UUID;
 
@@ -101,16 +102,7 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup);
 
-        /*ActionBar actionBar = getSupportActionBar();
-        assert actionBar != null;
-        actionBar.setDisplayHomeAsUpEnabled(true);*/
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-
-
-
-
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         checkIfDeviceIsConnectedToInternet();
 
@@ -140,33 +132,21 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
 
 
 
-
-
-
-
-
-        RadioGroup playersRadioGroup = (RadioGroup) findViewById(R.id.playersRadioGroup);
-        playersRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
-        {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                ImageView tilesPositioning = findViewById(R.id.positioningImageView);
-                switch(checkedId) {
-                    case R.id.twoPlayersButton:
-                        tilesPositioning.setImageResource(R.drawable.two_players);
-                        break;
-                    case R.id.threePlayersButton:
-                        tilesPositioning.setImageResource(R.drawable.three_players);
-                        break;
-                    case R.id.fourPlayersButton:
-                        tilesPositioning.setImageResource(R.drawable.four_players);
-                        break;
-                    default:
-                        tilesPositioning.setImageResource(R.drawable.one_players);
-                }
-
-
-
+        RadioGroup playersRadioGroup = findViewById(R.id.playersRadioGroup);
+        playersRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            ImageView tilesPositioning = findViewById(R.id.positioningImageView);
+            switch(checkedId) {
+                case R.id.twoPlayersButton:
+                    tilesPositioning.setImageResource(R.drawable.two_players);
+                    break;
+                case R.id.threePlayersButton:
+                    tilesPositioning.setImageResource(R.drawable.three_players);
+                    break;
+                case R.id.fourPlayersButton:
+                    tilesPositioning.setImageResource(R.drawable.four_players);
+                    break;
+                default:
+                    tilesPositioning.setImageResource(R.drawable.one_players);
             }
         });
 
