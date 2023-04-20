@@ -7,6 +7,7 @@ import static com.livelife.motolibrary.AntData.LED_COLOR_RED;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.AsyncTask;
@@ -43,7 +44,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
-public class MainActivity extends AppCompatActivity implements OnAntEventListener {
+public class MainActivity extends AppCompatActivity {
 
     MotoConnection connection;
     MotoSound sound;
@@ -96,94 +97,36 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        checkIfDeviceIsConnectedToInternet();
+        //checkIfDeviceIsConnectedToInternet();
 
-        sharedPref = this.getApplicationContext().getSharedPreferences("PLAYWARE_COURSE", Context.MODE_PRIVATE);
+        //sharedPref = this.getApplicationContext().getSharedPreferences("PLAYWARE_COURSE", Context.MODE_PRIVATE);
 
-        gameSessions_ListView = findViewById(R.id.gameSessions_ListView);
+        //gameSessions_ListView = findViewById(R.id.gameSessions_ListView);
 
-        gameSessions_ArrayAdapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, games_ArrayList);
+        //gameSessions_ArrayAdapter = new ArrayAdapter<String>(this,
+        //        android.R.layout.simple_list_item_1, games_ArrayList);
 
-        gameSessions_ListView.setAdapter(gameSessions_ArrayAdapter);
+        //gameSessions_ListView.setAdapter(gameSessions_ArrayAdapter);
 
-        connection = MotoConnection.getInstance();
+        /*connection = MotoConnection.getInstance();
         sound = MotoSound.getInstance();
 
         connection.startMotoConnection(this);
         connection.saveRfFrequency(66);
         connection.setDeviceId(2);
-        connection.registerListener(this);
+        connection.registerListener(this);*/
 
-        createChallenge_Btn = findViewById(R.id.createChallenge_Btn);
+        //createChallenge_Btn = findViewById(R.id.createChallenge_Btn);
 
-        createChallenge_Btn.setOnClickListener(v -> createChallenge());
+        //createChallenge_Btn.setOnClickListener(v -> createChallenge());
 
-        apiOutput = findViewById(R.id.apiOutput);
-        connectedTextView = findViewById(R.id.connectedTextView);
-        pairingButton = findViewById(R.id.pairingButton);
+        //apiOutput = findViewById(R.id.apiOutput);
+        //connectedTextView = findViewById(R.id.connectedTextView);
 
-        RadioGroup radioGroup = findViewById(R.id.numberOfPlayers_RG);
-        radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
-            switch(checkedId) {
-                case R.id.radio1:
-                    numberOfPlayers = 1;
-                    break;
-                case R.id.radio2:
-                    numberOfPlayers = 2;
-                    break;
-                case R.id.radio3:
-                    numberOfPlayers = 3;
-                    break;
-                case R.id.radio4:
-                    numberOfPlayers = 4;
-                    break;
-            }
-            Log.d("tag", String.valueOf(numberOfPlayers));
-        });
+        Button play_Btn = findViewById(R.id.playButton);
+        play_Btn.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, SetupActivity.class)));
 
-        pairingButton.setOnClickListener(v -> {
-            switch(setupMode) {
-                case 1:
-                    //Starting pairing tiles -> tiles a spinning
-                    connection.pairTilesStart();
-                    pairingButton.setText("Next1");
-                    setupMode = 2;
-                    break;
-                case 2:
-                    //Stopping pairing tiles -> tiles are OFF
-                    connection.pairTilesStop();
-
-                    setupTilesPosition(numberOfPlayers);
-                    pairingButton.setText("Next2");
-                    setupMode = 3;
-                    break;
-                case 3:
-                    pairingButton.setText("");
-                    break;
-                default:
-                    pairingButton.setText("Error");
-                    break;
-            }
-
-            /*if(isPlaying) {
-                return;
-            }
-
-            if (isPairing) {
-                connection.pairTilesStop();
-                pairingButton.setText("Setup Tiles");
-            } else {
-                connection.pairTilesStart();
-                pairingButton.setText("Next");
-
-                setupTilesPosition();
-            }
-            isPairing = !isPairing;*/
-        });
-
-        startGameButton = findViewById(R.id.startGameButton);
-        startGameButton.setOnClickListener(v -> {
+        /*startGameButton.setOnClickListener(v -> {
             if(!isPlaying) {
                 startGameButton.setText("STOP GAME");
                 isPlaying = true;
@@ -207,477 +150,9 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
             Toast.makeText(MainActivity.this, "Question: " + Question + ", Answer: " + Answer, Toast.LENGTH_LONG).show();
             textToSpeech(Question);
 
-        });
-
-        simulateGetGameSessions = findViewById(R.id.simulateGetGameSessions);
-        simulateGetGameSessions.setOnClickListener(v -> getGameSessions());
-
-        simulatePostGameSession = findViewById(R.id.simulatePostGameSession);
-        simulatePostGameSession.setOnClickListener(v -> postGameSession(null));
-
-        simulatePostGameChallenge = findViewById(R.id.simulatePostGameChallenge);
-        simulatePostGameChallenge.setOnClickListener(v -> postGameChallenge("1"));
-
-        simulateGetGameChallenge = findViewById(R.id.simulateGetGameChallenge);
-        simulateGetGameChallenge.setOnClickListener(v -> getGameChallenge());
-
-
-        gameSessions_ListView.setOnItemClickListener((adapterView, arg1, position, arg3) -> {
-            String content = (String)adapterView.getItemAtPosition(position);
-
-            List<String> content_ArrayList = new ArrayList<>(Arrays.asList(content.split(" ")));
-
-            Log.d("tag", "content_ArrayList: " + content_ArrayList);
-
-            int challengeID = Integer.parseInt(content_ArrayList.get(1));
-            //String challengeName = content_ArrayList.get(3);
-            //int challengeGameType = Integer.parseInt(content_ArrayList.get(5));
-            //int challengeStatus = Integer.parseInt(content_ArrayList.get(7));
-
-            postGameChallengeAccept(challengeID);
-        });
-    }
-
-    public int getRandomNumber(int max) {
-        return new Random().nextInt(max) + 1;
-    }
-
-    public void textToSpeech(String textToSay) {
-        textToSpeechSystem = new TextToSpeech(this, status -> {
-            if (status == TextToSpeech.SUCCESS) {
-                textToSpeechSystem.speak(textToSay, TextToSpeech.QUEUE_ADD, null);
-            }
-        });
-    }
-
-    public String getQuestionFromCSV(int lineNr) {
-        try {
-            InputStream is = getResources().openRawResource(R.raw.questions);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
-
-            for(int i = 0; i < lineNr-1; ++i)
-                reader.readLine();
-            return reader.readLine();
-
-        } catch (Resources.NotFoundException | IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void setupTilesPosition(int numberOfPlayers) {
-        connection.setAllTilesIdle(LED_COLOR_OFF);
-
-        switch (numberOfPlayers) {
-            case 1:
-                player1_trueTile = connection.randomIdleTile();
-                connection.setTileNumLeds(LED_COLOR_GREEN, player1_trueTile, 1);
-
-                player1_falseTile = connection.randomIdleTile();
-                connection.setTileNumLeds(LED_COLOR_RED, player1_falseTile, 1);
-                break;
-            case 2:
-                player1_trueTile = connection.randomIdleTile();
-                connection.setTileNumLeds(LED_COLOR_GREEN, player1_trueTile, 1);
-
-                player1_falseTile = connection.randomIdleTile();
-                connection.setTileNumLeds(LED_COLOR_RED, player1_falseTile, 1);
-
-                player2_trueTile = connection.randomIdleTile();
-                connection.setTileNumLeds(LED_COLOR_GREEN, player2_trueTile, 2);
-
-                player2_falseTile = connection.randomIdleTile();
-                connection.setTileNumLeds(LED_COLOR_RED, player2_falseTile, 2);
-
-                break;
-            case 3:
-                player1_trueTile = connection.randomIdleTile();
-                connection.setTileNumLeds(LED_COLOR_GREEN, player1_trueTile, 1);
-
-                player1_falseTile = connection.randomIdleTile();
-                connection.setTileNumLeds(LED_COLOR_RED, player1_falseTile, 1);
-
-                player2_trueTile = connection.randomIdleTile();
-                connection.setTileNumLeds(LED_COLOR_GREEN, player2_trueTile, 2);
-
-                player2_falseTile = connection.randomIdleTile();
-                connection.setTileNumLeds(LED_COLOR_RED, player2_falseTile, 2);
-
-                player3_trueTile = connection.randomIdleTile();
-                connection.setTileNumLeds(LED_COLOR_GREEN, player3_trueTile, 3);
-
-                player3_falseTile = connection.randomIdleTile();
-                connection.setTileNumLeds(LED_COLOR_RED, player3_falseTile, 3);
-
-                break;
-            case 4:
-                player1_trueTile = connection.randomIdleTile();
-                connection.setTileNumLeds(LED_COLOR_GREEN, player1_trueTile, 1);
-
-                player1_falseTile = connection.randomIdleTile();
-                connection.setTileNumLeds(LED_COLOR_RED, player1_falseTile, 1);
-
-                player2_trueTile = connection.randomIdleTile();
-                connection.setTileNumLeds(LED_COLOR_GREEN, player2_trueTile, 2);
-
-                player2_falseTile = connection.randomIdleTile();
-                connection.setTileNumLeds(LED_COLOR_RED, player2_falseTile, 2);
-
-                player3_trueTile = connection.randomIdleTile();
-                connection.setTileNumLeds(LED_COLOR_GREEN, player3_trueTile, 3);
-
-                player3_falseTile = connection.randomIdleTile();
-                connection.setTileNumLeds(LED_COLOR_RED, player3_falseTile, 3);
-
-                player4_trueTile = connection.randomIdleTile();
-                connection.setTileNumLeds(LED_COLOR_GREEN, player4_trueTile, 4);
-
-                player4_falseTile = connection.randomIdleTile();
-                connection.setTileNumLeds(LED_COLOR_RED, player4_falseTile, 4);
-
-                break;
-            default:
-                Log.d("tag", "ERROR: Wrong amount of players");
-                break;
-        }
-
-        textToSpeech("Place the two tiles 3 meters apart and stand between them");
-    }
-
-    public boolean checkIfDeviceIsConnectedToInternet() {
-
-        try {
-            InetAddress ipAddr = InetAddress.getByName("google.com");
-
-            if(!ipAddr.equals("")) {
-                //coneccted
-                Log.d("tag", "Connected");
-                return true;
-            }
-        } catch (Exception e) {
-            Toast.makeText(MainActivity.this, "You are not connected to the internet!", Toast.LENGTH_LONG).show();
-            return false;
-        }
-        return true;
-    }
-
-    private void createChallenge() {
-        /*final Dialog dialog = new Dialog(this); // Context, this, etc.
-        dialog.setContentView(R.layout.createchallenge_dialog);
-        dialog.setTitle("Choose Challenge");
-        dialog.show();
-
-        findViewById(R.id.createChallenge_NormalMode_Btn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("tag", "Normal Mode chosen");
-            }
         });*/
 
-        // setup the alert builder
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Choose Challenge");
-
-        // add a list
-        String[] challenges = {"Normal mode", "Hard mode", "Normal Time mode", "Hard Time mode"};
-        builder.setItems(challenges, (dialog, which) -> {
-            switch (which) {
-                case 0:
-                    Log.d("tag", "Normal Mode chosen");
-                    Toast.makeText(MainActivity.this, "Normal Mode chosen", Toast.LENGTH_LONG).show();
-                    postGameChallenge("1");
-                    break;
-                case 1:
-                    Log.d("tag", "Hard Mode chosen");
-                    Toast.makeText(MainActivity.this, "Hard Mode chosen", Toast.LENGTH_LONG).show();
-                    postGameChallenge("2");
-                    break;
-                case 2:
-                    Log.d("tag", "Normal Time Mode chosen");
-                    Toast.makeText(MainActivity.this, "Normal Time Mode chosen", Toast.LENGTH_LONG).show();
-                    postGameChallenge("3");
-                    break;
-                case 3:
-                    Log.d("tag", "Hard Time Mode chosen");
-                    Toast.makeText(MainActivity.this, "Hard Time Mode chosen", Toast.LENGTH_LONG).show();
-                    postGameChallenge("4");
-                    break;
-                default:
-                    Log.d("tag", "ERROR: No Game mode chosen");
-                    postGameChallenge("1");
-                    break;
-            }
-        });
-
-        // create and show the alert dialog
-        AlertDialog dialog = builder.create();
-        dialog.show();
-    }
-
-    private void postGameSession(String challengeId) {
-        RemoteHttpRequest requestPackage = new RemoteHttpRequest();
-        requestPackage.setMethod("POST");
-        requestPackage.setUrl(endpoint);
-        requestPackage.setParam("method","postGameSession"); // The method name
-        requestPackage.setParam("device_token",getDeviceToken()); // Your device token
-        requestPackage.setParam("group_id", groupID); // Your group ID
-        requestPackage.setParam("game_id","1"); // The game ID (From the Game class > setGameId() function
-        requestPackage.setParam("game_type_id","1"); // The game type ID (From the GameType class creation > first parameter)
-        requestPackage.setParam("game_score","30"); // The game score
-        requestPackage.setParam("game_time","30"); // The game elapsed time in seconds
-        requestPackage.setParam("num_tiles","4"); // The number of tiles used
-        if (challengeId != null) {
-            requestPackage.setParam("gcid",challengeId);
-        }
-
-
-        Downloader downloader = new Downloader(); //Instantiation of the Async task
-
-        downloader.execute(requestPackage);
-    }
-
-    private void getGameSessions() {
-        RemoteHttpRequest requestPackage = new RemoteHttpRequest();
-        requestPackage.setMethod("GET");
-        requestPackage.setUrl(endpoint);
-        requestPackage.setParam("method","getGameSessions"); // The method name
-        requestPackage.setParam("device_token",getDeviceToken()); // Your device token
-        requestPackage.setParam("group_id",groupID); // Your group ID
-
-        Downloader downloader = new Downloader(); //Instantiation of the Async task
-        //that’s defined below
-
-        downloader.execute(requestPackage);
-    }
-
-    private void postGameChallenge(String challengeGameType) {
-        RemoteHttpRequest requestPackage = new RemoteHttpRequest();
-        requestPackage.setMethod("POST");
-        requestPackage.setUrl(endpoint);
-        requestPackage.setParam("method","postGameChallenge"); // The method name
-        requestPackage.setParam("device_token",getDeviceToken()); // Your device token
-        requestPackage.setParam("game_id", "1"); // The game ID (From the Game class > setGameId() function
-        requestPackage.setParam("game_type_id", challengeGameType); // The game type ID (From the GameType class creation > first parameter)
-        requestPackage.setParam("challenger_name",myName); // The challenger name
-        requestPackage.setParam("group_id",groupID); // Your group ID
-
-        Downloader downloader = new Downloader(); //Instantiation of the Async task
-        //that’s defined below
-
-        downloader.execute(requestPackage);
-    }
-
-    private void getGameChallenge() {
-        RemoteHttpRequest requestPackage = new RemoteHttpRequest();
-        requestPackage.setMethod("GET");
-        requestPackage.setUrl(endpoint);
-        requestPackage.setParam("method","getGameChallenge"); // The method name
-        requestPackage.setParam("device_token",getDeviceToken()); // Your device token
-        requestPackage.setParam("group_id",groupID); // Your group ID
-
-        Downloader downloader = new Downloader(); //Instantiation of the Async task
-        //that’s defined below
-
-        downloader.execute(requestPackage);
-    }
-
-    private void postGameChallengeAccept(int challengeID) {
-        RemoteHttpRequest requestPackage = new RemoteHttpRequest();
-        requestPackage.setMethod("POST");
-        requestPackage.setUrl(endpoint);
-        requestPackage.setParam("method","postGameChallengeAccept"); // The method name
-        requestPackage.setParam("device_token",getDeviceToken()); // Your device token
-        requestPackage.setParam("challenged_name",myName); // The name of the person accepting the challenge
-        requestPackage.setParam("gcid", String.valueOf(challengeID)); // The game challenge id you want to accept
-
-        Downloader downloader = new Downloader(); //Instantiation of the Async task
-        //that’s defined below
-
-        downloader.execute(requestPackage);
-    }
-    private String getDeviceToken() {
-        // Get unique device_token from shared preferences
-        // Remember that what is saved in sharedPref exists until you delete the app!
-        String device_token = sharedPref.getString("device_token",null);
-
-        if(device_token == null) { // If device_token was never saved and null create one
-            device_token =  UUID.randomUUID().toString(); // Get a new device_token
-            sharedPref.edit().putString("device_token",device_token).apply(); // save it to shared preferences so next time will be used
-        }
-
-        return device_token;
-    }
-
-    private class Downloader extends AsyncTask<RemoteHttpRequest, String, String> {
-        @Override
-        protected String doInBackground(RemoteHttpRequest... params) {
-            return HttpManager.getData(params[0]);
-        }
-
-        //The String that is returned in the doInBackground() method is sent to the
-        // onPostExecute() method below. The String should contain JSON data.
-        @Override
-        protected void onPostExecute(String result) {
-
-            if(!checkIfDeviceIsConnectedToInternet()) {
-                return;
-            }
-
-            try {
-                //We need to convert the string in result to a JSONObject
-                JSONObject jsonObject = new JSONObject(result);
-
-                String message = jsonObject.getString("message");
-                Log.i("sessions",message);
-
-                // Log the entire response if needed to check the data structure
-                Log.i("sessions",jsonObject.toString());
-
-                // Log response
-                Log.i("sessions","response: "+jsonObject.getBoolean("response"));
-                // Update UI
-                apiOutput.setText(message);
-
-
-
-                if(jsonObject.getString("method").equals("getGameSessions")) {
-
-                    listFromJson_ArrayList.clear();
-                    games_ArrayList.clear();
-
-                    JSONArray sessions = jsonObject.getJSONArray("results");
-                    for(int i = 0; i < sessions.length();i++) {
-                        JSONObject session = sessions.getJSONObject(i);
-                        Log.i("sessions",session.toString());
-
-                        // get score example:
-                        // String score = session.getString("game_score");
-
-                        listFromJson_ArrayList.add("Game session ID:" + session.getString("sid") + " Score: " + session.getString("game_score") + " Group ID:" + session.getString("group_id") + " Number of tiles:" + session.getString("num_tiles"));
-                    }
-
-                    games_ArrayList.addAll(listFromJson_ArrayList);
-                    gameSessions_ArrayAdapter.notifyDataSetChanged();
-                }
-                else if(jsonObject.getString("method").equals("getGameChallenge")) {
-
-                    listFromJson_ArrayList.clear();
-                    games_ArrayList.clear();
-
-                    JSONArray challenges = jsonObject.getJSONArray("results");
-                    for(int i = 0; i < challenges.length();i++) {
-                        JSONObject challenge = challenges.getJSONObject(i);
-                        Log.i("challenge:",challenge.toString());
-
-                        // get score example:
-                        // String score = session.getString("game_score");
-
-                        listFromJson_ArrayList.add("ChallengeID: " + challenge.getString("gcid") + " Name: " + challenge.getString("challenger_name") + " GameID: " + challenge.getString("game_id") + " GameTypeID: " + challenge.getString("game_type_id") + " Status: " + challenge.getString("c_status"));
-                    }
-
-                    games_ArrayList.addAll(listFromJson_ArrayList);
-                    gameSessions_ArrayAdapter.notifyDataSetChanged();
-                }
-                else if(jsonObject.getString("method").equals("postGameSession")) {
-
-                    Log.i("sessions",message);
-
-                    // Update UI
-
-
-                }
-                else if(jsonObject.getString("method").equals("postGameChallenge")) {
-
-                    Log.i("challenge",message);
-
-                    // Update UI
-
-
-                }
-                else if(jsonObject.getString("method").equals("postGameChallengeAccept")) {
-
-                    Log.i("challengeAccept",message);
-
-                    // Update UI
-
-
-                }
-                /*else if(jsonObject.getString("method").equals("getGameChallenge")) {
-
-                    JSONArray challenges = jsonObject.getJSONArray("results");
-                    for(int i = 0; i < challenges.length();i++) {
-                        JSONObject challenge = challenges.getJSONObject(i);
-                        Log.i("challenge",challenge.toString());
-                        int status = challenge.getInt("c_status");
-                        if(status == 4) {
-                            Log.i("challenge",challenge.getJSONArray("summary").toString());
-                        }
-                    }
-
-
-                    // Update UI
-                }*/
-
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-    @Override
-    public void onMessageReceived(byte[] bytes, long l) {
-
-        int command = AntData.getCommand(bytes);
-        int tileId = AntData.getId(bytes);
-        int color = AntData.getColorFromPress(bytes);
-
-        if(command == EVENT_PRESS) {
-            if(tileId == selectedTile) {
-                sound.playMatched();
-                int randTile = connection.randomIdleTile();
-                connection.setAllTilesIdle(LED_COLOR_OFF);
-                connection.setTileColor(LED_COLOR_RED,randTile);
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        // Update UI
-                    }
-                });
-
-            }
-        }
 
     }
 
-    @Override
-    public void onAntServiceConnected() {
-        connection.setAllTilesToInit();
-
-    }
-
-    @Override
-    public void onNumbersOfTilesConnected(int i) {
-        connectedTextView.setText("Tiles connected: "+i);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        connection.stopMotoConnection();
-        connection.unregisterListener(this);
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        connection.startMotoConnection(this);
-        connection.registerListener(this);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        connection.stopMotoConnection();
-        connection.unregisterListener(this);
-    }
 }
