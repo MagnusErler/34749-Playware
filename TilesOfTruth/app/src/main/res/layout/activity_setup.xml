@@ -27,17 +27,18 @@
 
         <TextView
             android:id="@+id/difficultyTextView"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="10dp"
             android:text="@string/difficulty"
             android:textSize="25sp"
             app:layout_constraintBottom_toTopOf="@+id/difficultyRadioGroup"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/guideline1"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.1"
-            app:layout_constraintVertical_chainStyle="packed"
-            android:layout_marginBottom="10dp"
-            />
+            app:layout_constraintVertical_chainStyle="packed" />
 
         <RadioGroup
             android:id="@+id/difficultyRadioGroup"
@@ -45,7 +46,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="15dp"
             android:orientation="horizontal"
-            app:layout_constraintBottom_toTopOf="@+id/pairTextView"
+            app:layout_constraintBottom_toTopOf="@+id/numberOfPlayersTextView"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintStart_toStartOf="@+id/guideline1"
             app:layout_constraintTop_toBottomOf="@+id/difficultyTextView">
@@ -55,90 +56,73 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
+                android:layout_weight="1"
                 android:background="@drawable/radio_button_selector"
                 android:button="@android:color/transparent"
                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                android:gravity="center"
                 android:text="@string/easy"
                 android:textColor="@color/white"
                 android:textSize="25sp"
-                android:layout_weight="1"
-                android:gravity="center"/>
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:paddingVertical="7.5dp"/>
 
             <RadioButton
                 android:id="@+id/normalDifficultyButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
+                android:layout_weight="1"
                 android:background="@drawable/radio_button_selector"
                 android:button="@android:color/transparent"
                 android:checked="true"
                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                android:gravity="center"
                 android:text="@string/normal"
                 android:textColor="@color/white"
                 android:textSize="25sp"
-                android:layout_weight="1"
-                android:gravity="center"/>
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:paddingVertical="7.5dp"/>
 
             <RadioButton
                 android:id="@+id/hardDifficultyButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
+                android:layout_weight="1"
                 android:background="@drawable/radio_button_selector"
                 android:button="@android:color/transparent"
                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                android:gravity="center"
                 android:text="@string/hard"
                 android:textColor="@color/white"
                 android:textSize="25sp"
-                android:layout_weight="1"
-                android:gravity="center"/>
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:paddingVertical="7.5dp"/>
         </RadioGroup>
-
-        <TextView
-            android:id="@+id/pairTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/tiles_pairing"
-            android:textSize="25sp"
-            app:layout_constraintBottom_toTopOf="@+id/pairButton"
-            app:layout_constraintStart_toStartOf="@+id/guideline1"
-            app:layout_constraintTop_toBottomOf="@+id/difficultyRadioGroup"
-            android:layout_marginBottom="10dp"/>
-
-        <Button
-            android:id="@+id/pairButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:backgroundTint="@drawable/button_selector"
-            android:stateListAnimator="@null"
-            android:text="@string/start_pairing"
-            android:textSize="25sp"
-            android:typeface="sans"
-            app:cornerRadius="15dp"
-            app:layout_constraintBottom_toTopOf="@+id/numberOfPlayersTextView"
-            app:layout_constraintEnd_toStartOf="@+id/guideline2"
-            app:layout_constraintStart_toStartOf="@+id/guideline1"
-            app:layout_constraintTop_toBottomOf="@+id/pairTextView" />
 
         <TextView
             android:id="@+id/numberOfPlayersTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
             android:text="@string/number_of_players"
             android:textSize="25sp"
             app:layout_constraintBottom_toTopOf="@+id/playersRadioGroup"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintStart_toStartOf="@+id/guideline1"
-            app:layout_constraintTop_toBottomOf="@+id/pairButton"
-            android:layout_marginBottom="10dp"/>
+            app:layout_constraintTop_toBottomOf="@+id/difficultyRadioGroup" />
 
         <RadioGroup
             android:id="@+id/playersRadioGroup"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
+            android:layout_marginBottom="20dp"
             android:orientation="horizontal"
-            app:layout_constraintBottom_toTopOf="@+id/tilesPositioningTextView"
+            app:layout_constraintBottom_toTopOf="@+id/pairTextView"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintStart_toStartOf="@+id/guideline1"
             app:layout_constraintTop_toBottomOf="@+id/numberOfPlayersTextView">
@@ -156,7 +140,10 @@
                 android:gravity="center"
                 android:text="@string/one_players"
                 android:textColor="@color/white"
-                android:textSize="25sp" />
+                android:textSize="25sp"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:paddingVertical="7.5dp"/>
 
             <RadioButton
                 android:id="@+id/twoPlayersButton"
@@ -170,7 +157,10 @@
                 android:gravity="center"
                 android:text="@string/two_players"
                 android:textColor="@color/white"
-                android:textSize="25sp" />
+                android:textSize="25sp"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:paddingVertical="7.5dp"/>
 
             <RadioButton
                 android:id="@+id/threePlayersButton"
@@ -182,11 +172,12 @@
                 android:button="@android:color/transparent"
                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
                 android:gravity="center"
-                android:paddingStart="20dp"
-                android:paddingEnd="20dp"
                 android:text="@string/three_players"
                 android:textColor="@color/white"
-                android:textSize="25sp" />
+                android:textSize="25sp"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:paddingVertical="7.5dp"/>
 
             <RadioButton
                 android:id="@+id/fourPlayersButton"
@@ -200,35 +191,74 @@
                 android:gravity="center"
                 android:text="@string/four_players"
                 android:textColor="@color/white"
-                android:textSize="25sp" />
+                android:textSize="25sp"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:paddingVertical="7.5dp"/>
         </RadioGroup>
 
         <TextView
-            android:id="@+id/tilesPositioningTextView"
-            android:layout_width="wrap_content"
+            android:id="@+id/pairTextView"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/tiles_positioning"
+            android:layout_marginBottom="10dp"
+            android:text="@string/tiles_pairing"
+            android:textSize="25sp"
+            app:layout_constraintBottom_toTopOf="@+id/pairButton"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintStart_toStartOf="@+id/guideline1"
+            app:layout_constraintTop_toBottomOf="@id/playersRadioGroup" />
+
+        <Button
+            android:id="@+id/pairButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
+            android:backgroundTint="@drawable/button_selector"
+            android:stateListAnimator="@null"
+            android:text="@string/start_pairing"
+            android:textSize="25sp"
+            android:typeface="sans"
+            app:cornerRadius="15dp"
+            app:layout_constraintBottom_toTopOf="@+id/tilesConfigurationTextView"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintStart_toStartOf="@+id/guideline1"
+            app:layout_constraintTop_toBottomOf="@+id/pairTextView"
+            android:paddingVertical="7.5dp"/>
+
+        <TextView
+            android:id="@+id/tilesConfigurationTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:text="@string/tiles_configuration"
             android:textSize="25sp"
             app:layout_constraintBottom_toTopOf="@+id/positioningImageView"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintStart_toStartOf="@+id/guideline1"
-            app:layout_constraintTop_toBottomOf="@+id/playersRadioGroup"
-            android:layout_marginBottom="10dp"/>
+            app:layout_constraintTop_toBottomOf="@+id/pairButton"
+            />
 
         <ImageView
             android:id="@+id/positioningImageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:adjustViewBounds="false"
             android:contentDescription="@string/tiles_positioning"
             android:scaleType="fitCenter"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/startGameButton"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintStart_toStartOf="@+id/guideline1"
-            app:layout_constraintTop_toBottomOf="@+id/tilesPositioningTextView"
-            app:srcCompat="@drawable/one_players" />
+            app:layout_constraintTop_toBottomOf="@id/tilesConfigurationTextView"
+            app:srcCompat="@drawable/one_players"
+            android:layout_marginBottom="15dp"/>
 
         <Button
             android:id="@+id/startGameButton"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:paddingVertical="7.5dp"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
             android:backgroundTint="@drawable/button_selector"
             android:stateListAnimator="@null"
             android:text="@string/start_game"
@@ -239,20 +269,6 @@
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintStart_toStartOf="@+id/guideline1"
             app:layout_constraintTop_toBottomOf="@+id/positioningImageView"
-            app:layout_constraintVertical_bias="0.9"/>
-
-        <TextView
-            android:id="@+id/connectedTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:text="Tiles connected: 0"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/guideline2"
-            app:layout_constraintHorizontal_bias="0.911"
-            app:layout_constraintStart_toStartOf="@+id/guideline1"
-            app:layout_constraintTop_toBottomOf="@+id/positioningImageView"
-            app:layout_constraintVertical_bias="0.0" />
+            />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

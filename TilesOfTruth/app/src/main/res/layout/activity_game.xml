@@ -1,20 +1,134 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".GameActivity">
+    android:fillViewport="true">
 
-    <TextView
-        android:id="@+id/connectedTextView"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="56dp"
-        android:text="Tiles connected: 0"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        tools:context=".SetupActivity">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.1" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.9" />
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/logo"
+            android:cropToPadding="false"
+            android:scaleType="fitCenter"
+            app:layout_constraintBottom_toTopOf="@+id/space1"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintHeight_percent="0.1"
+            app:layout_constraintStart_toStartOf="@+id/guideline1"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
+            app:srcCompat="@drawable/logoalternative"
+            android:layout_marginTop="15dp"/>
+
+        <Space
+            android:id="@+id/space1"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/questionTextView"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintHeight_percent="0.2"
+            app:layout_constraintStart_toStartOf="@+id/guideline1"
+            app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
+        <TextView
+            android:id="@+id/questionTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/loading_text"
+            android:textAlignment="center"
+            android:textSize="50sp"
+            app:layout_constraintBottom_toTopOf="@+id/space2"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintStart_toStartOf="@+id/guideline1"
+            app:layout_constraintTop_toBottomOf="@+id/space1" />
+
+        <Space
+            android:id="@+id/space2"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintHeight_percent="0.2"
+            app:layout_constraintStart_toStartOf="@+id/guideline1"
+            app:layout_constraintTop_toBottomOf="@+id/questionTextView" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintStart_toStartOf="@+id/guideline1"
+            app:layout_constraintTop_toBottomOf="@+id/space2">
+
+            <ImageView
+                android:id="@+id/trueTileImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:contentDescription="@string/true_tile"
+                app:srcCompat="@drawable/truetile" />
+
+            <ImageView
+                android:id="@+id/falseTileImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:contentDescription="@string/false_tile"
+                app:srcCompat="@drawable/falsetile" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintStart_toStartOf="@+id/guideline1"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
+            android:layout_marginBottom="15dp">
+
+            <TextView
+                android:id="@+id/trueTextView"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="@string/true_string"
+                android:textAlignment="center"
+                android:textSize="25sp" />
+
+            <TextView
+                android:id="@+id/falseTextView"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="@string/false_string"
+                android:textAlignment="center"
+                android:textSize="25sp" />
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

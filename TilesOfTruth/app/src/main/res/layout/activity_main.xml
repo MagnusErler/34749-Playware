@@ -39,13 +39,12 @@
         <ImageView
             android:id="@+id/logoImageView"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:adjustViewBounds="true"
             android:contentDescription="@string/logo"
             android:scaleType="fitCenter"
             app:layout_constraintBottom_toTopOf="@+id/space2"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
-            app:layout_constraintHeight_percent="0.2"
             app:layout_constraintStart_toStartOf="@+id/guideline1"
             app:layout_constraintTop_toBottomOf="@+id/space1"
             app:srcCompat="@drawable/logoalternative" />
@@ -56,7 +55,7 @@
             android:layout_height="0dp"
             app:layout_constraintBottom_toTopOf="@+id/playButton"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
-            app:layout_constraintHeight_percent="0.05"
+            app:layout_constraintHeight_percent="0.1"
             app:layout_constraintStart_toStartOf="@+id/guideline1"
             app:layout_constraintTop_toBottomOf="@+id/logoImageView" />
 
@@ -73,7 +72,8 @@
             app:layout_constraintBottom_toTopOf="@+id/scoreboardButton"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintStart_toStartOf="@+id/guideline1"
-            app:layout_constraintTop_toBottomOf="@+id/space2" />
+            app:layout_constraintTop_toBottomOf="@+id/space2"
+            android:paddingVertical="7.5dp"/>
 
         <Button
             android:id="@+id/scoreboardButton"
@@ -88,7 +88,8 @@
             app:layout_constraintBottom_toTopOf="@+id/space3"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintStart_toStartOf="@+id/guideline1"
-            app:layout_constraintTop_toBottomOf="@+id/playButton" />
+            app:layout_constraintTop_toBottomOf="@+id/playButton"
+            android:paddingVertical="7.5dp"/>
 
         <Space
             android:id="@+id/space3"

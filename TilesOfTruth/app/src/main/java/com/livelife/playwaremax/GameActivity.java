@@ -5,6 +5,7 @@ import static com.livelife.motolibrary.AntData.LED_COLOR_GREEN;
 import static com.livelife.motolibrary.AntData.LED_COLOR_OFF;
 import static com.livelife.motolibrary.AntData.LED_COLOR_RED;
 
+import android.annotation.SuppressLint;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
@@ -66,10 +67,13 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
 
         answeredQuestionsNr.add(randomQuestionNr);
 
+        // Question update
         String[] separated = getQuestionFromCSV(randomQuestionNr).split(",");
         String Question = separated[0];
         boolean Answer = Boolean.parseBoolean(separated[1]);
-        Toast.makeText(GameActivity.this, "Question: " + Question + ", Answer: " + Answer, Toast.LENGTH_LONG).show();
+        TextView questionTextView = findViewById(R.id.questionTextView);
+        questionTextView.setText(Question);
+        //Toast.makeText(GameActivity.this, "Question: " + Question + ", Answer: " + Answer, Toast.LENGTH_LONG).show();
         textToSpeech(Question);
 
         // Moto Connection
@@ -219,9 +223,9 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         connection.setAllTilesToInit();
     }
 
-    @Override
+   @Override
     public void onNumbersOfTilesConnected(int i) {
-        TextView connectedTextView = findViewById(R.id.connectedTextView);
-        connectedTextView.setText("Tiles connected: "+i);
+        //TextView connectedTextView = findViewById(R.id.connectedTextView);
+        //connectedTextView.setText("Tiles connected: "+i);
     }
 }

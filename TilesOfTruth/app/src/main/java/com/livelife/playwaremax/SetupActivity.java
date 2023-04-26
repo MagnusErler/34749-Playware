@@ -151,10 +151,10 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
                 case 2:
                     //Stopping pairing tiles -> tiles are OFF
                     connection.pairTilesStop();
-                    playersRadioGroup.setVisibility(View.VISIBLE);
-                    numberOfPlayersTextView.setVisibility(View.VISIBLE);
-                    tilesPositioningTextView.setVisibility(View.VISIBLE);
-                    positioningImageView.setVisibility(View.VISIBLE);
+                    //playersRadioGroup.setVisibility(View.VISIBLE);
+                    //numberOfPlayersTextView.setVisibility(View.VISIBLE);
+                    //tilesPositioningTextView.setVisibility(View.VISIBLE);
+                    //positioningImageView.setVisibility(View.VISIBLE);
                     setupTilesPosition(numberOfPlayers);
                     textToSpeech("Place the two tiles 3 meters apart and stand between them. Press next when you are done.");
                     pairingButton.setText("Next");
@@ -186,16 +186,16 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
 
         // ------ Number of players ------
         numberOfPlayersTextView = findViewById(R.id.numberOfPlayersTextView);
-        numberOfPlayersTextView.setVisibility(View.INVISIBLE);
+        //numberOfPlayersTextView.setVisibility(View.INVISIBLE);
 
         playersRadioGroup = findViewById(R.id.playersRadioGroup);
-        playersRadioGroup.setVisibility(View.INVISIBLE);
+        //playersRadioGroup.setVisibility(View.INVISIBLE);
 
-        tilesPositioningTextView = findViewById(R.id.tilesPositioningTextView);
-        tilesPositioningTextView.setVisibility(View.INVISIBLE);
+        //tilesPositioningTextView = findViewById(R.id.tilesPositioningTextView);
+        //tilesPositioningTextView.setVisibility(View.INVISIBLE);
 
         positioningImageView = findViewById(R.id.positioningImageView);
-        positioningImageView.setVisibility(View.INVISIBLE);
+        //positioningImageView.setVisibility(View.INVISIBLE);
 
         playersRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             switch(checkedId) {
@@ -653,8 +653,8 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
 
     @Override
     public void onNumbersOfTilesConnected(int i) {
-        TextView connectedTextView = findViewById(R.id.connectedTextView);
-        connectedTextView.setText("Tiles connected: "+i);
+        TextView pairTextView = findViewById(R.id.pairTextView);
+        pairTextView.setText("Tiles pairing (connected tiles: " + i + ")");
     }
 
     @Override

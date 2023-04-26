@@ -56,6 +56,9 @@
             android:textSize="25sp"
             android:layout_weight="1"
             android:gravity="center"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:paddingVertical="7.5dp"
             />
 
         <RadioButton
@@ -72,6 +75,9 @@
             android:textSize="25sp"
             android:layout_weight="1"
             android:gravity="center"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:paddingVertical="7.5dp"
             />
 
         <RadioButton
@@ -87,6 +93,9 @@
             android:textSize="25sp"
             android:layout_weight="1"
             android:gravity="center"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:paddingVertical="7.5dp"
             />
     </RadioGroup>
 

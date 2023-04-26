@@ -4,7 +4,7 @@
     <string name="scoreboard">Scoreboard</string>
     <string name="logo">logo</string>
     <string name="illustration">Tiles main page</string>
-    <string name="tiles_pairing">Tiles pairing</string>
+    <string name="tiles_pairing">Tiles pairing (connected tiles: 0)</string>
     <string name="start_pairing">Start pairing</string>
     <string name="difficulty">Difficulty</string>
     <string name="easy">EASY</string>
@@ -15,6 +15,12 @@
     <string name="two_players">2</string>
     <string name="three_players">3</string>
     <string name="four_players">4</string>
-    <string name="tiles_positioning">Tiles positioning</string>
+    <string name="tiles_configuration">Tiles configuration</string>
     <string name="start_game">START GAME</string>
+    <string name="loading_text">The questions are being loaded..</string>
+    <string name="true_string">True</string>
+    <string name="false_string">False</string>
+    <string name="false_tile">False tile</string>
+    <string name="true_tile">True tile</string>
+    <string name="tiles_positioning">Tiles positioning</string>
 </resources>
