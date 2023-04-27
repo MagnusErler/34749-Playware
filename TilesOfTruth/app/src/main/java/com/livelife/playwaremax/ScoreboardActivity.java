@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -147,7 +146,7 @@ public class ScoreboardActivity extends AppCompatActivity {
 
                         //Split string into two varibale seperated by ","
                         String[] parts = session.getString("device_token").split(",");
-                        if (parts[0].equals("ToT")) {
+                        if (parts[0].equals("ToT1")) {
                             String gameWinner_Name = parts[1];
                             String gameWinner_Score = parts[2];
                             String gameWinner_Difficulty = parts[3];

@@ -26,7 +26,6 @@ import com.livelife.motolibrary.AntData;
 import com.livelife.motolibrary.MotoConnection;
 import com.livelife.motolibrary.OnAntEventListener;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -38,7 +37,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
-import java.util.UUID;
 
 public class GameActivity extends AppCompatActivity implements OnAntEventListener {
 
@@ -365,20 +363,20 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
 
         String difficulty_text;
         if (difficulty == 1){
-            difficulty_text = "easy";
+            difficulty_text = "Easy";
         } else if (difficulty == 2){
-            difficulty_text = "medium";
+            difficulty_text = "Medium";
         } else if (difficulty == 3){
-            difficulty_text = "hard";
+            difficulty_text = "Hard";
         } else {
-            difficulty_text = "easy";
+            difficulty_text = "Easy";
         }
 
         RemoteHttpRequest requestPackage = new RemoteHttpRequest();
         requestPackage.setMethod("POST");
         requestPackage.setUrl(endpoint);
         requestPackage.setParam("method", "postGameSession");
-        requestPackage.setParam("device_token", "ToT," + gameWinner + "," + score + "," + difficulty_text);
+        requestPackage.setParam("device_token", "ToT1," + gameWinner + "," + score + "," + difficulty_text);
 
         requestPackage.setParam("game_time","30");
         requestPackage.setParam("game_id", "1");
