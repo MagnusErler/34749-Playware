@@ -95,8 +95,11 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         //Toast.makeText(GameActivity.this, "Question: " + Question + ", Answer: " + Answer, Toast.LENGTH_LONG).show();
         textToSpeech(Question);
 
+        startTimer();
 
+    }
 
+    void startTimer() {
         TextView timer = findViewById(R.id.timer);
         new CountDownTimer(10000, 1000) {
 
@@ -111,9 +114,9 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
             }
 
         }.start();
-
-
     }
+
+
     // ------------------------------- //
     // For going back to previous activity
     @Override
