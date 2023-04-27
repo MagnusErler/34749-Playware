@@ -168,7 +168,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
             });
 
             //Toast.makeText(GameActivity.this, "Question: " + Question + ", Answer: " + answer_int, Toast.LENGTH_LONG).show();
-            //textToSpeech(Question); SHUT THE FUCK UP
+            textToSpeech(Question); //SHUT THE FUCK UP
             if(!firstRound)timerRound.cancel(); //Cancel previous timer
             startTimer_Round(5000);
         }
@@ -343,6 +343,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     public void textToSpeech(String textToSay) {
         textToSpeechSystem = new TextToSpeech(this, status -> {
             if (status == TextToSpeech.SUCCESS) {
+                textToSpeechSystem.setSpeechRate(1.2F);
                 textToSpeechSystem.speak(textToSay, TextToSpeech.QUEUE_FLUSH, null);
             }
         });
