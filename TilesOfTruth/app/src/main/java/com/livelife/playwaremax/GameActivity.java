@@ -49,6 +49,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
 
     // ------------------------------- //
     // Game logic/Score
+    boolean gameOver = false;
     boolean newRound = false;
     int numberOfPlayersPressed = 0;
     boolean answer_bool;
@@ -83,7 +84,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         player4_trueTile = tileIDs[6];
         player4_falseTile = tileIDs[7];
 
-        gameOver();
+        //gameOver();
 
         startTimer_Game(30000);
         gameLogic(defaultArray, false, true);
@@ -103,7 +104,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         }
         if(numberOfPlayersPressed == numberOfPlayers) newRound = true;
 
-        if (newRound) {
+        if (newRound && !gameOver) {
             playerPressedList.clear();
             newRound = false;
             // Get a new question
@@ -127,7 +128,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     }
 
     void startTimer_Round(int time) {
-        TextView timer = findViewById(R.id.timer);
+        TextView timer = findViewById(R.id.roundTimeTextView);
         new CountDownTimer(time, 1000) {
             public void onTick(long millisUntilFinished) {
                 timeLeft_Round = (int) (millisUntilFinished / 1000);
@@ -145,7 +146,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     }
 
     void startTimer_Game(int time) {
-        TextView timer = findViewById(R.id.timer);
+        TextView timer = findViewById(R.id.gameTimeTextView);
         new CountDownTimer(time, 1000) {
             public void onTick(long millisUntilFinished) {
                 timeLeft_Game = (int) (millisUntilFinished / 1000);
@@ -153,12 +154,14 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
 
             public void onFinish() {
                 timer.setText("Game Over");
+                gameOver();
             }
 
         }.start();
     }
 
     void gameOver() {
+        gameOver = true;
         AlertDialog.Builder gameOver_AlertDialog = new AlertDialog.Builder(this);
         gameOver_AlertDialog.setIcon(android.R.drawable.ic_dialog_alert);
         gameOver_AlertDialog.setTitle("Player: XX" + " won this round!");
@@ -205,42 +208,42 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         //int color = AntData.getColorFromPress(bytes);
 
         if(command == EVENT_PRESS) {
-            Log.d("tag", "tileID: " + tileId);
+            Log.d("tile_press", "tileID: " + tileId);
 
             if (tileId == player1_trueTile) {
-                Log.d("tag", "Player 1 True Tile pressed");
+                Log.d("tile_press", "Player 1 True Tile pressed");
                 pressArray[0] = 1;
                 pressArray[1] = 1;
             } else if (tileId == player1_falseTile) {
-                Log.d("tag", "Player 1 False Tile pressed");
+                Log.d("tile_press", "Player 1 False Tile pressed");
                 pressArray[0] = 1;
                 pressArray[1] = 0;
             } else if (tileId == player2_trueTile) {
-                Log.d("tag", "Player 2 True Tile pressed");
+                Log.d("tile_press", "Player 2 True Tile pressed");
                 pressArray[0] = 2;
                 pressArray[1] = 1;
             } else if (tileId == player2_falseTile) {
-                Log.d("tag", "Player 2 False Tile pressed");
+                Log.d("tile_press", "Player 2 False Tile pressed");
                 pressArray[0] = 2;
                 pressArray[1] = 0;
             } else if (tileId == player3_trueTile) {
-                Log.d("tag", "Player 3 True Tile pressed");
+                Log.d("tile_press", "Player 3 True Tile pressed");
                 pressArray[0] = 3;
                 pressArray[1] = 1;
             } else if (tileId == player3_falseTile) {
-                Log.d("tag", "Player 3 False Tile pressed");
+                Log.d("tile_press", "Player 3 False Tile pressed");
                 pressArray[0] = 3;
                 pressArray[1] = 0;
             } else if (tileId == player4_trueTile) {
-                Log.d("tag", "Player 4 True Tile pressed");
+                Log.d("tile_press", "Player 4 True Tile pressed");
                 pressArray[0] = 4;
                 pressArray[1] = 1;
             } else if (tileId == player4_falseTile) {
-                Log.d("tag", "Player 4 False Tile pressed");
+                Log.d("tile_press", "Player 4 False Tile pressed");
                 pressArray[0] = 4;
                 pressArray[1] = 0;
             } else {
-                Log.d("tag", "ERROR: Tile not found");
+                Log.d("tile_press", "ERROR: Tile not found");
             }
             gameLogic(pressArray,false,false);
         }
