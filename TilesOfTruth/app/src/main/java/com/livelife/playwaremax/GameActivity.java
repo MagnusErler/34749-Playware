@@ -88,6 +88,8 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         // Enable Back-button
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
+        apiOutput = findViewById(R.id.apiOutput);
+
         // Data from SetupActivity
         int[] setup = getIntent().getIntArrayExtra("setup_data");
         numberOfPlayers = setup[0];
@@ -107,7 +109,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
 
         //gameOver();
 
-        startTimer_Game(30000);
+        startTimer_Game(10000);
         gameLogic(defaultArray, false, true);
     }
     void gameLogic(int[] playerPressed, Boolean timeOut,Boolean firstRound) {
@@ -150,7 +152,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
             //Toast.makeText(GameActivity.this, "Question: " + Question + ", Answer: " + answer_int, Toast.LENGTH_LONG).show();
             textToSpeech(Question);
 
-            startTimer_Round(10000);
+            startTimer_Round(5000);
         }
     }
 
@@ -218,7 +220,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         gameOver_AlertDialog.setPositiveButton("Enter", (dialogInterface, i) -> {
                     //set what would happen when positive button is clicked
                     postGameWinner(input.getText().toString());
-                    finish();
+                    finish(); //Go back to previos activity
                 });
         gameOver_AlertDialog.setNegativeButton("No", (dialogInterface, i) -> {
                     //set what should happen when negative button is clicked
@@ -338,28 +340,20 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         RemoteHttpRequest requestPackage = new RemoteHttpRequest();
         requestPackage.setMethod("POST");
         requestPackage.setUrl(endpoint);
-        requestPackage.setParam("method", "postGameWinner"); // The method name
-        requestPackage.setParam("device_token", getDeviceToken()); // Your device token
-        requestPackage.setParam("winner_name", gameWinner); // The name of the person accepting the challenge
+        requestPackage.setParam("method", "postGameSession"); // The method name
+        requestPackage.setParam("device_token", "ToT," + gameWinner + ",10"); // Your device token
+
+        requestPackage.setParam("game_time","30");
+        requestPackage.setParam("game_id", "1");
+        requestPackage.setParam("group_id", "420"); // Your group ID
+        requestPackage.setParam("game_type_id", "1"); // The name of the person accepting the challenge
+        requestPackage.setParam("game_score", "10"); // The name of the person accepting the challenge
         //requestPackage.setParam("gcid", String.valueOf(challengeID)); // The game challenge id you want to accept
 
         Downloader downloader = new Downloader(); //Instantiation of the Async task
         //that’s defined below
 
         downloader.execute(requestPackage);
-    }
-
-    private String getDeviceToken() {
-        // Get unique device_token from shared preferences
-        // Remember that what is saved in sharedPref exists until you delete the app!
-        String device_token = sharedPref.getString("device_token",null);
-
-        if(device_token == null) { // If device_token was never saved and null create one
-            device_token =  UUID.randomUUID().toString(); // Get a new device_token
-            sharedPref.edit().putString("device_token",device_token).apply(); // save it to shared preferences so next time will be used
-        }
-
-        return device_token;
     }
 
     private class Downloader extends AsyncTask<RemoteHttpRequest, String, String> {
@@ -386,87 +380,6 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
                 Log.i("sessions","response: "+jsonObject.getBoolean("response"));
                 // Update UI
                 apiOutput.setText(message);
-
-
-
-                /*if(jsonObject.getString("method").equals("getGameSessions")) {
-
-                    listFromJson_ArrayList.clear();
-                    games_ArrayList.clear();
-
-                    JSONArray sessions = jsonObject.getJSONArray("results");
-                    for(int i = 0; i < sessions.length();i++) {
-                        JSONObject session = sessions.getJSONObject(i);
-                        Log.i("sessions",session.toString());
-
-                        // get score example:
-                        // String score = session.getString("game_score");
-
-                        listFromJson_ArrayList.add("Game session ID:" + session.getString("sid") + " Score: " + session.getString("game_score") + " Group ID:" + session.getString("group_id") + " Number of tiles:" + session.getString("num_tiles"));
-                    }
-
-                    games_ArrayList.addAll(listFromJson_ArrayList);
-                    gameSessions_ArrayAdapter.notifyDataSetChanged();
-                }
-                else if(jsonObject.getString("method").equals("getGameChallenge")) {
-
-                    listFromJson_ArrayList.clear();
-                    games_ArrayList.clear();
-
-                    JSONArray challenges = jsonObject.getJSONArray("results");
-                    for(int i = 0; i < challenges.length();i++) {
-                        JSONObject challenge = challenges.getJSONObject(i);
-                        Log.i("challenge:",challenge.toString());
-
-                        // get score example:
-                        // String score = session.getString("game_score");
-
-                        listFromJson_ArrayList.add("ChallengeID: " + challenge.getString("gcid") + " Name: " + challenge.getString("challenger_name") + " GameID: " + challenge.getString("game_id") + " GameTypeID: " + challenge.getString("game_type_id") + " Status: " + challenge.getString("c_status"));
-                    }
-
-                    games_ArrayList.addAll(listFromJson_ArrayList);
-                    gameSessions_ArrayAdapter.notifyDataSetChanged();
-                }
-                else if(jsonObject.getString("method").equals("postGameSession")) {
-
-                    Log.i("sessions",message);
-
-                    // Update UI
-
-
-                }
-                else if(jsonObject.getString("method").equals("postGameChallenge")) {
-
-                    Log.i("challenge",message);
-
-                    // Update UI
-
-
-                }
-                else if(jsonObject.getString("method").equals("postGameChallengeAccept")) {
-
-                    Log.i("challengeAccept",message);
-
-                    // Update UI
-
-
-                }
-                /*else if(jsonObject.getString("method").equals("getGameChallenge")) {
-
-                    JSONArray challenges = jsonObject.getJSONArray("results");
-                    for(int i = 0; i < challenges.length();i++) {
-                        JSONObject challenge = challenges.getJSONObject(i);
-                        Log.i("challenge",challenge.toString());
-                        int status = challenge.getInt("c_status");
-                        if(status == 4) {
-                            Log.i("challenge",challenge.getJSONArray("summary").toString());
-                        }
-                    }
-
-
-                    // Update UI
-                }*/
-
 
             } catch (JSONException e) {
                 e.printStackTrace();

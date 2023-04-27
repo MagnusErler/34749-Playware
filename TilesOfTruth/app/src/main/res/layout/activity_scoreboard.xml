@@ -99,6 +99,15 @@
             />
     </RadioGroup>
 
+    <TextView
+        android:id="@+id/apiOutput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_columnSpan="2"
+        android:layout_gravity="center_horizontal"
+        android:text="JSON out..."/>
+
     <ListView
         android:id="@+id/gameSessions_ListView"
         android:layout_width="0dp"

@@ -49,6 +49,8 @@ public class ScoreboardActivity extends AppCompatActivity {
         // Enable Back-button
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
+        apiOutput = findViewById(R.id.apiOutput);
+
         gameSessions_ListView = findViewById(R.id.gameSessions_ListView);
 
         gameSessions_ArrayAdapter = new ArrayAdapter<String>(this,
@@ -94,7 +96,7 @@ public class ScoreboardActivity extends AppCompatActivity {
         RemoteHttpRequest requestPackage = new RemoteHttpRequest();
         requestPackage.setMethod("GET");
         requestPackage.setUrl(endpoint);
-        requestPackage.setParam("method", "getGameWinner"); // The method name
+        requestPackage.setParam("method", "getGameSessions"); // The method name
         requestPackage.setParam("device_token", getDeviceToken()); // Your device token
         requestPackage.setParam("group_id", "420"); // Your group ID
 
@@ -132,20 +134,10 @@ public class ScoreboardActivity extends AppCompatActivity {
                 JSONObject jsonObject = new JSONObject(result);
 
                 String message = jsonObject.getString("message");
-                Log.i("sessions",message);
-
-                // Log the entire response if needed to check the data structure
-                Log.i("sessions",jsonObject.toString());
-
-                // Log response
-                Log.i("sessions","response: "+jsonObject.getBoolean("response"));
                 // Update UI
                 apiOutput.setText(message);
 
-
-
-
-                if(jsonObject.getString("method").equals("getGameWinner")) {
+                if(jsonObject.getString("method").equals("getGameSessions")) {
 
                     listFromJson_ArrayList.clear();
                     games_ArrayList.clear();
@@ -153,97 +145,18 @@ public class ScoreboardActivity extends AppCompatActivity {
                     JSONArray sessions = jsonObject.getJSONArray("results");
                     for(int i = 0; i < sessions.length();i++) {
                         JSONObject session = sessions.getJSONObject(i);
-                        Log.i("sessions", session.toString());
 
-                        // get score example:
-                        // String score = session.getString("game_score");
+                        //Split string into two varibale seperated by ","
+                        String[] parts = session.getString("device_token").split(",");
+                        if (parts[0].equals("ToT")) {
+                            String gameWinner_Name = parts[1];
+                            String gameWinner_Score = parts[2];
 
-                        //listFromJson_ArrayList.add("Game session ID:" + session.getString("sid") + " Score: " + session.getString("game_score") + " Group ID:" + session.getString("group_id") + " Number of tiles:" + session.getString("num_tiles"));
-                        games_ArrayList.add("Game session ID: " + i + " Score: " + i + " Group ID:" + i + " Number of tiles:" + i);
-                    }
-
-                    games_ArrayList.addAll(games_ArrayList);
-                    gameSessions_ArrayAdapter.notifyDataSetChanged();
-                }
-
-                /*if(jsonObject.getString("method").equals("getGameSessions")) {
-
-                    listFromJson_ArrayList.clear();
-                    games_ArrayList.clear();
-
-                    JSONArray sessions = jsonObject.getJSONArray("results");
-                    for(int i = 0; i < sessions.length();i++) {
-                        JSONObject session = sessions.getJSONObject(i);
-                        Log.i("sessions",session.toString());
-
-                        // get score example:
-                        // String score = session.getString("game_score");
-
-                        listFromJson_ArrayList.add("Game session ID:" + session.getString("sid") + " Score: " + session.getString("game_score") + " Group ID:" + session.getString("group_id") + " Number of tiles:" + session.getString("num_tiles"));
-                    }
-
-                    games_ArrayList.addAll(listFromJson_ArrayList);
-                    gameSessions_ArrayAdapter.notifyDataSetChanged();
-                }
-                else if(jsonObject.getString("method").equals("getGameChallenge")) {
-
-                    listFromJson_ArrayList.clear();
-                    games_ArrayList.clear();
-
-                    JSONArray challenges = jsonObject.getJSONArray("results");
-                    for(int i = 0; i < challenges.length();i++) {
-                        JSONObject challenge = challenges.getJSONObject(i);
-                        Log.i("challenge:",challenge.toString());
-
-                        // get score example:
-                        // String score = session.getString("game_score");
-
-                        listFromJson_ArrayList.add("ChallengeID: " + challenge.getString("gcid") + " Name: " + challenge.getString("challenger_name") + " GameID: " + challenge.getString("game_id") + " GameTypeID: " + challenge.getString("game_type_id") + " Status: " + challenge.getString("c_status"));
-                    }
-
-                    games_ArrayList.addAll(listFromJson_ArrayList);
-                    gameSessions_ArrayAdapter.notifyDataSetChanged();
-                }
-                else if(jsonObject.getString("method").equals("postGameSession")) {
-
-                    Log.i("sessions",message);
-
-                    // Update UI
-
-
-                }
-                else if(jsonObject.getString("method").equals("postGameChallenge")) {
-
-                    Log.i("challenge",message);
-
-                    // Update UI
-
-
-                }
-                else if(jsonObject.getString("method").equals("postGameChallengeAccept")) {
-
-                    Log.i("challengeAccept",message);
-
-                    // Update UI
-
-
-                }
-                /*else if(jsonObject.getString("method").equals("getGameChallenge")) {
-
-                    JSONArray challenges = jsonObject.getJSONArray("results");
-                    for(int i = 0; i < challenges.length();i++) {
-                        JSONObject challenge = challenges.getJSONObject(i);
-                        Log.i("challenge",challenge.toString());
-                        int status = challenge.getInt("c_status");
-                        if(status == 4) {
-                            Log.i("challenge",challenge.getJSONArray("summary").toString());
+                            games_ArrayList.add("Name: " + gameWinner_Name + ", Score: " + gameWinner_Score);
                         }
                     }
-
-
-                    // Update UI
-                }*/
-
+                    gameSessions_ArrayAdapter.notifyDataSetChanged();
+                }
 
             } catch (JSONException e) {
                 e.printStackTrace();
