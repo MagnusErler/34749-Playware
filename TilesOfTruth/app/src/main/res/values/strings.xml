@@ -23,4 +23,6 @@
     <string name="false_tile">False tile</string>
     <string name="true_tile">True tile</string>
     <string name="tiles_positioning">Tiles positioning</string>
+    <string name="round_timer_string">Round: 0.00 s</string>
+    <string name="game_timer_string">Game: 0 s</string>
 </resources>

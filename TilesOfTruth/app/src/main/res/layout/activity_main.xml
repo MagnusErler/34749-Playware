@@ -26,7 +26,7 @@
             app:layout_constraintGuide_percent="0.9" />
 
         <Space
-            android:id="@+id/space1"
+            android:id="@+id/activity_main_space1"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintHeight_percent="0.1"
@@ -43,14 +43,14 @@
             android:adjustViewBounds="true"
             android:contentDescription="@string/logo"
             android:scaleType="fitCenter"
-            app:layout_constraintBottom_toTopOf="@+id/space2"
+            app:layout_constraintBottom_toTopOf="@+id/activity_main_space2"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintStart_toStartOf="@+id/guideline1"
-            app:layout_constraintTop_toBottomOf="@+id/space1"
+            app:layout_constraintTop_toBottomOf="@+id/activity_main_space1"
             app:srcCompat="@drawable/logoalternative" />
 
         <Space
-            android:id="@+id/space2"
+            android:id="@+id/activity_main_space2"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintBottom_toTopOf="@+id/playButton"
@@ -72,7 +72,7 @@
             app:layout_constraintBottom_toTopOf="@+id/scoreboardButton"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintStart_toStartOf="@+id/guideline1"
-            app:layout_constraintTop_toBottomOf="@+id/space2"
+            app:layout_constraintTop_toBottomOf="@+id/activity_main_space2"
             android:paddingVertical="7.5dp"/>
 
         <Button
@@ -85,14 +85,14 @@
             android:textSize="25sp"
             android:typeface="sans"
             app:cornerRadius="15dp"
-            app:layout_constraintBottom_toTopOf="@+id/space3"
+            app:layout_constraintBottom_toTopOf="@+id/activity_main_space3"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintStart_toStartOf="@+id/guideline1"
             app:layout_constraintTop_toBottomOf="@+id/playButton"
             android:paddingVertical="7.5dp"/>
 
         <Space
-            android:id="@+id/space3"
+            android:id="@+id/activity_main_space3"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintHeight_percent="0.1"
@@ -108,15 +108,15 @@
             android:adjustViewBounds="true"
             android:contentDescription="@string/illustration"
             android:scaleType="fitCenter"
-            app:layout_constraintBottom_toTopOf="@+id/space4"
+            app:layout_constraintBottom_toTopOf="@+id/activity_main_space4"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintHeight_percent="0.25"
             app:layout_constraintStart_toStartOf="@+id/guideline1"
-            app:layout_constraintTop_toBottomOf="@+id/space3"
+            app:layout_constraintTop_toBottomOf="@+id/activity_main_space3"
             app:srcCompat="@drawable/illustrationandroid" />
 
         <Space
-            android:id="@+id/space4"
+            android:id="@+id/activity_main_space4"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
