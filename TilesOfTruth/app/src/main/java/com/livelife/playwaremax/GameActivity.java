@@ -83,6 +83,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         gameLogic(defaultArray);
     }
     void gameLogic(int[] playerPressed) {
+
         do  {
             randomQuestionNr = getRandomNumber(numberOfQuestions);
         } while (answeredQuestionsNr.contains(randomQuestionNr));
@@ -200,6 +201,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
 
         int command = AntData.getCommand(bytes);
         int tileId = AntData.getId(bytes);
+        int[] pressArray = {0,0};
         //int color = AntData.getColorFromPress(bytes);
 
         if(command == EVENT_PRESS) {
@@ -207,23 +209,40 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
 
             if (tileId == player1_trueTile) {
                 Log.d("tag", "Player 1 True Tile pressed");
+                pressArray[0] = 1;
+                pressArray[1] = 1;
             } else if (tileId == player1_falseTile) {
                 Log.d("tag", "Player 1 False Tile pressed");
+                pressArray[0] = 1;
+                pressArray[1] = 0;
             } else if (tileId == player2_trueTile) {
                 Log.d("tag", "Player 2 True Tile pressed");
+                pressArray[0] = 2;
+                pressArray[1] = 1;
             } else if (tileId == player2_falseTile) {
                 Log.d("tag", "Player 2 False Tile pressed");
+                pressArray[0] = 2;
+                pressArray[1] = 0;
             } else if (tileId == player3_trueTile) {
                 Log.d("tag", "Player 3 True Tile pressed");
+                pressArray[0] = 3;
+                pressArray[1] = 1;
             } else if (tileId == player3_falseTile) {
                 Log.d("tag", "Player 3 False Tile pressed");
+                pressArray[0] = 3;
+                pressArray[1] = 0;
             } else if (tileId == player4_trueTile) {
                 Log.d("tag", "Player 4 True Tile pressed");
+                pressArray[0] = 4;
+                pressArray[1] = 1;
             } else if (tileId == player4_falseTile) {
                 Log.d("tag", "Player 4 False Tile pressed");
+                pressArray[0] = 4;
+                pressArray[1] = 0;
             } else {
                 Log.d("tag", "ERROR: Tile not found");
             }
+            gameLogic(pressArray);
         }
     }
 
