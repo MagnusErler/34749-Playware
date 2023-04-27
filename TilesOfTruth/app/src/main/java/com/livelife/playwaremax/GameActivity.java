@@ -127,8 +127,8 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     }
 
     void startTimer_Round(int time) {
-        TextView timer = findViewById(R.id.timer);
-        new CountDownTimer(time, 1000) {
+        TextView timer = findViewById(R.id.time);
+        CountDownTimer timerRound = new CountDownTimer(time, 1000) {
             public void onTick(long millisUntilFinished) {
                 timeLeft_Round = (int) (millisUntilFinished / 1000);
                 timer.setText("Round: " + timeLeft_Round + ", Game: " + timeLeft_Game);
@@ -141,12 +141,13 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
                 gameLogic(defaultArray, true,false);
             }
 
-        }.start();
+        };
+        timerRound.start();
     }
 
     void startTimer_Game(int time) {
-        TextView timer = findViewById(R.id.timer);
-        new CountDownTimer(time, 1000) {
+        TextView timer = findViewById(R.id.time);
+        CountDownTimer timerGame = new CountDownTimer(time, 1000) {
             public void onTick(long millisUntilFinished) {
                 timeLeft_Game = (int) (millisUntilFinished / 1000);
             }
@@ -155,7 +156,8 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
                 timer.setText("Game Over");
             }
 
-        }.start();
+        };
+        timerGame.start();
     }
 
     void gameOver() {
