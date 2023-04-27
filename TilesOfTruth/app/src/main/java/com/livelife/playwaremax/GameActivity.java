@@ -150,52 +150,6 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         return true;
     }
 
-    public void setupTiles(int numberOfPlayers, int[]tileID) {
-
-        player1_trueTile = tileID[0];
-        player1_falseTile = tileID[1];
-        player2_trueTile = tileID[2];
-        player2_falseTile = tileID[3];
-        player3_trueTile = tileID[4];
-        player3_falseTile = tileID[5];
-        player4_trueTile = tileID[6];
-        player4_falseTile = tileID[7];
-
-        switch (numberOfPlayers) {
-            case 1:
-                connection.setTileNumLeds(LED_COLOR_GREEN, player1_trueTile, 1);
-                connection.setTileNumLeds(LED_COLOR_RED, player1_falseTile, 1);
-                break;
-            case 2:
-                connection.setTileNumLeds(LED_COLOR_GREEN, player1_trueTile, 1);
-                connection.setTileNumLeds(LED_COLOR_RED, player1_falseTile, 1);
-                connection.setTileNumLeds(LED_COLOR_GREEN, player2_trueTile, 2);
-                connection.setTileNumLeds(LED_COLOR_RED, player2_falseTile, 2);
-                break;
-            case 3:
-                connection.setTileNumLeds(LED_COLOR_GREEN, player1_trueTile, 1);
-                connection.setTileNumLeds(LED_COLOR_RED, player1_falseTile, 1);
-                connection.setTileNumLeds(LED_COLOR_GREEN, player2_trueTile, 2);
-                connection.setTileNumLeds(LED_COLOR_RED, player2_falseTile, 2);
-                connection.setTileNumLeds(LED_COLOR_GREEN, player3_trueTile, 3);
-                connection.setTileNumLeds(LED_COLOR_RED, player3_falseTile, 3);
-                break;
-            case 4:
-                connection.setTileNumLeds(LED_COLOR_GREEN, player1_trueTile, 1);
-                connection.setTileNumLeds(LED_COLOR_RED, player1_falseTile, 1);
-                connection.setTileNumLeds(LED_COLOR_GREEN, player2_trueTile, 2);
-                connection.setTileNumLeds(LED_COLOR_RED, player2_falseTile, 2);
-                connection.setTileNumLeds(LED_COLOR_GREEN, player3_trueTile, 3);
-                connection.setTileNumLeds(LED_COLOR_RED, player3_falseTile, 3);
-                connection.setTileNumLeds(LED_COLOR_GREEN, player4_trueTile, 4);
-                connection.setTileNumLeds(LED_COLOR_RED, player4_falseTile, 4);
-                break;
-            default:
-                Log.d("tag", "ERROR: Wrong amount of players");
-                break;
-        }
-    }
-
     @Override
     public void onMessageReceived(byte[] bytes, long l) {
 
