@@ -2,12 +2,13 @@ package com.livelife.playwaremax;
 
 import static com.livelife.motolibrary.AntData.EVENT_PRESS;
 import static com.livelife.motolibrary.AntData.LED_COLOR_GREEN;
-import static com.livelife.motolibrary.AntData.LED_COLOR_OFF;
 import static com.livelife.motolibrary.AntData.LED_COLOR_RED;
 
-import android.annotation.SuppressLint;
 import android.content.res.Resources;
+import android.media.AudioManager;
+import android.media.ToneGenerator;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.Menu;
@@ -57,7 +58,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
-        // Back-button
+        // Enable Back-button
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         // Data from SetupActivity
@@ -83,17 +84,35 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         do  {
             randomQuestionNr = getRandomNumber(numberOfQuestions);
         } while (answeredQuestionsNr.contains(randomQuestionNr));
-
         answeredQuestionsNr.add(randomQuestionNr);
 
         // Question update
-        String[] separated = getQuestionFromCSV(randomQuestionNr).split(",");
-        String Question = separated[0];
-        boolean Answer = Boolean.parseBoolean(separated[1]);
+        String[] QuestionAnswer = getQuestionFromCSV(randomQuestionNr).split(",");
+        String Question = QuestionAnswer[0];
+        boolean Answer = Boolean.parseBoolean(QuestionAnswer[1]);
         TextView questionTextView = findViewById(R.id.questionTextView);
         questionTextView.setText(Question);
         //Toast.makeText(GameActivity.this, "Question: " + Question + ", Answer: " + Answer, Toast.LENGTH_LONG).show();
         textToSpeech(Question);
+
+
+
+        TextView timer = findViewById(R.id.timer);
+        new CountDownTimer(10000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+                timer.setText("" + millisUntilFinished / 1000);
+                ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 40);
+                toneG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 200);
+            }
+
+            public void onFinish() {
+                timer.setText("Answer");
+            }
+
+        }.start();
+
+
     }
     // ------------------------------- //
     // For going back to previous activity
