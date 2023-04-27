@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.RadioGroup;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -31,6 +32,7 @@ public class ScoreboardActivity extends AppCompatActivity {
     String endpoint = "https://centerforplayware.com/api/index.php";
     SharedPreferences sharedPref;
     ArrayList<String> listFromJson_ArrayList = new ArrayList<>();
+    int sortByDifficulty = 10;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +59,27 @@ public class ScoreboardActivity extends AppCompatActivity {
         });
 
         getGameWinner();
+
+        RadioGroup playersRadioGroup = findViewById(R.id.difficultyRadioGroup);
+        playersRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            switch(checkedId) {
+                case R.id.allScoreboardButton:
+                    sortByDifficulty = 10;
+                    break;
+                case R.id.easyScoreboardButton:
+                    sortByDifficulty = 0;
+                    break;
+                case R.id.normalScoreboardButton:
+                    sortByDifficulty = 1;
+                    break;
+                case R.id.hardScoreboardButton:
+                    sortByDifficulty = 2;
+                    break;
+                default:
+                    break;
+            }
+            getGameWinner();
+        });
     }
 
     @Override
@@ -122,12 +145,29 @@ public class ScoreboardActivity extends AppCompatActivity {
 
                         //Split string into two varibale seperated by ","
                         String[] parts = session.getString("device_token").split(",");
-                        if (parts[0].equals("ToT1")) {
+                        if (parts[0].equals("ToT2")) {
                             String gameWinner_Name = parts[1];
                             String gameWinner_Score = parts[2];
-                            String gameWinner_Difficulty = parts[3];
+                            int gameWinner_Difficulty = Integer.parseInt(parts[3]);
 
-                            games_ArrayList.add("Name: " + gameWinner_Name + ", Score: " + gameWinner_Score + ", Difficulty: " + gameWinner_Difficulty);
+                            String difficulty_text;
+                            if (gameWinner_Difficulty == 0){
+                                difficulty_text = "Easy";
+                            } else if (gameWinner_Difficulty == 1){
+                                difficulty_text = "Medium";
+                            } else if (gameWinner_Difficulty == 2){
+                                difficulty_text = "Hard";
+                            } else {
+                                difficulty_text = "Easy";
+                            }
+
+                            if (sortByDifficulty == gameWinner_Difficulty) {
+                                games_ArrayList.add("Name: " + gameWinner_Name + ", Score: " + gameWinner_Score + ", Difficulty: " + difficulty_text);
+                            }
+
+                            if (sortByDifficulty == 10) {
+                                games_ArrayList.add("Name: " + gameWinner_Name + ", Score: " + gameWinner_Score + ", Difficulty: " + difficulty_text);
+                            }
                         }
                     }
                     gameSessions_ArrayAdapter.notifyDataSetChanged();

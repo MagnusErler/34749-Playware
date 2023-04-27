@@ -379,10 +379,6 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
                 textToSpeechSystem.speak(textToSay, TextToSpeech.QUEUE_FLUSH, null);
             }
         });
-
-
-
-
     }
 
     @Override
@@ -398,22 +394,11 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
 
     private void postGameWinner(String gameWinner, int score) {
 
-        String difficulty_text;
-        if (difficulty == 0){
-            difficulty_text = "Easy";
-        } else if (difficulty == 1){
-            difficulty_text = "Medium";
-        } else if (difficulty == 2){
-            difficulty_text = "Hard";
-        } else {
-            difficulty_text = "Easy";
-        }
-
         RemoteHttpRequest requestPackage = new RemoteHttpRequest();
         requestPackage.setMethod("POST");
         requestPackage.setUrl(endpoint);
         requestPackage.setParam("method", "postGameSession");
-        requestPackage.setParam("device_token", "ToT1," + gameWinner + "," + score + "," + difficulty_text);
+        requestPackage.setParam("device_token", "ToT2," + gameWinner + "," + score + "," + difficulty);
 
         requestPackage.setParam("game_time","30");
         requestPackage.setParam("game_id", "1");

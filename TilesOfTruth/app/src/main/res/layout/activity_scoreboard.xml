@@ -44,6 +44,25 @@
         app:layout_constraintTop_toBottomOf="@+id/difficultyScoreboardTextView">
 
         <RadioButton
+            android:id="@+id/allScoreboardButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@drawable/radio_button_selector"
+            android:button="@android:color/transparent"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
+            android:text="ALL"
+            android:checked="true"
+            android:textColor="@color/white"
+            android:textSize="25sp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:paddingVertical="7.5dp"
+            />
+
+        <RadioButton
             android:id="@+id/easyScoreboardButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -68,7 +87,6 @@
             android:layout_margin="5dp"
             android:background="@drawable/radio_button_selector"
             android:button="@android:color/transparent"
-            android:checked="true"
             android:foreground="?android:attr/selectableItemBackgroundBorderless"
             android:text="@string/normal"
             android:textColor="@color/white"
@@ -98,15 +116,6 @@
             android:paddingVertical="7.5dp"
             />
     </RadioGroup>
-
-    <TextView
-        android:id="@+id/apiOutput"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:layout_columnSpan="2"
-        android:layout_gravity="center_horizontal"
-        android:text="JSON out..."/>
 
     <ListView
         android:id="@+id/gameSessions_ListView"

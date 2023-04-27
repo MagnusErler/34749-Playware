@@ -114,15 +114,6 @@
             app:layout_constraintStart_toStartOf="@+id/guideline1"
             app:layout_constraintTop_toBottomOf="@+id/questionTextView" />
 
-        <TextView
-            android:id="@+id/apiOutput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:layout_columnSpan="2"
-            android:layout_gravity="center_horizontal"
-            android:text="JSON out..."/>
-
         <TableLayout
             android:id="@+id/scoreTableLayout"
             android:layout_width="wrap_content"
