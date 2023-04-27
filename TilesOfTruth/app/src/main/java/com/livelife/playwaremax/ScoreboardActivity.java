@@ -78,10 +78,9 @@ public class ScoreboardActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                return true;
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -151,8 +150,9 @@ public class ScoreboardActivity extends AppCompatActivity {
                         if (parts[0].equals("ToT")) {
                             String gameWinner_Name = parts[1];
                             String gameWinner_Score = parts[2];
+                            String gameWinner_Difficulty = parts[3];
 
-                            games_ArrayList.add("Name: " + gameWinner_Name + ", Score: " + gameWinner_Score);
+                            games_ArrayList.add("Name: " + gameWinner_Name + ", Score: " + gameWinner_Score + ", Difficulty: " + gameWinner_Difficulty);
                         }
                     }
                     gameSessions_ArrayAdapter.notifyDataSetChanged();

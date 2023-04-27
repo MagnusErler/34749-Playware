@@ -183,12 +183,9 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
             public void onTick(long millisUntilFinished) {
                 timeLeft_Round = (int) (millisUntilFinished / 1000);
 
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        timerRound_TextView.setText("Round: " + timeLeft_Round + "s");
-                        timerGame_TextView.setText("Game: " + timeLeft_Game + "s");
-                    }
+                runOnUiThread(() -> {
+                    timerRound_TextView.setText("Round: " + timeLeft_Round + "s");
+                    timerGame_TextView.setText("Game: " + timeLeft_Game + "s");
                 });
 
                 ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 40);
@@ -196,12 +193,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
             }
 
             public void onFinish() {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        timerRound_TextView.setText("Round Over");
-                    }
-                });
+                runOnUiThread(() -> timerRound_TextView.setText("Round Over"));
 
                 gameLogic(defaultArray, true,false);
             }
@@ -227,19 +219,32 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     }
 
     void gameOver() {
+
+        //Find the highest number of playerScores and the player with that score
+        int maxScore = 0;
+        int maxScorePlayer = 0;
+        for (int i = 0; i < playerScores.length; i++) {
+            if (playerScores[i] > maxScore) {
+                maxScore = playerScores[i];
+                maxScorePlayer = i;
+            }
+        }
+
+
         gameOver = true;
         AlertDialog.Builder gameOver_AlertDialog = new AlertDialog.Builder(this);
         gameOver_AlertDialog.setIcon(android.R.drawable.ic_dialog_alert);
-        gameOver_AlertDialog.setTitle("Player: XX" + " won this round!");
+        gameOver_AlertDialog.setTitle("Player " + maxScorePlayer + " won this game with" + maxScore + " points");
         gameOver_AlertDialog.setMessage("Please fill in you name for the score board");
 
         final EditText input = new EditText(GameActivity.this);
         input.setInputType(InputType.TYPE_CLASS_TEXT);
         gameOver_AlertDialog.setView(input);
 
+        int finalMaxScore = maxScore;
         gameOver_AlertDialog.setPositiveButton("Enter", (dialogInterface, i) -> {
                     //set what would happen when positive button is clicked
-                    postGameWinner(input.getText().toString());
+                    postGameWinner(input.getText().toString(), finalMaxScore);
                     finish(); //Go back to previos activity
                 });
         gameOver_AlertDialog.setNegativeButton("No", (dialogInterface, i) -> {
@@ -356,22 +361,32 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         //connectedTextView.setText("Tiles connected: "+i);
     }
 
-    private void postGameWinner(String gameWinner) {
+    private void postGameWinner(String gameWinner, int score) {
+
+        String difficulty_text;
+        if (difficulty == 1){
+            difficulty_text = "easy";
+        } else if (difficulty == 2){
+            difficulty_text = "medium";
+        } else if (difficulty == 3){
+            difficulty_text = "hard";
+        } else {
+            difficulty_text = "easy";
+        }
+
         RemoteHttpRequest requestPackage = new RemoteHttpRequest();
         requestPackage.setMethod("POST");
         requestPackage.setUrl(endpoint);
-        requestPackage.setParam("method", "postGameSession"); // The method name
-        requestPackage.setParam("device_token", "ToT," + gameWinner + ",10"); // Your device token
+        requestPackage.setParam("method", "postGameSession");
+        requestPackage.setParam("device_token", "ToT," + gameWinner + "," + score + "," + difficulty_text);
 
         requestPackage.setParam("game_time","30");
         requestPackage.setParam("game_id", "1");
-        requestPackage.setParam("group_id", "420"); // Your group ID
-        requestPackage.setParam("game_type_id", "1"); // The name of the person accepting the challenge
-        requestPackage.setParam("game_score", "10"); // The name of the person accepting the challenge
-        //requestPackage.setParam("gcid", String.valueOf(challengeID)); // The game challenge id you want to accept
+        requestPackage.setParam("group_id", "420");
+        requestPackage.setParam("game_type_id", "1");
+        requestPackage.setParam("game_score", "10");
 
-        Downloader downloader = new Downloader(); //Instantiation of the Async task
-        //that’s defined below
+        Downloader downloader = new Downloader();
 
         downloader.execute(requestPackage);
     }
@@ -391,14 +406,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
                 JSONObject jsonObject = new JSONObject(result);
 
                 String message = jsonObject.getString("message");
-                Log.i("sessions",message);
 
-                // Log the entire response if needed to check the data structure
-                Log.i("sessions",jsonObject.toString());
-
-                // Log response
-                Log.i("sessions","response: "+jsonObject.getBoolean("response"));
-                // Update UI
                 apiOutput.setText(message);
 
             } catch (JSONException e) {
