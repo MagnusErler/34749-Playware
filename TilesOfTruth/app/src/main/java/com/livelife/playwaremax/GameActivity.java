@@ -59,6 +59,15 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     int timeLeft_Game;  //milliseconds
     int[] playerScores = {0, 0, 0, 0};
     int[] defaultArray = {0, 0}; //For calling gameLogic() when no press is detected
+    CountDownTimer timerRound;
+    CountDownTimer timerGame;
+
+    //Database
+    TextView apiOutput;
+    String endpoint = "https://centerforplayware.com/api/index.php";
+    SharedPreferences sharedPref;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -129,7 +138,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
 
     void startTimer_Round(int time) {
         TextView timer = findViewById(R.id.roundTimeTextView);
-        CountDownTimer timerRound = new CountDownTimer(time, 1000) {
+        timerRound = new CountDownTimer(time, 1000) {
             public void onTick(long millisUntilFinished) {
                 timeLeft_Round = (int) (millisUntilFinished / 1000);
                 timer.setText("Round: " + timeLeft_Round + ", Game: " + timeLeft_Game);
@@ -148,7 +157,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
 
     void startTimer_Game(int time) {
         TextView timer = findViewById(R.id.gameTimeTextView);
-        CountDownTimer timerGame = new CountDownTimer(time, 1000) {
+        timerGame = new CountDownTimer(time, 1000) {
             public void onTick(long millisUntilFinished) {
                 timeLeft_Game = (int) (millisUntilFinished / 1000);
             }
