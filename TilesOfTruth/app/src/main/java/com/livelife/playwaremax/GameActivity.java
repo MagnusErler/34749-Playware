@@ -220,8 +220,8 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
 
         //Find the highest number of playerScores and the player with that score
         int maxScore = 0;
-        int maxScorePlayer = 0;
-        for (int i = 0; i < playerScores.length; i++) {
+        int maxScorePlayer = 1;
+        for (int i = 1; i < playerScores.length; i++) {
             if (playerScores[i] > maxScore) {
                 maxScore = playerScores[i];
                 maxScorePlayer = i;
@@ -232,7 +232,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         gameOver = true;
         AlertDialog.Builder gameOver_AlertDialog = new AlertDialog.Builder(this);
         gameOver_AlertDialog.setIcon(android.R.drawable.ic_dialog_alert);
-        gameOver_AlertDialog.setTitle("Player " + maxScorePlayer + " won this game with" + maxScore + " points");
+        gameOver_AlertDialog.setTitle("Player " + maxScorePlayer + " won this game with " + maxScore + " points");
         gameOver_AlertDialog.setMessage("Please fill in you name for the score board");
 
         final EditText input = new EditText(GameActivity.this);
@@ -362,11 +362,11 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     private void postGameWinner(String gameWinner, int score) {
 
         String difficulty_text;
-        if (difficulty == 1){
+        if (difficulty == 0){
             difficulty_text = "Easy";
-        } else if (difficulty == 2){
+        } else if (difficulty == 1){
             difficulty_text = "Medium";
-        } else if (difficulty == 3){
+        } else if (difficulty == 2){
             difficulty_text = "Hard";
         } else {
             difficulty_text = "Easy";
