@@ -5,21 +5,14 @@ import static com.livelife.motolibrary.AntData.LED_COLOR_GREEN;
 import static com.livelife.motolibrary.AntData.LED_COLOR_OFF;
 import static com.livelife.motolibrary.AntData.LED_COLOR_RED;
 
-import android.app.AlertDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,15 +24,8 @@ import com.livelife.motolibrary.MotoConnection;
 import com.livelife.motolibrary.MotoSound;
 import com.livelife.motolibrary.OnAntEventListener;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.InputStream;
 import java.net.InetAddress;
-import java.util.ArrayList;
 import java.util.Objects;
-import java.util.UUID;
 
 public class SetupActivity extends AppCompatActivity implements OnAntEventListener {
 
@@ -47,12 +33,8 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
     MotoConnection connection;
     MotoSound sound;
 
-    // ------ Button ------
-    Button simulateGetGameSessions, simulatePostGameSession, simulatePostGameChallenge, simulateGetGameChallenge;
-
     // ------ TextView ------
     TextView numberOfPlayersTextView;
-    TextView tilesPositioningTextView;
 
     RadioGroup playersRadioGroup;
 
@@ -61,31 +43,13 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
     int numberOfPlayers = 1;
     int difficulty = 1;
 
-    int trueTile, falseTile;
     int player1_trueTile = 0, player2_trueTile = 0, player3_trueTile = 0, player4_trueTile = 0;
     int player1_falseTile = 0, player2_falseTile = 0, player3_falseTile = 0, player4_falseTile = 0;
 
-    InputStream inputStream;
     private TextToSpeech textToSpeechSystem;
-    ListView gameSessions_ListView;
-    ArrayAdapter<String> gameSessions_ArrayAdapter;
-    ArrayList<String> games_ArrayList = new ArrayList<>();
-    ArrayList<String> listFromJson_ArrayList = new ArrayList<>();
-    String groupID = "420";
-    String myName = "AndersBjarklev";
-    Button createChallenge_Btn;
     // -------------------------
 
-
-    Boolean isPairing = false;
-    Boolean isPlaying = false;
-
     int setupMode = 1;
-
-    TextView apiOutput;
-    String endpoint = "https://centerforplayware.com/api/index.php";
-
-    SharedPreferences sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,19 +58,10 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
 
         setTitle("Setup Game");
 
-        sharedPref = this.getApplicationContext().getSharedPreferences("PLAYWARE_COURSE", Context.MODE_PRIVATE);
-
         // Enable Back-button
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         checkIfDeviceIsConnectedToInternet();
-
-        /*gameSessions_ListView = findViewById(R.id.gameSessions_ListView);
-
-        gameSessions_ArrayAdapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, games_ArrayList);
-
-        gameSessions_ListView.setAdapter(gameSessions_ArrayAdapter);*/
 
         connection = MotoConnection.getInstance();
         sound = MotoSound.getInstance();
@@ -115,12 +70,6 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         connection.saveRfFrequency(66);
         connection.setDeviceId(2);
         connection.registerListener(this);
-
-        /*createChallenge_Btn = findViewById(R.id.createChallenge_Btn);
-
-        createChallenge_Btn.setOnClickListener(v -> createChallenge());
-
-        apiOutput = findViewById(R.id.apiOutput);*/
 
         // ------ Difficulty ------
         Button easyDifficultyButton = findViewById(R.id.easyDifficultyButton);
@@ -172,32 +121,12 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
                     break;
             }
 
-            /*if(isPlaying) {
-                return;
-            }
-            if (isPairing) {
-                connection.pairTilesStop();
-                pairingButton.setText("Setup Tiles");
-            } else {
-                connection.pairTilesStart();
-                pairingButton.setText("Next");
-                setupTilesPosition();
-            }
-            isPairing = !isPairing;*/
         });
 
         // ------ Number of players ------
         numberOfPlayersTextView = findViewById(R.id.numberOfPlayersTextView);
-        //numberOfPlayersTextView.setVisibility(View.INVISIBLE);
-
         playersRadioGroup = findViewById(R.id.playersRadioGroup);
-        //playersRadioGroup.setVisibility(View.INVISIBLE);
-
-        //tilesPositioningTextView = findViewById(R.id.tilesPositioningTextView);
-        //tilesPositioningTextView.setVisibility(View.INVISIBLE);
-
         positioningImageView = findViewById(R.id.positioningImageView);
-        //positioningImageView.setVisibility(View.INVISIBLE);
 
         playersRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             switch(checkedId) {
@@ -227,17 +156,6 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
             intent.putExtra("setup_data", new int[]{numberOfPlayers, difficulty});
             intent.putExtra("tile_ids", new int[]{player1_trueTile, player1_falseTile, player2_trueTile, player2_falseTile, player3_trueTile, player3_falseTile, player4_trueTile, player4_falseTile});
             startActivity(intent);
-
-            /*if(!isPlaying) {
-                startGameButton.setText("STOP GAME");
-                isPlaying = true;
-                connection.setAllTilesIdle(LED_COLOR_OFF);
-
-            } else {
-                startGameButton.setText("START GAME");
-                isPlaying = false;
-                connection.setAllTilesToInit();
-            }*/
         });
     }
 
@@ -349,12 +267,11 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
     // ------------------------------- //
     // Checking Internet Connection
     public boolean checkIfDeviceIsConnectedToInternet() {
-
         try {
             InetAddress ipAddr = InetAddress.getByName("google.com");
 
             if(!ipAddr.equals("")) {
-                //coneccted
+                //connected
                 Log.d("tag", "Connected");
                 return true;
             }
@@ -365,263 +282,6 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         return true;
     }
 
-    // ------------------------------- //
-    // Challenges
-    private void createChallenge() {
-        /*final Dialog dialog = new Dialog(this); // Context, this, etc.
-        dialog.setContentView(R.layout.createchallenge_dialog);
-        dialog.setTitle("Choose Challenge");
-        dialog.show();
-
-        findViewById(R.id.createChallenge_NormalMode_Btn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("tag", "Normal Mode chosen");
-            }
-        });*/
-
-        // setup the alert builder
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Choose Challenge");
-
-        // add a list
-        String[] challenges = {"Easy mode","Normal mode", "Hard mode"};
-        builder.setItems(challenges, (dialog, which) -> {
-            switch (which) {
-                case 0:
-                    Log.d("tag", "Easy Mode chosen");
-                    Toast.makeText(SetupActivity.this, "Easy Mode chosen", Toast.LENGTH_LONG).show();
-                    postGameChallenge("1");
-                    break;
-                case 1:
-                    Log.d("tag", "Normal Mode chosen");
-                    Toast.makeText(SetupActivity.this, "Normal Mode chosen", Toast.LENGTH_LONG).show();
-                    postGameChallenge("2");
-                    break;
-                case 2:
-                    Log.d("tag", "Hard Mode chosen");
-                    Toast.makeText(SetupActivity.this, "Hard Mode chosen", Toast.LENGTH_LONG).show();
-                    postGameChallenge("3");
-                    break;
-                default:
-                    Log.d("tag", "ERROR: No Game mode chosen");
-                    postGameChallenge("2");
-                    break;
-            }
-        });
-
-        // create and show the alert dialog
-        AlertDialog dialog = builder.create();
-        dialog.show();
-    }
-    private void getGameChallenge() {
-        RemoteHttpRequest requestPackage = new RemoteHttpRequest();
-        requestPackage.setMethod("GET");
-        requestPackage.setUrl(endpoint);
-        requestPackage.setParam("method","getGameChallenge"); // The method name
-        requestPackage.setParam("device_token",getDeviceToken()); // Your device token
-        requestPackage.setParam("group_id",groupID); // Your group ID
-
-        SetupActivity.Downloader downloader = new SetupActivity.Downloader(); //Instantiation of the Async task
-        //that’s defined below
-
-        downloader.execute(requestPackage);
-    }
-
-    // ------------------------------- //
-    // Sessions
-    private void postGameSession(String challengeId) {
-        RemoteHttpRequest requestPackage = new RemoteHttpRequest();
-        requestPackage.setMethod("POST");
-        requestPackage.setUrl(endpoint);
-        requestPackage.setParam("method","postGameSession"); // The method name
-        requestPackage.setParam("device_token",getDeviceToken()); // Your device token
-        requestPackage.setParam("group_id", groupID); // Your group ID
-        requestPackage.setParam("game_id","1"); // The game ID (From the Game class > setGameId() function
-        requestPackage.setParam("game_type_id","1"); // The game type ID (From the GameType class creation > first parameter)
-        requestPackage.setParam("game_score","30"); // The game score
-        requestPackage.setParam("game_time","30"); // The game elapsed time in seconds
-        requestPackage.setParam("num_tiles","4"); // The number of tiles used
-        if (challengeId != null) {
-            requestPackage.setParam("gcid",challengeId);
-        }
-
-
-        SetupActivity.Downloader downloader = new SetupActivity.Downloader(); //Instantiation of the Async task
-
-        downloader.execute(requestPackage);
-    }
-    private void getGameSessions() {
-        RemoteHttpRequest requestPackage = new RemoteHttpRequest();
-        requestPackage.setMethod("GET");
-        requestPackage.setUrl(endpoint);
-        requestPackage.setParam("method","getGameSessions"); // The method name
-        requestPackage.setParam("device_token",getDeviceToken()); // Your device token
-        requestPackage.setParam("group_id",groupID); // Your group ID
-
-        SetupActivity.Downloader downloader = new SetupActivity.Downloader(); //Instantiation of the Async task
-        //that’s defined below
-
-        downloader.execute(requestPackage);
-    }
-    private void postGameChallenge(String challengeGameType) {
-        RemoteHttpRequest requestPackage = new RemoteHttpRequest();
-        requestPackage.setMethod("POST");
-        requestPackage.setUrl(endpoint);
-        requestPackage.setParam("method","postGameChallenge"); // The method name
-        requestPackage.setParam("device_token",getDeviceToken()); // Your device token
-        requestPackage.setParam("game_id", "1"); // The game ID (From the Game class > setGameId() function
-        requestPackage.setParam("game_type_id", challengeGameType); // The game type ID (From the GameType class creation > first parameter)
-        requestPackage.setParam("challenger_name",myName); // The challenger name
-        requestPackage.setParam("group_id",groupID); // Your group ID
-
-        SetupActivity.Downloader downloader = new SetupActivity.Downloader(); //Instantiation of the Async task
-        //that’s defined below
-
-        downloader.execute(requestPackage);
-    }
-    private void postGameChallengeAccept(int challengeID) {
-        RemoteHttpRequest requestPackage = new RemoteHttpRequest();
-        requestPackage.setMethod("POST");
-        requestPackage.setUrl(endpoint);
-        requestPackage.setParam("method","postGameChallengeAccept"); // The method name
-        requestPackage.setParam("device_token",getDeviceToken()); // Your device token
-        requestPackage.setParam("challenged_name",myName); // The name of the person accepting the challenge
-        requestPackage.setParam("gcid", String.valueOf(challengeID)); // The game challenge id you want to accept
-
-        SetupActivity.Downloader downloader = new SetupActivity.Downloader(); //Instantiation of the Async task
-        //that’s defined below
-
-        downloader.execute(requestPackage);
-    }
-    private String getDeviceToken() {
-        // Get unique device_token from shared preferences
-        // Remember that what is saved in sharedPref exists until you delete the app!
-        String device_token = sharedPref.getString("device_token",null);
-
-        if(device_token == null) { // If device_token was never saved and null create one
-            device_token =  UUID.randomUUID().toString(); // Get a new device_token
-            sharedPref.edit().putString("device_token", device_token).apply(); // save it to shared preferences so next time will be used
-        }
-
-        return device_token;
-    }
-    private class Downloader extends AsyncTask<RemoteHttpRequest, String, String> {
-        @Override
-        protected String doInBackground(RemoteHttpRequest... params) {
-            return HttpManager.getData(params[0]);
-        }
-
-        //The String that is returned in the doInBackground() method is sent to the
-        // onPostExecute() method below. The String should contain JSON data.
-        @Override
-        protected void onPostExecute(String result) {
-
-            if(!checkIfDeviceIsConnectedToInternet()) {
-                return;
-            }
-
-            try {
-                //We need to convert the string in result to a JSONObject
-                JSONObject jsonObject = new JSONObject(result);
-
-                String message = jsonObject.getString("message");
-                Log.i("sessions",message);
-
-                // Log the entire response if needed to check the data structure
-                Log.i("sessions",jsonObject.toString());
-
-                // Log response
-                Log.i("sessions","response: "+jsonObject.getBoolean("response"));
-                // Update UI
-                apiOutput.setText(message);
-
-
-
-                if(jsonObject.getString("method").equals("getGameSessions")) {
-
-                    listFromJson_ArrayList.clear();
-                    games_ArrayList.clear();
-
-                    JSONArray sessions = jsonObject.getJSONArray("results");
-                    for(int i = 0; i < sessions.length();i++) {
-                        JSONObject session = sessions.getJSONObject(i);
-                        Log.i("sessions",session.toString());
-
-                        // get score example:
-                        // String score = session.getString("game_score");
-
-                        listFromJson_ArrayList.add("Game session ID:" + session.getString("sid") + " Score: " + session.getString("game_score") + " Group ID:" + session.getString("group_id") + " Number of tiles:" + session.getString("num_tiles"));
-                    }
-
-                    games_ArrayList.addAll(listFromJson_ArrayList);
-                    gameSessions_ArrayAdapter.notifyDataSetChanged();
-                }
-                else if(jsonObject.getString("method").equals("getGameChallenge")) {
-
-                    listFromJson_ArrayList.clear();
-                    games_ArrayList.clear();
-
-                    JSONArray challenges = jsonObject.getJSONArray("results");
-                    for(int i = 0; i < challenges.length();i++) {
-                        JSONObject challenge = challenges.getJSONObject(i);
-                        Log.i("challenge:",challenge.toString());
-
-                        // get score example:
-                        // String score = session.getString("game_score");
-
-                        listFromJson_ArrayList.add("ChallengeID: " + challenge.getString("gcid") + " Name: " + challenge.getString("challenger_name") + " GameID: " + challenge.getString("game_id") + " GameTypeID: " + challenge.getString("game_type_id") + " Status: " + challenge.getString("c_status"));
-                    }
-
-                    games_ArrayList.addAll(listFromJson_ArrayList);
-                    gameSessions_ArrayAdapter.notifyDataSetChanged();
-                }
-                else if(jsonObject.getString("method").equals("postGameSession")) {
-
-                    Log.i("sessions",message);
-
-                    // Update UI
-
-
-                }
-                else if(jsonObject.getString("method").equals("postGameChallenge")) {
-
-                    Log.i("challenge",message);
-
-                    // Update UI
-
-
-                }
-                else if(jsonObject.getString("method").equals("postGameChallengeAccept")) {
-
-                    Log.i("challengeAccept",message);
-
-                    // Update UI
-
-
-                }
-                /*else if(jsonObject.getString("method").equals("getGameChallenge")) {
-
-                    JSONArray challenges = jsonObject.getJSONArray("results");
-                    for(int i = 0; i < challenges.length();i++) {
-                        JSONObject challenge = challenges.getJSONObject(i);
-                        Log.i("challenge",challenge.toString());
-                        int status = challenge.getInt("c_status");
-                        if(status == 4) {
-                            Log.i("challenge",challenge.getJSONArray("summary").toString());
-                        }
-                    }
-
-
-                    // Update UI
-                }*/
-
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    }
     @Override
     public void onMessageReceived(byte[] bytes, long l) {
 
@@ -631,23 +291,9 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
 
         if(command == EVENT_PRESS) {
             Log.d("tag", "tileID: " + tileId);
-            /*if(tileId == selectedTile) {
-                sound.playMatched();
-                int randTile = connection.randomIdleTile();
-                connection.setAllTilesIdle(LED_COLOR_OFF);
-                connection.setTileColor(LED_COLOR_RED,randTile);
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        // Update UI
-                    }
-                });
-
-            }*/
         }
-
     }
+
     @Override
     public void onAntServiceConnected() {
         connection.setAllTilesToInit();

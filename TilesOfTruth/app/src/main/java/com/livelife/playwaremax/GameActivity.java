@@ -26,9 +26,6 @@ import com.livelife.motolibrary.AntData;
 import com.livelife.motolibrary.MotoConnection;
 import com.livelife.motolibrary.OnAntEventListener;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -70,7 +67,6 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     // ------------------------------- //
 
     //Database
-    TextView apiOutput;
     String endpoint = "https://centerforplayware.com/api/index.php";
     SharedPreferences sharedPref;
 
@@ -87,8 +83,6 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
 
         // Enable Back-button
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-
-        apiOutput = findViewById(R.id.apiOutput);
 
         // Data from SetupActivity
         int[] setup = getIntent().getIntArrayExtra("setup_data");
@@ -233,7 +227,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         AlertDialog.Builder gameOver_AlertDialog = new AlertDialog.Builder(this);
         gameOver_AlertDialog.setIcon(android.R.drawable.ic_dialog_alert);
         gameOver_AlertDialog.setTitle("Player " + maxScorePlayer + " won this game with " + maxScore + " points");
-        gameOver_AlertDialog.setMessage("Please fill in you name for the score board");
+        gameOver_AlertDialog.setMessage("Please fill in your name for the scoreboard");
 
         final EditText input = new EditText(GameActivity.this);
         input.setInputType(InputType.TYPE_CLASS_TEXT);
@@ -347,6 +341,10 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
                 textToSpeechSystem.speak(textToSay, TextToSpeech.QUEUE_FLUSH, null);
             }
         });
+
+
+
+
     }
 
     @Override
@@ -390,27 +388,10 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         downloader.execute(requestPackage);
     }
 
-    private class Downloader extends AsyncTask<RemoteHttpRequest, String, String> {
+    private static class Downloader extends AsyncTask<RemoteHttpRequest, String, String> {
         @Override
         protected String doInBackground(RemoteHttpRequest... params) {
             return HttpManager.getData(params[0]);
-        }
-
-        //The String that is returned in the doInBackground() method is sent to the
-        // onPostExecute() method below. The String should contain JSON data.
-        @Override
-        protected void onPostExecute(String result) {
-            try {
-                //We need to convert the string in result to a JSONObject
-                JSONObject jsonObject = new JSONObject(result);
-
-                String message = jsonObject.getString("message");
-
-                apiOutput.setText(message);
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
         }
     }
 }

@@ -6,11 +6,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -31,7 +28,6 @@ public class ScoreboardActivity extends AppCompatActivity {
     ArrayList<String> games_ArrayList = new ArrayList<>();
 
     //Database
-    TextView apiOutput;
     String endpoint = "https://centerforplayware.com/api/index.php";
     SharedPreferences sharedPref;
     ArrayList<String> listFromJson_ArrayList = new ArrayList<>();
@@ -48,29 +44,17 @@ public class ScoreboardActivity extends AppCompatActivity {
         // Enable Back-button
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
-        apiOutput = findViewById(R.id.apiOutput);
-
         gameSessions_ListView = findViewById(R.id.gameSessions_ListView);
 
-        gameSessions_ArrayAdapter = new ArrayAdapter<String>(this,
+        gameSessions_ArrayAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, games_ArrayList);
 
         gameSessions_ListView.setAdapter(gameSessions_ArrayAdapter);
 
-        gameSessions_ListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            public void onItemClick(AdapterView<?> adapterView, View arg1, int position, long arg3) {
-                String content = (String) adapterView.getItemAtPosition(position);
-                List<String> content_ArrayList = new ArrayList<>(Arrays.asList(content.split(" ")));
-            }
+        gameSessions_ListView.setOnItemClickListener((adapterView, arg1, position, arg3) -> {
+            String content = (String) adapterView.getItemAtPosition(position);
+            List<String> content_ArrayList = new ArrayList<>(Arrays.asList(content.split(" ")));
         });
-        /*// for testing purposes only
-        for(int i = 0; i < 20; i++) {
-            games_ArrayList.add("Game session ID: " + i + " Score: " + i + " Group ID:" + i + " Number of tiles:" + i);
-        }
-
-        games_ArrayList.addAll(games_ArrayList);
-        gameSessions_ArrayAdapter.notifyDataSetChanged();*/
 
         getGameWinner();
     }
@@ -105,8 +89,6 @@ public class ScoreboardActivity extends AppCompatActivity {
     }
 
     private String getDeviceToken() {
-        // Get unique device_token from shared preferences
-        // Remember that what is saved in sharedPref exists until you delete the app!
         String device_token = sharedPref.getString("device_token",null);
 
         if(device_token == null) { // If device_token was never saved and null create one
@@ -123,17 +105,11 @@ public class ScoreboardActivity extends AppCompatActivity {
             return HttpManager.getData(params[0]);
         }
 
-        //The String that is returned in the doInBackground() method is sent to the
-        // onPostExecute() method below. The String should contain JSON data.
         @Override
         protected void onPostExecute(String result) {
             try {
                 //We need to convert the string in result to a JSONObject
                 JSONObject jsonObject = new JSONObject(result);
-
-                String message = jsonObject.getString("message");
-                // Update UI
-                apiOutput.setText(message);
 
                 if(jsonObject.getString("method").equals("getGameSessions")) {
 
