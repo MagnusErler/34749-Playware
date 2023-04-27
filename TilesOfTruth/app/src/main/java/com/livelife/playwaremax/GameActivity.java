@@ -65,7 +65,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     CountDownTimer timerRound;
     CountDownTimer timerGame;
     // ------------------------------- //
-
+    ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 40);
     //Database
     String endpoint = "https://centerforplayware.com/api/index.php";
     SharedPreferences sharedPref;
@@ -101,9 +101,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         player4_trueTile = tileIDs[6];
         player4_falseTile = tileIDs[7];
 
-        //gameOver();
-
-        startTimer_Game(10000);
+        startTimer_Game(30000);
         gameLogic(defaultArray, false, true);
     }
     void gameLogic(int[] playerPressed, Boolean timeOut,Boolean firstRound) {
@@ -162,7 +160,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
             });
 
             //Toast.makeText(GameActivity.this, "Question: " + Question + ", Answer: " + answer_int, Toast.LENGTH_LONG).show();
-            textToSpeech(Question); //SHUT THE FUCK UP
+            textToSpeech(Question); // SHUT THE FUCK UP
             if(!firstRound)timerRound.cancel(); //Cancel previous timer
             startTimer_Round(5000);
         }
@@ -171,6 +169,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     void startTimer_Round(int time) {
         TextView timerRound_TextView = findViewById(R.id.roundTimeTextView);
         TextView timerGame_TextView = findViewById(R.id.gameTimeTextView);
+
         timerRound = new CountDownTimer(time, 1000) {
             public void onTick(long millisUntilFinished) {
                 timeLeft_Round = (int) (millisUntilFinished / 1000);
@@ -180,7 +179,6 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
                     timerGame_TextView.setText("Game: " + timeLeft_Game + "s");
                 });
 
-                ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 40);
                 toneG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 200);
             }
 
@@ -222,8 +220,12 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
             }
         }
 
-
         gameOver = true;
+        timerRound.cancel();
+        timerGame.cancel();
+        toneG.stopTone();
+        toneG.release();
+
         AlertDialog.Builder gameOver_AlertDialog = new AlertDialog.Builder(this);
         gameOver_AlertDialog.setIcon(android.R.drawable.ic_dialog_alert);
         gameOver_AlertDialog.setTitle("Player " + maxScorePlayer + " won this game with " + maxScore + " points");

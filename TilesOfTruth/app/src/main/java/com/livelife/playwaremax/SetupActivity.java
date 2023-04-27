@@ -56,6 +56,9 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup);
 
+        //Clear previous connection
+
+
         setTitle("Setup Game");
 
         // Enable Back-button
@@ -66,7 +69,9 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         connection = MotoConnection.getInstance();
         sound = MotoSound.getInstance();
 
+        connection.stopMotoConnection();
         connection.startMotoConnection(this);
+        
         connection.saveRfFrequency(66);
         connection.setDeviceId(2);
         connection.registerListener(this);
