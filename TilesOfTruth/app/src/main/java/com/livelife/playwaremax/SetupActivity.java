@@ -162,6 +162,13 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
                 return;
             }
 
+            if (setupMode == 1) {
+                setupTilesPosition(numberOfPlayers);
+                textToSpeech("Place the " + numberOfPlayers*2 + " tiles 3 meters apart and stand between them");
+                setupMode = 3;
+                return;
+            }
+
             Intent intent = new Intent(SetupActivity.this, GameActivity.class);
             intent.putExtra("setup_data", new int[]{numberOfPlayers, difficulty});
             intent.putExtra("tile_ids", new int[]{player1_trueTile, player1_falseTile, player2_trueTile, player2_falseTile, player3_trueTile, player3_falseTile, player4_trueTile, player4_falseTile});
