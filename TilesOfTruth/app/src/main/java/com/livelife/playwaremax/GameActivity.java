@@ -289,6 +289,10 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
+            timerRound.cancel();
+            timerGame.cancel();
+            toneG.stopTone();
+            toneG.release();
             finish();
             return true;
         }
@@ -376,7 +380,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         textToSpeechSystem = new TextToSpeech(this, status -> {
             if (status == TextToSpeech.SUCCESS) {
                 textToSpeechSystem.setSpeechRate(1.2F);
-                textToSpeechSystem.speak(textToSay, TextToSpeech.QUEUE_FLUSH, null);
+                textToSpeechSystem.speak(textToSay, TextToSpeech.QUEUE_FLUSH, null, "ID");
             }
         });
     }
