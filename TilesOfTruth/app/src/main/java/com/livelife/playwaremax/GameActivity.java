@@ -47,15 +47,17 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     int player1_trueTile, player2_trueTile, player3_trueTile, player4_trueTile;
     int player1_falseTile, player2_falseTile, player3_falseTile, player4_falseTile;
 
-
-
     // ------------------------------- //
     // Game logic/Score
+    boolean newRound = false;
+    int numberOfPlayersPressed = 0;
+    boolean answer_bool;
+    ArrayList<Integer> playerPressedList = new ArrayList<>();
+    int answer_int = 0;
     int timeLeft_Round; //milliseconds
     int timeLeft_Game;  //milliseconds
-    boolean Answer;
     int[] playerScores = {0, 0, 0, 0};
-    int[] defaultArray = {0, 0}; //For calling gamelogic() when no press is detected
+    int[] defaultArray = {0, 0}; //For calling gameLogic() when no press is detected
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,20 +89,24 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         gameLogic(defaultArray, false, true);
     }
     void gameLogic(int[] playerPressed, Boolean timeOut,Boolean firstRound) {
-        Boolean newRound = false;
-        int numberOfPlayersPressed = 0;
-        boolean answer_bool;
-        int answer_int;
 
         if(firstRound) newRound = true;
         if(timeOut) newRound = true;
 
-        // A player has pressed
-        if(playerPressed[0] != 0) {
-
+        // A player has pressed a tile :O
+        if(playerPressed[0] != 0 && !playerPressedList.contains(playerPressed[0])) {
+            numberOfPlayersPressed++;
+            playerPressedList.add(playerPressed[0]);
+            if (playerPressed[1] == answer_int) {
+                playerScores[playerPressed[0]]++; //increment the player that pressed the correct tile
+            }
         }
+        if(numberOfPlayersPressed == numberOfPlayers) newRound = true;
 
         if (newRound) {
+            playerPressedList.clear();
+            newRound = false;
+            // Get a new question
             do  {
                 randomQuestionNr = getRandomNumber(numberOfQuestions);
             } while (answeredQuestionsNr.contains(randomQuestionNr));
