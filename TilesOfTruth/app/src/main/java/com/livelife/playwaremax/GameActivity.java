@@ -69,6 +69,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     int[] defaultArray = {0, 0}; //For calling gameLogic() when no press is detected
     CountDownTimer timerRound;
     CountDownTimer timerGame;
+    // ------------------------------- //
 
     //Database
     TextView apiOutput;
@@ -78,6 +79,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
@@ -113,6 +115,13 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         gameLogic(defaultArray, false, true);
     }
     void gameLogic(int[] playerPressed, Boolean timeOut,Boolean firstRound) {
+        //Get Score UI elements
+        // TextViews
+        TextView player1ScoreTextView = findViewById(R.id.player1scoreTextView);
+        TextView player2ScoreTextView = findViewById(R.id.player2scoreTextView);
+        TextView player3ScoreTextView = findViewById(R.id.player3scoreTextView);
+        TextView player4ScoreTextView = findViewById(R.id.player4scoreTextView);
+        TextView questionTextView = findViewById(R.id.questionTextView);
 
         if(firstRound) newRound = true;
         if(timeOut) newRound = true;
@@ -122,13 +131,24 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
             numberOfPlayersPressed++;
             playerPressedList.add(playerPressed[0]);
             if (playerPressed[1] == answer_int) {
-                playerScores[playerPressed[0]]++; //increment the player that pressed the correct tile
+                playerScores[playerPressed[0]-1]++; //increment the player that pressed the correct tile
             }
+            //Update score in UI
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    player1ScoreTextView.setText(playerScores[0]+"");
+                    player2ScoreTextView.setText(playerScores[1]+"");
+                    player3ScoreTextView.setText(playerScores[2]+"");
+                    player4ScoreTextView.setText(playerScores[3]+"");
+                }
+            });
         }
-        if(numberOfPlayersPressed == numberOfPlayers) newRound = true;
+        if(numberOfPlayersPressed >= numberOfPlayers) newRound = true;
 
         if (newRound && !gameOver) {
             playerPressedList.clear();
+            numberOfPlayersPressed = 0;
             newRound = false;
             // Get a new question
             do  {
@@ -141,7 +161,6 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
             String Question = QuestionAnswer[0];
             answer_bool = Boolean.parseBoolean(QuestionAnswer[1]);
             answer_int = answer_bool ? 1 : 0;
-            TextView questionTextView = findViewById(R.id.questionTextView);
 
             runOnUiThread(new Runnable() {
                 @Override
@@ -149,9 +168,10 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
                     questionTextView.setText(Question);
                 }
             });
-            //Toast.makeText(GameActivity.this, "Question: " + Question + ", Answer: " + answer_int, Toast.LENGTH_LONG).show();
-            textToSpeech(Question);
 
+            //Toast.makeText(GameActivity.this, "Question: " + Question + ", Answer: " + answer_int, Toast.LENGTH_LONG).show();
+            //textToSpeech(Question); SHUT THE FUCK UP
+            if(!firstRound)timerRound.cancel(); //Cancel previous timer
             startTimer_Round(5000);
         }
     }
