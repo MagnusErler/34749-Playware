@@ -663,7 +663,7 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
     protected void onPause() {
         super.onPause();
         //connection.stopMotoConnection();
-        //connection.unregisterListener(this);
+        connection.unregisterListener(this);
     }
 
     @Override
@@ -677,7 +677,7 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
     protected void onDestroy() {
         super.onDestroy();
         //connection.stopMotoConnection();
-        //connection.unregisterListener(this);
+        connection.unregisterListener(this);
     }
 
 }

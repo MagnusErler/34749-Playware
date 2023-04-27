@@ -81,6 +81,8 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
+        connection.registerListener(this);
+
         sharedPref = this.getApplicationContext().getSharedPreferences("PLAYWARE_COURSE", Context.MODE_PRIVATE);
 
         // Enable Back-button
@@ -138,8 +140,14 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
             answer_bool = Boolean.parseBoolean(QuestionAnswer[1]);
             answer_int = answer_bool ? 1 : 0;
             TextView questionTextView = findViewById(R.id.questionTextView);
-            questionTextView.setText(Question);
-            //Toast.makeText(GameActivity.this, "Question: " + Question + ", Answer: " + Answer, Toast.LENGTH_LONG).show();
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    questionTextView.setText(Question);
+                }
+            });
+            //Toast.makeText(GameActivity.this, "Question: " + Question + ", Answer: " + answer_int, Toast.LENGTH_LONG).show();
             textToSpeech(Question);
 
             startTimer_Round(10000);
@@ -152,14 +160,27 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         timerRound = new CountDownTimer(time, 1000) {
             public void onTick(long millisUntilFinished) {
                 timeLeft_Round = (int) (millisUntilFinished / 1000);
-                timerRound_TextView.setText("Round: " + timeLeft_Round + "s");
-                timerGame_TextView.setText("Game: " + timeLeft_Game + "s");
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        timerRound_TextView.setText("Round: " + timeLeft_Round + "s");
+                        timerGame_TextView.setText("Game: " + timeLeft_Game + "s");
+                    }
+                });
+
                 ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 40);
                 toneG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 200);
             }
 
             public void onFinish() {
-                timerRound_TextView.setText("Round Over");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        timerRound_TextView.setText("Round Over");
+                    }
+                });
+
                 gameLogic(defaultArray, true,false);
             }
 
