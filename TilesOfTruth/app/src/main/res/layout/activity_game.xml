@@ -167,24 +167,28 @@
                     android:textSize="25sp" />
 
                 <TextView
+                    android:id="@+id/player1scoreTextView"
                     android:gravity="center"
                     android:padding="5dp"
                     android:text="0"
                     android:textSize="25sp" />
 
                 <TextView
+                    android:id="@+id/player2scoreTextView"
                     android:gravity="center"
                     android:padding="5dp"
                     android:text="0"
                     android:textSize="25sp" />
 
                 <TextView
+                    android:id="@+id/player3scoreTextView"
                     android:gravity="center"
                     android:padding="5dp"
                     android:text="0"
                     android:textSize="25sp" />
 
                 <TextView
+                    android:id="@+id/player4scoreTextView"
                     android:gravity="center"
                     android:padding="5dp"
                     android:text="0"
