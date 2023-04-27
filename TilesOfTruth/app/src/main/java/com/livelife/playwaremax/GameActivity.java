@@ -164,12 +164,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
             answer_bool = Boolean.parseBoolean(QuestionAnswer[1]);
             answer_int = answer_bool ? 1 : 0;
 
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    questionTextView.setText(Question);
-                }
-            });
+            runOnUiThread(() -> questionTextView.setText(Question));
 
             //Toast.makeText(GameActivity.this, "Question: " + Question + ", Answer: " + answer_int, Toast.LENGTH_LONG).show();
             textToSpeech(Question); // SHUT THE FUCK UP
@@ -270,16 +265,32 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
 
         int finalMaxScore = maxScore;
         gameOver_AlertDialog.setPositiveButton("Enter", (dialogInterface, i) -> {
-                    //set what would happen when positive button is clicked
-                    postGameWinner(input.getText().toString(), finalMaxScore);
+                    if (checkIfDeviceIsConnectedToInternet()) {
+                        postGameWinner(input.getText().toString(), finalMaxScore);
+                    }
                     finish(); //Go back to previos activity
                 });
         gameOver_AlertDialog.setNegativeButton("No", (dialogInterface, i) -> {
-                    //set what should happen when negative button is clicked
-                    Toast.makeText(getApplicationContext(), "Nothing Happened", Toast.LENGTH_LONG).show();
                     finish(); //Go back to previos activity
                 });
+        gameOver_AlertDialog.setCancelable(false);
         gameOver_AlertDialog.show();
+    }
+
+    // ------------------------------- //
+    // Checking Internet Connection
+    public boolean checkIfDeviceIsConnectedToInternet() {
+        try {
+            String command = "ping -c 1 google.com";
+            boolean value = (Runtime.getRuntime().exec(command).waitFor() == 0);
+            if (!value) {
+                Toast.makeText(getApplicationContext(), "You are not connected to the internet!", Toast.LENGTH_LONG).show();
+            }
+            return value;
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), "You are not connected to the internet!", Toast.LENGTH_LONG).show();
+            return false;
+        }
     }
 
     // ------------------------------- //

@@ -74,7 +74,7 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         connection.stopMotoConnection();
         connection.startMotoConnection(this);
         
-        connection.saveRfFrequency(66);
+        connection.saveRfFrequency(70);
         connection.setDeviceId(2);
         connection.registerListener(this);
 
@@ -281,18 +281,16 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
     // Checking Internet Connection
     public boolean checkIfDeviceIsConnectedToInternet() {
         try {
-            InetAddress ipAddr = InetAddress.getByName("google.com");
-
-            if(!ipAddr.equals("")) {
-                //connected
-                Log.d("tag", "Connected");
-                return true;
+            String command = "ping -c 1 google.com";
+            boolean value = (Runtime.getRuntime().exec(command).waitFor() == 0);
+            if (!value) {
+                Toast.makeText(getApplicationContext(), "You are not connected to the internet!", Toast.LENGTH_LONG).show();
             }
+            return value;
         } catch (Exception e) {
-            Toast.makeText(SetupActivity.this, "You are not connected to the internet!", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "You are not connected to the internet!", Toast.LENGTH_LONG).show();
             return false;
         }
-        return true;
     }
 
     @Override

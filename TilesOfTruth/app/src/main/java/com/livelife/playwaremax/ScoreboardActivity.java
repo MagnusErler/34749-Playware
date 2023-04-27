@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -58,6 +59,10 @@ public class ScoreboardActivity extends AppCompatActivity {
             List<String> content_ArrayList = new ArrayList<>(Arrays.asList(content.split(" ")));
         });
 
+        if (!checkIfDeviceIsConnectedToInternet()) {
+            return;
+        }
+
         getGameWinner();
 
         RadioGroup playersRadioGroup = findViewById(R.id.difficultyRadioGroup);
@@ -80,6 +85,22 @@ public class ScoreboardActivity extends AppCompatActivity {
             }
             getGameWinner();
         });
+    }
+
+    // ------------------------------- //
+    // Checking Internet Connection
+    public boolean checkIfDeviceIsConnectedToInternet() {
+        try {
+            String command = "ping -c 1 google.com";
+            boolean value = (Runtime.getRuntime().exec(command).waitFor() == 0);
+            if (!value) {
+                Toast.makeText(getApplicationContext(), "You are not connected to the internet!", Toast.LENGTH_LONG).show();
+            }
+            return value;
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), "You are not connected to the internet!", Toast.LENGTH_LONG).show();
+            return false;
+        }
     }
 
     @Override
