@@ -54,7 +54,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     int timeLeft_Round; //milliseconds
     int timeLeft_Game;  //milliseconds
     boolean Answer;
-    int player1_score = 0; int player2_score = 0; int player3_score = 0; int player4_score = 0;
+    int[] playerScores = {0, 0, 0, 0};
     int[] defaultArray = {0, 0}; //For calling gamelogic() when no press is detected
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,27 +83,41 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
 
         gameOver();
 
-        gameLogic(defaultArray);
-    }
-    void gameLogic(int[] playerPressed) {
-
-        do  {
-            randomQuestionNr = getRandomNumber(numberOfQuestions);
-        } while (answeredQuestionsNr.contains(randomQuestionNr));
-        answeredQuestionsNr.add(randomQuestionNr);
-
-        // Question update
-        String[] QuestionAnswer = getQuestionFromCSV(randomQuestionNr).split(",");
-        String Question = QuestionAnswer[0];
-        boolean Answer = Boolean.parseBoolean(QuestionAnswer[1]);
-        TextView questionTextView = findViewById(R.id.questionTextView);
-        questionTextView.setText(Question);
-        //Toast.makeText(GameActivity.this, "Question: " + Question + ", Answer: " + Answer, Toast.LENGTH_LONG).show();
-        textToSpeech(Question);
-
-        startTimer_Round(10000);
         startTimer_Game(30000);
+        gameLogic(defaultArray, false, true);
+    }
+    void gameLogic(int[] playerPressed, Boolean timeOut,Boolean firstRound) {
+        Boolean newRound = false;
+        int numberOfPlayersPressed = 0;
+        boolean answer_bool;
+        int answer_int;
 
+        if(firstRound) newRound = true;
+        if(timeOut) newRound = true;
+
+        // A player has pressed
+        if(playerPressed[0] != 0) {
+
+        }
+
+        if (newRound) {
+            do  {
+                randomQuestionNr = getRandomNumber(numberOfQuestions);
+            } while (answeredQuestionsNr.contains(randomQuestionNr));
+            answeredQuestionsNr.add(randomQuestionNr);
+
+            // Question update
+            String[] QuestionAnswer = getQuestionFromCSV(randomQuestionNr).split(",");
+            String Question = QuestionAnswer[0];
+            answer_bool = Boolean.parseBoolean(QuestionAnswer[1]);
+            answer_int = answer_bool ? 1 : 0;
+            TextView questionTextView = findViewById(R.id.questionTextView);
+            questionTextView.setText(Question);
+            //Toast.makeText(GameActivity.this, "Question: " + Question + ", Answer: " + Answer, Toast.LENGTH_LONG).show();
+            textToSpeech(Question);
+
+            startTimer_Round(10000);
+        }
     }
 
     void startTimer_Round(int time) {
@@ -118,6 +132,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
 
             public void onFinish() {
                 timer.setText("Round Over");
+                gameLogic(defaultArray, true,false);
             }
 
         }.start();
@@ -221,7 +236,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
             } else {
                 Log.d("tag", "ERROR: Tile not found");
             }
-            gameLogic(pressArray);
+            gameLogic(pressArray,false,false);
         }
     }
 
