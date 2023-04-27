@@ -36,7 +36,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
 
     int randomQuestionNr;
     int numberOfQuestions = 1000;
-    ArrayList<Integer> answeredQuestionsNr= new ArrayList<>(numberOfQuestions);
+    ArrayList<Integer> answeredQuestionsNr = new ArrayList<>(numberOfQuestions);
     private TextToSpeech textToSpeechSystem;
 
     //Setup info
@@ -45,6 +45,13 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     int player1_trueTile, player2_trueTile, player3_trueTile, player4_trueTile;
     int player1_falseTile, player2_falseTile, player3_falseTile, player4_falseTile;
 
+
+
+    // ------------------------------- //
+    // Game logic/Score
+    boolean Answer;
+    int player1_score = 0; int player2_score = 0; int player3_score = 0; int player4_score = 0;
+    int[] defaultArray = {0, 0}; //For calling gamelogic() when no press is detected
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +68,18 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         int[] tileIDs = getIntent().getIntArrayExtra("tile_ids");
         Toast.makeText(GameActivity.this, "Number of players: " + setup[0] + " Difficulty: " + setup[1], Toast.LENGTH_LONG).show();
 
+        player1_trueTile = tileIDs[0];
+        player1_falseTile = tileIDs[1];
+        player2_trueTile = tileIDs[2];
+        player2_falseTile = tileIDs[3];
+        player3_trueTile = tileIDs[4];
+        player3_falseTile = tileIDs[5];
+        player4_trueTile = tileIDs[6];
+        player4_falseTile = tileIDs[7];
+
+        gameLogic(defaultArray);
+    }
+    void gameLogic(int[] playerPressed) {
         do  {
             randomQuestionNr = getRandomNumber(numberOfQuestions);
         } while (answeredQuestionsNr.contains(randomQuestionNr));
@@ -75,25 +94,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         questionTextView.setText(Question);
         //Toast.makeText(GameActivity.this, "Question: " + Question + ", Answer: " + Answer, Toast.LENGTH_LONG).show();
         textToSpeech(Question);
-
-        // Moto Connection
-        //connection.startMotoConnection(this);
-        //connection.saveRfFrequency(66);
-        //connection.setDeviceId(2);
-        //connection.registerListener(this);
-
-        //setupTiles(numberOfPlayers, tileIDs);
-
-        player1_trueTile = tileIDs[0];
-        player1_falseTile = tileIDs[1];
-        player2_trueTile = tileIDs[2];
-        player2_falseTile = tileIDs[3];
-        player3_trueTile = tileIDs[4];
-        player3_falseTile = tileIDs[5];
-        player4_trueTile = tileIDs[6];
-        player4_falseTile = tileIDs[7];
     }
-
     // ------------------------------- //
     // For going back to previous activity
     @Override
@@ -161,7 +162,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
 
         int command = AntData.getCommand(bytes);
         int tileId = AntData.getId(bytes);
-        int color = AntData.getColorFromPress(bytes);
+        //int color = AntData.getColorFromPress(bytes);
 
         if(command == EVENT_PRESS) {
             Log.d("tag", "tileID: " + tileId);
