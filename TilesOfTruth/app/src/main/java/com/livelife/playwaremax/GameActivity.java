@@ -50,6 +50,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
 
     // ------------------------------- //
     // Game logic/Score
+    int timeLeft;
     boolean Answer;
     int player1_score = 0; int player2_score = 0; int player3_score = 0; int player4_score = 0;
     int[] defaultArray = {0, 0}; //For calling gamelogic() when no press is detected
@@ -104,7 +105,8 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         new CountDownTimer(10000, 1000) {
 
             public void onTick(long millisUntilFinished) {
-                timer.setText("" + millisUntilFinished / 1000);
+                timeLeft = (int) (millisUntilFinished / 1000);
+                timer.setText("" + timeLeft);
                 ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 40);
                 toneG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 200);
             }
