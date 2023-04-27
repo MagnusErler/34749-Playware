@@ -1,18 +1,19 @@
 package com.livelife.playwaremax;
 
 import static com.livelife.motolibrary.AntData.EVENT_PRESS;
-import static com.livelife.motolibrary.AntData.LED_COLOR_GREEN;
-import static com.livelife.motolibrary.AntData.LED_COLOR_RED;
 
+import android.app.AlertDialog;
 import android.content.res.Resources;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.speech.tts.TextToSpeech;
+import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -80,6 +81,8 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         player4_trueTile = tileIDs[6];
         player4_falseTile = tileIDs[7];
 
+        gameOver();
+
         gameLogic(defaultArray);
     }
     void gameLogic(int[] playerPressed) {
@@ -132,6 +135,28 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
             }
 
         }.start();
+    }
+
+    void gameOver() {
+        AlertDialog.Builder gameOver_AlertDialog = new AlertDialog.Builder(this);
+        gameOver_AlertDialog.setIcon(android.R.drawable.ic_dialog_alert);
+        gameOver_AlertDialog.setTitle("Player: XX" + " won this round!");
+        gameOver_AlertDialog.setMessage("Please fill in you name for the score board");
+
+        final EditText input = new EditText(GameActivity.this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        gameOver_AlertDialog.setView(input);
+        String gameOver_WinnerOfGame = input.getText().toString();
+
+        gameOver_AlertDialog.setPositiveButton("Enter", (dialogInterface, i) -> {
+                    //set what would happen when positive button is clicked
+                    finish();
+                });
+        gameOver_AlertDialog.setNegativeButton("No", (dialogInterface, i) -> {
+                    //set what should happen when negative button is clicked
+                    Toast.makeText(getApplicationContext(), "Nothing Happened", Toast.LENGTH_LONG).show();
+                });
+        gameOver_AlertDialog.show();
     }
 
     // ------------------------------- //
