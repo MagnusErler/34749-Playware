@@ -98,14 +98,14 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         //Toast.makeText(GameActivity.this, "Question: " + Question + ", Answer: " + Answer, Toast.LENGTH_LONG).show();
         textToSpeech(Question);
 
-        startTimer_Round();
-        startTimer_Game();
+        startTimer_Round(10000);
+        startTimer_Game(30000);
 
     }
 
-    void startTimer_Round() {
+    void startTimer_Round(int time) {
         TextView timer = findViewById(R.id.timer);
-        new CountDownTimer(10000, 1000) {
+        new CountDownTimer(time, 1000) {
             public void onTick(long millisUntilFinished) {
                 timeLeft_Round = (int) (millisUntilFinished / 1000);
                 timer.setText("Round: " + timeLeft_Round + ", Game: " + timeLeft_Game);
@@ -120,9 +120,9 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         }.start();
     }
 
-    void startTimer_Game() {
+    void startTimer_Game(int time) {
         TextView timer = findViewById(R.id.timer);
-        new CountDownTimer(30000, 1000) {
+        new CountDownTimer(time, 1000) {
             public void onTick(long millisUntilFinished) {
                 timeLeft_Game = (int) (millisUntilFinished / 1000);
             }
