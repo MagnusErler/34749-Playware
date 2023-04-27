@@ -36,6 +36,8 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
     // ------ TextView ------
     TextView numberOfPlayersTextView;
 
+    int connectedTiles = 0;
+
     RadioGroup playersRadioGroup;
 
     ImageView positioningImageView;
@@ -100,7 +102,7 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
                 case 1:
                     //Starting pairing tiles -> tiles a spinning
                     connection.pairTilesStart();
-                    textToSpeech("Press the tiles you want to use. Press next when you are done.");
+                    textToSpeech("Press " + numberOfPlayers*2 + "tiles you want to use");
                     pairingButton.setText("Next");
                     setupMode = 2;
                     break;
@@ -112,7 +114,7 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
                     //tilesPositioningTextView.setVisibility(View.VISIBLE);
                     //positioningImageView.setVisibility(View.VISIBLE);
                     setupTilesPosition(numberOfPlayers);
-                    textToSpeech("Place the two tiles 3 meters apart and stand between them. Press next when you are done.");
+                    textToSpeech("Place the " + numberOfPlayers*2 + " tiles 3 meters apart and stand between them");
                     pairingButton.setText("Next");
                     setupMode = 3;
                     break;
@@ -157,6 +159,12 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
 
         Button startGameButton = findViewById(R.id.startGameButton);
         startGameButton.setOnClickListener(v -> {
+
+            if (numberOfPlayers > connectedTiles/2) {
+                Toast.makeText(this, "Not enough tiles connected", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             Intent intent = new Intent(SetupActivity.this, GameActivity.class);
             intent.putExtra("setup_data", new int[]{numberOfPlayers, difficulty});
             intent.putExtra("tile_ids", new int[]{player1_trueTile, player1_falseTile, player2_trueTile, player2_falseTile, player3_trueTile, player3_falseTile, player4_trueTile, player4_falseTile});
@@ -184,9 +192,9 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
     // Text To Speech
     public void textToSpeech(String textToSay) {
         textToSpeechSystem = new TextToSpeech(this, status -> {
-            if (status == TextToSpeech.SUCCESS) {
-                textToSpeechSystem.speak(textToSay, TextToSpeech.QUEUE_FLUSH, null);
-            }
+            //if (status == TextToSpeech.SUCCESS) {
+            textToSpeechSystem.speak(textToSay, TextToSpeech.QUEUE_FLUSH, null,"ID");
+            //}
         });
     }
 
@@ -306,6 +314,7 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
 
     @Override
     public void onNumbersOfTilesConnected(int i) {
+        connectedTiles = i;
         TextView pairTextView = findViewById(R.id.pairTextView);
         pairTextView.setText("Tiles pairing (connected tiles: " + i + ")");
     }

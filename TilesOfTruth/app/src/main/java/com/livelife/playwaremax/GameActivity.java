@@ -257,10 +257,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         }
 
         gameOver = true;
-        timerRound.cancel();
-        timerGame.cancel();
-        toneG.stopTone();
-        toneG.release();
+        stopTimer();
 
         AlertDialog.Builder gameOver_AlertDialog = new AlertDialog.Builder(this);
         gameOver_AlertDialog.setIcon(android.R.drawable.ic_dialog_alert);
@@ -280,6 +277,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         gameOver_AlertDialog.setNegativeButton("No", (dialogInterface, i) -> {
                     //set what should happen when negative button is clicked
                     Toast.makeText(getApplicationContext(), "Nothing Happened", Toast.LENGTH_LONG).show();
+                    finish(); //Go back to previos activity
                 });
         gameOver_AlertDialog.show();
     }
@@ -289,10 +287,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            timerRound.cancel();
-            timerGame.cancel();
-            toneG.stopTone();
-            toneG.release();
+            stopTimer();
             finish();
             return true;
         }
@@ -302,6 +297,13 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
 
     public boolean onCreateOptionsMenu(Menu menu) {
         return true;
+    }
+
+    void stopTimer() {
+        timerRound.cancel();
+        timerGame.cancel();
+        toneG.stopTone();
+        //toneG.release();
     }
 
     @Override
@@ -378,10 +380,10 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     // Text to Speech
     public void textToSpeech(String textToSay) {
         textToSpeechSystem = new TextToSpeech(this, status -> {
-            if (status == TextToSpeech.SUCCESS) {
-                textToSpeechSystem.setSpeechRate(1.2F);
-                textToSpeechSystem.speak(textToSay, TextToSpeech.QUEUE_FLUSH, null, "ID");
-            }
+            //if (status == TextToSpeech.SUCCESS) {
+            textToSpeechSystem.setSpeechRate(1.2F);
+            textToSpeechSystem.speak(textToSay, TextToSpeech.QUEUE_FLUSH, null, "ID");
+            //}
         });
     }
 
@@ -390,10 +392,14 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         connection.setAllTilesToInit();
     }
 
-   @Override
-    public void onNumbersOfTilesConnected(int i) {
-        //TextView connectedTextView = findViewById(R.id.connectedTextView);
-        //connectedTextView.setText("Tiles connected: "+i);
+    @Override
+    public void onNumbersOfTilesConnected(int i) {}
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        stopTimer();
+        finish();
     }
 
     private void postGameWinner(String gameWinner, int score) {
