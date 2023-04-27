@@ -2,6 +2,7 @@ package com.livelife.playwaremax;
 
 import static com.livelife.motolibrary.AntData.EVENT_PRESS;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -76,7 +77,6 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     int baseGameTime = 30000;
 
     double adaptivityFactor = 1.0;
-    TextView apiOutput;
     String endpoint = "https://centerforplayware.com/api/index.php";
     SharedPreferences sharedPref;
 
@@ -115,7 +115,8 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
 
         gameLogic(defaultArray, false, true);
     }
-    void gameLogic(int[] playerPressed, Boolean timeOut,Boolean firstRound) {
+    @SuppressLint("SetTextI18n")
+    void gameLogic(int[] playerPressed, Boolean timeOut, Boolean firstRound) {
         //Get Score UI elements
         // TextViews
         TextView player1ScoreTextView = findViewById(R.id.player1scoreTextView);
@@ -136,14 +137,11 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
                 roundScore++; //Increment total score of all players for this round
             }
             //Update score in UI
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    player1ScoreTextView.setText(playerScores[0]+"");
-                    player2ScoreTextView.setText(playerScores[1]+"");
-                    player3ScoreTextView.setText(playerScores[2]+"");
-                    player4ScoreTextView.setText(playerScores[3]+"");
-                }
+            runOnUiThread(() -> {
+                player1ScoreTextView.setText(playerScores[0]+"");
+                player2ScoreTextView.setText(playerScores[1]+"");
+                player3ScoreTextView.setText(playerScores[2]+"");
+                player4ScoreTextView.setText(playerScores[3]+"");
             });
         }
         if(numberOfPlayersPressed >= numberOfPlayers) newRound = true;
@@ -202,6 +200,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         TextView timerGame_TextView = findViewById(R.id.gameTimeTextView);
 
         timerRound = new CountDownTimer(time, 1000) {
+            @SuppressLint("SetTextI18n")
             public void onTick(long millisUntilFinished) {
                 timeLeft_Round = (int) (millisUntilFinished / 1000);
 
@@ -213,6 +212,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
                 toneG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 200);
             }
 
+            @SuppressLint("SetTextI18n")
             public void onFinish() {
                 runOnUiThread(() -> timerRound_TextView.setText("Round Over"));
 
@@ -230,6 +230,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
                 timeLeft_Game = (int) (millisUntilFinished / 1000);
             }
 
+            @SuppressLint("SetTextI18n")
             public void onFinish() {
                 timer.setText("Game Over");
                 gameOver();
@@ -392,7 +393,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     public void textToSpeech(String textToSay) {
         textToSpeechSystem = new TextToSpeech(this, status -> {
             //if (status == TextToSpeech.SUCCESS) {
-            textToSpeechSystem.setSpeechRate(1.2F);
+            textToSpeechSystem.setSpeechRate(1.3F);
             textToSpeechSystem.speak(textToSay, TextToSpeech.QUEUE_FLUSH, null, "ID");
             //}
         });

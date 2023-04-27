@@ -5,6 +5,7 @@ import static com.livelife.motolibrary.AntData.LED_COLOR_GREEN;
 import static com.livelife.motolibrary.AntData.LED_COLOR_OFF;
 import static com.livelife.motolibrary.AntData.LED_COLOR_RED;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
@@ -53,20 +54,16 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
 
     int setupMode = 1;
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup);
 
-        //Clear previous connection
-
-
         setTitle("Setup Game");
 
         // Enable Back-button
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-
-        checkIfDeviceIsConnectedToInternet();
 
         connection = MotoConnection.getInstance();
         sound = MotoSound.getInstance();
@@ -277,22 +274,6 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         }
     }
 
-    // ------------------------------- //
-    // Checking Internet Connection
-    public boolean checkIfDeviceIsConnectedToInternet() {
-        try {
-            String command = "ping -c 1 google.com";
-            boolean value = (Runtime.getRuntime().exec(command).waitFor() == 0);
-            if (!value) {
-                Toast.makeText(getApplicationContext(), "You are not connected to the internet!", Toast.LENGTH_LONG).show();
-            }
-            return value;
-        } catch (Exception e) {
-            Toast.makeText(getApplicationContext(), "You are not connected to the internet!", Toast.LENGTH_LONG).show();
-            return false;
-        }
-    }
-
     @Override
     public void onMessageReceived(byte[] bytes, long l) {
 
@@ -310,6 +291,7 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         connection.setAllTilesToInit();
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onNumbersOfTilesConnected(int i) {
         connectedTiles = i;

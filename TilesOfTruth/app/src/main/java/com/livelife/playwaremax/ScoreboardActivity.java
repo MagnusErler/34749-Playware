@@ -18,8 +18,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -48,15 +46,10 @@ public class ScoreboardActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         gameSessions_ListView = findViewById(R.id.gameSessions_ListView);
-
         gameSessions_ArrayAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, games_ArrayList);
-
         gameSessions_ListView.setAdapter(gameSessions_ArrayAdapter);
-
         gameSessions_ListView.setOnItemClickListener((adapterView, arg1, position, arg3) -> {
-            String content = (String) adapterView.getItemAtPosition(position);
-            List<String> content_ArrayList = new ArrayList<>(Arrays.asList(content.split(" ")));
         });
 
         if (!checkIfDeviceIsConnectedToInternet()) {
@@ -152,7 +145,6 @@ public class ScoreboardActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             try {
-                //We need to convert the string in result to a JSONObject
                 JSONObject jsonObject = new JSONObject(result);
 
                 if(jsonObject.getString("method").equals("getGameSessions")) {
