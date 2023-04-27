@@ -60,6 +60,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     int answer_int = 0;
     int timeLeft_Round; //milliseconds
     int timeLeft_Game;  //milliseconds
+    int roundScore = 0;
     int[] playerScores = {0, 0, 0, 0};
     int[] defaultArray = {0, 0}; //For calling gameLogic() when no press is detected
     CountDownTimer timerRound;
@@ -67,6 +68,15 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     // ------------------------------- //
     ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 40);
     //Database
+    //------------------------//
+    // Adaptivity stuff
+    int baseRoundTimeEasy = 10000;
+    int baseRoundTimeNormal = 7500;
+    int baseRoundTimeHard = 5000;
+    int baseGameTime = 30000;
+
+    double adaptivityFactor = 1.0;
+    TextView apiOutput;
     String endpoint = "https://centerforplayware.com/api/index.php";
     SharedPreferences sharedPref;
 
@@ -101,7 +111,8 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         player4_trueTile = tileIDs[6];
         player4_falseTile = tileIDs[7];
 
-        startTimer_Game(30000);
+        startTimer_Game(baseGameTime);
+
         gameLogic(defaultArray, false, true);
     }
     void gameLogic(int[] playerPressed, Boolean timeOut,Boolean firstRound) {
@@ -122,6 +133,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
             playerPressedList.add(playerPressed[0]);
             if (playerPressed[1] == answer_int) {
                 playerScores[playerPressed[0]-1]++; //increment the player that pressed the correct tile
+                roundScore++; //Increment total score of all players for this round
             }
             //Update score in UI
             runOnUiThread(new Runnable() {
@@ -162,10 +174,34 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
             //Toast.makeText(GameActivity.this, "Question: " + Question + ", Answer: " + answer_int, Toast.LENGTH_LONG).show();
             textToSpeech(Question); // SHUT THE FUCK UP
             if(!firstRound)timerRound.cancel(); //Cancel previous timer
-            startTimer_Round(5000);
+
+            startTimer_Round(getAdaptiveRoundTime(roundScore));
+            roundScore = 0;
         }
     }
 
+    int getAdaptiveRoundTime(int prevRoundScore) {
+        int roundTime = 10000;
+
+        if (prevRoundScore/numberOfPlayers == 1) {
+            adaptivityFactor -= 0.1;
+        }
+        else {
+            adaptivityFactor += 0.1;
+        }
+        //Easy mode
+        if (difficulty == 0) {
+            roundTime = (int) (adaptivityFactor * baseRoundTimeEasy);
+        }
+        else if (difficulty == 1) {
+            roundTime = (int) (adaptivityFactor * baseRoundTimeNormal);
+        }
+        else if (difficulty == 2) {
+            roundTime = (int) (adaptivityFactor * baseRoundTimeHard);
+        }
+
+        return roundTime;
+    }
     void startTimer_Round(int time) {
         TextView timerRound_TextView = findViewById(R.id.roundTimeTextView);
         TextView timerGame_TextView = findViewById(R.id.gameTimeTextView);
