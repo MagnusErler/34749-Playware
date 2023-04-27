@@ -50,7 +50,8 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
 
     // ------------------------------- //
     // Game logic/Score
-    int timeLeft;
+    int timeLeft_Round; //milliseconds
+    int timeLeft_Game;  //milliseconds
     boolean Answer;
     int player1_score = 0; int player2_score = 0; int player3_score = 0; int player4_score = 0;
     int[] defaultArray = {0, 0}; //For calling gamelogic() when no press is detected
@@ -96,28 +97,41 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         //Toast.makeText(GameActivity.this, "Question: " + Question + ", Answer: " + Answer, Toast.LENGTH_LONG).show();
         textToSpeech(Question);
 
-        startTimer();
+        startTimer_Round();
+        startTimer_Game();
 
     }
 
-    void startTimer() {
+    void startTimer_Round() {
         TextView timer = findViewById(R.id.timer);
         new CountDownTimer(10000, 1000) {
-
             public void onTick(long millisUntilFinished) {
-                timeLeft = (int) (millisUntilFinished / 1000);
-                timer.setText("" + timeLeft);
+                timeLeft_Round = (int) (millisUntilFinished / 1000);
+                timer.setText("Round: " + timeLeft_Round + ", Game: " + timeLeft_Game);
                 ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 40);
                 toneG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 200);
             }
 
             public void onFinish() {
-                timer.setText("Answer");
+                timer.setText("Round Over");
             }
 
         }.start();
     }
 
+    void startTimer_Game() {
+        TextView timer = findViewById(R.id.timer);
+        new CountDownTimer(30000, 1000) {
+            public void onTick(long millisUntilFinished) {
+                timeLeft_Game = (int) (millisUntilFinished / 1000);
+            }
+
+            public void onFinish() {
+                timer.setText("Game Over");
+            }
+
+        }.start();
+    }
 
     // ------------------------------- //
     // For going back to previous activity
