@@ -196,9 +196,10 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
     // Text To Speech
     public void textToSpeech(String textToSay) {
         textToSpeechSystem = new TextToSpeech(this, status -> {
-            //if (status == TextToSpeech.SUCCESS) {
+            if (status == TextToSpeech.SUCCESS) {
+                textToSpeechSystem.setSpeechRate(1F);
             textToSpeechSystem.speak(textToSay, TextToSpeech.QUEUE_FLUSH, null,"ID");
-            //}
+            }
         });
     }
 

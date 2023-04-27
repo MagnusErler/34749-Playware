@@ -95,7 +95,7 @@
         <TextView
             android:id="@+id/questionTextView"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:text="@string/loading_text"
             android:textAlignment="center"
             android:textSize="50sp"

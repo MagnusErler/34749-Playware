@@ -33,6 +33,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Random;
 
@@ -68,6 +69,8 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     CountDownTimer timerGame;
     // ------------------------------- //
     ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 40);
+    boolean cancelTimerRound = false;
+    boolean cancelTimerGame = false;
     //Database
     //------------------------//
     // Adaptivity stuff
@@ -202,6 +205,8 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         timerRound = new CountDownTimer(time, 1000) {
             @SuppressLint("SetTextI18n")
             public void onTick(long millisUntilFinished) {
+                if(cancelTimerRound) { cancel(); }
+
                 timeLeft_Round = (int) (millisUntilFinished / 1000);
 
                 runOnUiThread(() -> {
@@ -227,6 +232,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         TextView timer = findViewById(R.id.gameTimeTextView);
         timerGame = new CountDownTimer(time, 1000) {
             public void onTick(long millisUntilFinished) {
+                if(cancelTimerGame) { cancel(); }
                 timeLeft_Game = (int) (millisUntilFinished / 1000);
             }
 
@@ -241,7 +247,6 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     }
 
     void gameOver() {
-
         //Find the highest number of playerScores and the player with that score
         int maxScore = 0;
         int maxScorePlayer = 0;
@@ -254,6 +259,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
 
         gameOver = true;
         stopTimer();
+        stopTTS();
 
         AlertDialog.Builder gameOver_AlertDialog = new AlertDialog.Builder(this);
         gameOver_AlertDialog.setIcon(android.R.drawable.ic_dialog_alert);
@@ -300,6 +306,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             stopTimer();
+            stopTTS();
             finish();
             return true;
         }
@@ -312,10 +319,17 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     }
 
     void stopTimer() {
+        cancelTimerRound = true;
+        cancelTimerGame = true;
         timerRound.cancel();
         timerGame.cancel();
         toneG.stopTone();
         //toneG.release();
+    }
+
+    void stopTTS() {
+        textToSpeechSystem.stop();
+        textToSpeechSystem.shutdown();
     }
 
     @Override
@@ -392,10 +406,10 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     // Text to Speech
     public void textToSpeech(String textToSay) {
         textToSpeechSystem = new TextToSpeech(this, status -> {
-            //if (status == TextToSpeech.SUCCESS) {
-            textToSpeechSystem.setSpeechRate(1.3F);
-            textToSpeechSystem.speak(textToSay, TextToSpeech.QUEUE_FLUSH, null, "ID");
-            //}
+            if (status == TextToSpeech.SUCCESS) {
+                textToSpeechSystem.setSpeechRate(1.3F);
+                textToSpeechSystem.speak(textToSay, TextToSpeech.QUEUE_FLUSH, null, "ID");
+            }
         });
     }
 
@@ -411,6 +425,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     public void onBackPressed() {
         super.onBackPressed();
         stopTimer();
+        stopTTS();
         finish();
     }
 
