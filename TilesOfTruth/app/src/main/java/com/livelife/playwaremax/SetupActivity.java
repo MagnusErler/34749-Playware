@@ -94,12 +94,12 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
 
         setTitle("Setup Game");
 
+        sharedPref = this.getApplicationContext().getSharedPreferences("PLAYWARE_COURSE", Context.MODE_PRIVATE);
+
         // Enable Back-button
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         checkIfDeviceIsConnectedToInternet();
-
-        sharedPref = this.getApplicationContext().getSharedPreferences("PLAYWARE_COURSE", Context.MODE_PRIVATE);
 
         /*gameSessions_ListView = findViewById(R.id.gameSessions_ListView);
 
