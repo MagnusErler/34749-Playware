@@ -47,7 +47,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
 
     //Setup info
     int numberOfPlayers = 1;
-    int difficulty = 1;
+    int difficulty = 2;
     int player1_trueTile, player2_trueTile, player3_trueTile, player4_trueTile;
     int player1_falseTile, player2_falseTile, player3_falseTile, player4_falseTile;
 
@@ -100,7 +100,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         difficulty = setup[1];
 
         int[] tileIDs = getIntent().getIntArrayExtra("tile_ids");
-        Toast.makeText(GameActivity.this, "Number of players: " + setup[0] + " Difficulty: " + setup[1], Toast.LENGTH_LONG).show();
+        //Toast.makeText(GameActivity.this, "Number of players: " + setup[0] + " Difficulty: " + difficulty, Toast.LENGTH_LONG).show();
 
         player1_trueTile = tileIDs[0];
         player1_falseTile = tileIDs[1];
@@ -183,13 +183,13 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
             adaptivityFactor += 0.1;
         }
         //Easy mode
-        if (difficulty == 0) {
+        if (difficulty == 1) {
             roundTime = (int) (adaptivityFactor * baseRoundTimeEasy);
         }
-        else if (difficulty == 1) {
+        else if (difficulty == 2) {
             roundTime = (int) (adaptivityFactor * baseRoundTimeNormal);
         }
-        else if (difficulty == 2) {
+        else if (difficulty == 3) {
             roundTime = (int) (adaptivityFactor * baseRoundTimeHard);
         }
 

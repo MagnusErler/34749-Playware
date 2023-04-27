@@ -44,7 +44,7 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
     ImageView positioningImageView;
 
     int numberOfPlayers = 1;
-    int difficulty = 1;
+    int difficulty = 2;
 
     int player1_trueTile = 0, player2_trueTile = 0, player3_trueTile = 0, player4_trueTile = 0;
     int player1_falseTile = 0, player2_falseTile = 0, player3_falseTile = 0, player4_falseTile = 0;

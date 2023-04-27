@@ -31,7 +31,7 @@ public class ScoreboardActivity extends AppCompatActivity {
     String endpoint = "https://centerforplayware.com/api/index.php";
     SharedPreferences sharedPref;
     ArrayList<String> listFromJson_ArrayList = new ArrayList<>();
-    int sortByDifficulty = 10;
+    int sortByDifficulty = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,16 +62,16 @@ public class ScoreboardActivity extends AppCompatActivity {
         playersRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             switch(checkedId) {
                 case R.id.allScoreboardButton:
-                    sortByDifficulty = 10;
-                    break;
-                case R.id.easyScoreboardButton:
                     sortByDifficulty = 0;
                     break;
-                case R.id.normalScoreboardButton:
+                case R.id.easyScoreboardButton:
                     sortByDifficulty = 1;
                     break;
-                case R.id.hardScoreboardButton:
+                case R.id.normalScoreboardButton:
                     sortByDifficulty = 2;
+                    break;
+                case R.id.hardScoreboardButton:
+                    sortByDifficulty = 3;
                     break;
                 default:
                     break;
@@ -164,11 +164,11 @@ public class ScoreboardActivity extends AppCompatActivity {
                             int gameWinner_Difficulty = Integer.parseInt(parts[3]);
 
                             String difficulty_text;
-                            if (gameWinner_Difficulty == 0){
+                            if (gameWinner_Difficulty == 1){
                                 difficulty_text = "Easy";
-                            } else if (gameWinner_Difficulty == 1){
-                                difficulty_text = "Medium";
                             } else if (gameWinner_Difficulty == 2){
+                                difficulty_text = "Medium";
+                            } else if (gameWinner_Difficulty == 3){
                                 difficulty_text = "Hard";
                             } else {
                                 difficulty_text = "Easy";
@@ -178,7 +178,7 @@ public class ScoreboardActivity extends AppCompatActivity {
                                 games_ArrayList.add("Name: " + gameWinner_Name + ", Score: " + gameWinner_Score + ", Difficulty: " + difficulty_text);
                             }
 
-                            if (sortByDifficulty == 10) {
+                            if (sortByDifficulty == 0) {
                                 games_ArrayList.add("Name: " + gameWinner_Name + ", Score: " + gameWinner_Score + ", Difficulty: " + difficulty_text);
                             }
                         }
