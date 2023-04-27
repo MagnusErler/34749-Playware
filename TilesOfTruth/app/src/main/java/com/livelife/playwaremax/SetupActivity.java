@@ -92,7 +92,9 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup);
 
-        // Back-button
+        setTitle("Setup Game");
+
+        // Enable Back-button
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         checkIfDeviceIsConnectedToInternet();

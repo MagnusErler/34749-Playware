@@ -1,17 +1,19 @@
 package com.livelife.playwaremax;
 
 import static com.livelife.motolibrary.AntData.EVENT_PRESS;
-import static com.livelife.motolibrary.AntData.LED_COLOR_GREEN;
-import static com.livelife.motolibrary.AntData.LED_COLOR_OFF;
-import static com.livelife.motolibrary.AntData.LED_COLOR_RED;
 
-import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.res.Resources;
+import android.media.AudioManager;
+import android.media.ToneGenerator;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.speech.tts.TextToSpeech;
+import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,7 +38,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
 
     int randomQuestionNr;
     int numberOfQuestions = 1000;
-    ArrayList<Integer> answeredQuestionsNr= new ArrayList<>(numberOfQuestions);
+    ArrayList<Integer> answeredQuestionsNr = new ArrayList<>(numberOfQuestions);
     private TextToSpeech textToSpeechSystem;
 
     //Setup info
@@ -45,12 +47,23 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     int player1_trueTile, player2_trueTile, player3_trueTile, player4_trueTile;
     int player1_falseTile, player2_falseTile, player3_falseTile, player4_falseTile;
 
+    // ------------------------------- //
+    // Game logic/Score
+    boolean newRound = false;
+    int numberOfPlayersPressed = 0;
+    boolean answer_bool;
+    ArrayList<Integer> playerPressedList = new ArrayList<>();
+    int answer_int = 0;
+    int timeLeft_Round; //milliseconds
+    int timeLeft_Game;  //milliseconds
+    int[] playerScores = {0, 0, 0, 0};
+    int[] defaultArray = {0, 0}; //For calling gameLogic() when no press is detected
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
-        // Back-button
+        // Enable Back-button
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         // Data from SetupActivity
@@ -61,29 +74,6 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         int[] tileIDs = getIntent().getIntArrayExtra("tile_ids");
         Toast.makeText(GameActivity.this, "Number of players: " + setup[0] + " Difficulty: " + setup[1], Toast.LENGTH_LONG).show();
 
-        do  {
-            randomQuestionNr = getRandomNumber(numberOfQuestions);
-        } while (answeredQuestionsNr.contains(randomQuestionNr));
-
-        answeredQuestionsNr.add(randomQuestionNr);
-
-        // Question update
-        String[] separated = getQuestionFromCSV(randomQuestionNr).split(",");
-        String Question = separated[0];
-        boolean Answer = Boolean.parseBoolean(separated[1]);
-        TextView questionTextView = findViewById(R.id.questionTextView);
-        questionTextView.setText(Question);
-        //Toast.makeText(GameActivity.this, "Question: " + Question + ", Answer: " + Answer, Toast.LENGTH_LONG).show();
-        textToSpeech(Question);
-
-        // Moto Connection
-        //connection.startMotoConnection(this);
-        //connection.saveRfFrequency(66);
-        //connection.setDeviceId(2);
-        //connection.registerListener(this);
-
-        //setupTiles(numberOfPlayers, tileIDs);
-
         player1_trueTile = tileIDs[0];
         player1_falseTile = tileIDs[1];
         player2_trueTile = tileIDs[2];
@@ -92,6 +82,102 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         player3_falseTile = tileIDs[5];
         player4_trueTile = tileIDs[6];
         player4_falseTile = tileIDs[7];
+
+        gameOver();
+
+        startTimer_Game(30000);
+        gameLogic(defaultArray, false, true);
+    }
+    void gameLogic(int[] playerPressed, Boolean timeOut,Boolean firstRound) {
+
+        if(firstRound) newRound = true;
+        if(timeOut) newRound = true;
+
+        // A player has pressed a tile :O
+        if(playerPressed[0] != 0 && !playerPressedList.contains(playerPressed[0])) {
+            numberOfPlayersPressed++;
+            playerPressedList.add(playerPressed[0]);
+            if (playerPressed[1] == answer_int) {
+                playerScores[playerPressed[0]]++; //increment the player that pressed the correct tile
+            }
+        }
+        if(numberOfPlayersPressed == numberOfPlayers) newRound = true;
+
+        if (newRound) {
+            playerPressedList.clear();
+            newRound = false;
+            // Get a new question
+            do  {
+                randomQuestionNr = getRandomNumber(numberOfQuestions);
+            } while (answeredQuestionsNr.contains(randomQuestionNr));
+            answeredQuestionsNr.add(randomQuestionNr);
+
+            // Question update
+            String[] QuestionAnswer = getQuestionFromCSV(randomQuestionNr).split(",");
+            String Question = QuestionAnswer[0];
+            answer_bool = Boolean.parseBoolean(QuestionAnswer[1]);
+            answer_int = answer_bool ? 1 : 0;
+            TextView questionTextView = findViewById(R.id.questionTextView);
+            questionTextView.setText(Question);
+            //Toast.makeText(GameActivity.this, "Question: " + Question + ", Answer: " + Answer, Toast.LENGTH_LONG).show();
+            textToSpeech(Question);
+
+            startTimer_Round(10000);
+        }
+    }
+
+    void startTimer_Round(int time) {
+        TextView timer = findViewById(R.id.timer);
+        new CountDownTimer(time, 1000) {
+            public void onTick(long millisUntilFinished) {
+                timeLeft_Round = (int) (millisUntilFinished / 1000);
+                timer.setText("Round: " + timeLeft_Round + ", Game: " + timeLeft_Game);
+                ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 40);
+                toneG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 200);
+            }
+
+            public void onFinish() {
+                timer.setText("Round Over");
+                gameLogic(defaultArray, true,false);
+            }
+
+        }.start();
+    }
+
+    void startTimer_Game(int time) {
+        TextView timer = findViewById(R.id.timer);
+        new CountDownTimer(time, 1000) {
+            public void onTick(long millisUntilFinished) {
+                timeLeft_Game = (int) (millisUntilFinished / 1000);
+            }
+
+            public void onFinish() {
+                timer.setText("Game Over");
+            }
+
+        }.start();
+    }
+
+    void gameOver() {
+        AlertDialog.Builder gameOver_AlertDialog = new AlertDialog.Builder(this);
+        gameOver_AlertDialog.setIcon(android.R.drawable.ic_dialog_alert);
+        gameOver_AlertDialog.setTitle("Player: XX" + " won this round!");
+        gameOver_AlertDialog.setMessage("Please fill in you name for the score board");
+
+        final EditText input = new EditText(GameActivity.this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        gameOver_AlertDialog.setView(input);
+        String gameOver_WinnerOfGame = input.getText().toString();
+
+        gameOver_AlertDialog.setPositiveButton("Enter", (dialogInterface, i) -> {
+                    //set what would happen when positive button is clicked
+                    finish();
+                });
+        gameOver_AlertDialog.setNegativeButton("No", (dialogInterface, i) -> {
+                    //set what should happen when negative button is clicked
+                    Toast.makeText(getApplicationContext(), "Nothing Happened", Toast.LENGTH_LONG).show();
+                });
+        gameOver_AlertDialog.show();
     }
 
     // ------------------------------- //
@@ -110,81 +196,53 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         return true;
     }
 
-    public void setupTiles(int numberOfPlayers, int[]tileID) {
-
-        player1_trueTile = tileID[0];
-        player1_falseTile = tileID[1];
-        player2_trueTile = tileID[2];
-        player2_falseTile = tileID[3];
-        player3_trueTile = tileID[4];
-        player3_falseTile = tileID[5];
-        player4_trueTile = tileID[6];
-        player4_falseTile = tileID[7];
-
-        switch (numberOfPlayers) {
-            case 1:
-                connection.setTileNumLeds(LED_COLOR_GREEN, player1_trueTile, 1);
-                connection.setTileNumLeds(LED_COLOR_RED, player1_falseTile, 1);
-                break;
-            case 2:
-                connection.setTileNumLeds(LED_COLOR_GREEN, player1_trueTile, 1);
-                connection.setTileNumLeds(LED_COLOR_RED, player1_falseTile, 1);
-                connection.setTileNumLeds(LED_COLOR_GREEN, player2_trueTile, 2);
-                connection.setTileNumLeds(LED_COLOR_RED, player2_falseTile, 2);
-                break;
-            case 3:
-                connection.setTileNumLeds(LED_COLOR_GREEN, player1_trueTile, 1);
-                connection.setTileNumLeds(LED_COLOR_RED, player1_falseTile, 1);
-                connection.setTileNumLeds(LED_COLOR_GREEN, player2_trueTile, 2);
-                connection.setTileNumLeds(LED_COLOR_RED, player2_falseTile, 2);
-                connection.setTileNumLeds(LED_COLOR_GREEN, player3_trueTile, 3);
-                connection.setTileNumLeds(LED_COLOR_RED, player3_falseTile, 3);
-                break;
-            case 4:
-                connection.setTileNumLeds(LED_COLOR_GREEN, player1_trueTile, 1);
-                connection.setTileNumLeds(LED_COLOR_RED, player1_falseTile, 1);
-                connection.setTileNumLeds(LED_COLOR_GREEN, player2_trueTile, 2);
-                connection.setTileNumLeds(LED_COLOR_RED, player2_falseTile, 2);
-                connection.setTileNumLeds(LED_COLOR_GREEN, player3_trueTile, 3);
-                connection.setTileNumLeds(LED_COLOR_RED, player3_falseTile, 3);
-                connection.setTileNumLeds(LED_COLOR_GREEN, player4_trueTile, 4);
-                connection.setTileNumLeds(LED_COLOR_RED, player4_falseTile, 4);
-                break;
-            default:
-                Log.d("tag", "ERROR: Wrong amount of players");
-                break;
-        }
-    }
-
     @Override
     public void onMessageReceived(byte[] bytes, long l) {
 
         int command = AntData.getCommand(bytes);
         int tileId = AntData.getId(bytes);
-        int color = AntData.getColorFromPress(bytes);
+        int[] pressArray = {0,0};
+        //int color = AntData.getColorFromPress(bytes);
 
         if(command == EVENT_PRESS) {
             Log.d("tag", "tileID: " + tileId);
 
             if (tileId == player1_trueTile) {
                 Log.d("tag", "Player 1 True Tile pressed");
+                pressArray[0] = 1;
+                pressArray[1] = 1;
             } else if (tileId == player1_falseTile) {
                 Log.d("tag", "Player 1 False Tile pressed");
+                pressArray[0] = 1;
+                pressArray[1] = 0;
             } else if (tileId == player2_trueTile) {
                 Log.d("tag", "Player 2 True Tile pressed");
+                pressArray[0] = 2;
+                pressArray[1] = 1;
             } else if (tileId == player2_falseTile) {
                 Log.d("tag", "Player 2 False Tile pressed");
+                pressArray[0] = 2;
+                pressArray[1] = 0;
             } else if (tileId == player3_trueTile) {
                 Log.d("tag", "Player 3 True Tile pressed");
+                pressArray[0] = 3;
+                pressArray[1] = 1;
             } else if (tileId == player3_falseTile) {
                 Log.d("tag", "Player 3 False Tile pressed");
+                pressArray[0] = 3;
+                pressArray[1] = 0;
             } else if (tileId == player4_trueTile) {
                 Log.d("tag", "Player 4 True Tile pressed");
+                pressArray[0] = 4;
+                pressArray[1] = 1;
             } else if (tileId == player4_falseTile) {
                 Log.d("tag", "Player 4 False Tile pressed");
+                pressArray[0] = 4;
+                pressArray[1] = 0;
             } else {
                 Log.d("tag", "ERROR: Tile not found");
             }
+            gameLogic(pressArray,false,false);
         }
     }
 
