@@ -25,6 +25,10 @@ public class ScoreboardActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scoreboard);
+
+        setTitle("Scoreboard");
+
+        // Enable Back-button
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         gameSessions_ListView = findViewById(R.id.gameSessions_ListView);
