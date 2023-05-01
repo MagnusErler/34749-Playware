@@ -25,7 +25,7 @@ import com.livelife.motolibrary.MotoConnection;
 import com.livelife.motolibrary.MotoSound;
 import com.livelife.motolibrary.OnAntEventListener;
 
-import java.net.InetAddress;
+import java.util.Locale;
 import java.util.Objects;
 
 public class SetupActivity extends AppCompatActivity implements OnAntEventListener {
@@ -43,13 +43,14 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
 
     ImageView positioningImageView;
 
+
     int numberOfPlayers = 1;
     int difficulty = 2;
 
     int player1_trueTile = 0, player2_trueTile = 0, player3_trueTile = 0, player4_trueTile = 0;
     int player1_falseTile = 0, player2_falseTile = 0, player3_falseTile = 0, player4_falseTile = 0;
 
-    private TextToSpeech textToSpeechSystem;
+    public static TextToSpeech textToSpeechSystem;
     // -------------------------
 
     int setupMode = 1;
@@ -68,12 +69,11 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         connection = MotoConnection.getInstance();
         sound = MotoSound.getInstance();
 
-        connection.stopMotoConnection();
         connection.startMotoConnection(this);
         
-        connection.saveRfFrequency(70);
+        connection.saveRfFrequency(66);
         connection.setDeviceId(2);
-        connection.registerListener(this);
+        //connection.registerListener(this);
 
         // ------ Difficulty ------
         Button easyDifficultyButton = findViewById(R.id.easyDifficultyButton);
@@ -92,33 +92,52 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
             difficulty = 3;
         });
 
+        // ------ Text to Speech initialization ------
+        textToSpeechSystem = new TextToSpeech(SetupActivity.this, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status == TextToSpeech.SUCCESS) {
+                int result = textToSpeechSystem.setLanguage(Locale.ENGLISH);
+                    if (result == TextToSpeech.LANG_MISSING_DATA ||
+                        result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                        Log.e("error", "This Language is not supported");
+                    }
+                    textToSpeechSystem.setSpeechRate(1.5F);
+                    } else
+                        Log.e("error", "Initialization Failed!");
+            }
+        });
+
         // ------ Pairing Tiles ------
         Button pairingButton = findViewById(R.id.pairButton);
         pairingButton.setOnClickListener(v -> {
             switch(setupMode) {
                 case 1:
                     //Starting pairing tiles -> tiles a spinning
+                    connection.registerListener(this);
                     connection.pairTilesStart();
-                    textToSpeech("Press " + numberOfPlayers*2 + "tiles you want to use");
+                    textToSpeechSystem.speak("Turn on and press " + numberOfPlayers*2 + "tiles you want to use", TextToSpeech.QUEUE_FLUSH, null,"ID");
                     pairingButton.setText("Next");
                     setupMode = 2;
                     break;
                 case 2:
                     //Stopping pairing tiles -> tiles are OFF
                     connection.pairTilesStop();
-                    //playersRadioGroup.setVisibility(View.VISIBLE);
-                    //numberOfPlayersTextView.setVisibility(View.VISIBLE);
-                    //tilesPositioningTextView.setVisibility(View.VISIBLE);
-                    //positioningImageView.setVisibility(View.VISIBLE);
-                    setupTilesPosition(numberOfPlayers);
-                    textToSpeech("Place the " + numberOfPlayers*2 + " tiles 3 meters apart and stand between them");
+                    textToSpeechSystem.speak("Place the " + numberOfPlayers*2 + " tiles 3 meters apart and stand between them", TextToSpeech.QUEUE_FLUSH, null,"ID");
                     pairingButton.setText("Next");
                     setupMode = 3;
                     break;
                 case 3:
-                    textToSpeech("Setup complete. You are now ready to play. Press start game");
+                    setupTilesPosition(numberOfPlayers);
+                    textToSpeechSystem.speak("Setup complete", TextToSpeech.QUEUE_FLUSH, null,"ID");
+                    connection.unregisterListener(this);
                     pairingButton.setText("Start Pairing");
                     setupMode = 1;
+                    /*
+                    for (int numaa = 0; numaa < connection.connectedTiles.size(); numaa++) { //DEBUG
+                        Log.d("tag","Connected tiles' ID " + connection.connectedTiles.get(numaa));
+                    }
+                     */
                     break;
                 default:
                     pairingButton.setText("Error");
@@ -162,13 +181,6 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
                 return;
             }
 
-            if (setupMode == 1) {
-                setupTilesPosition(numberOfPlayers);
-                textToSpeech("Place the " + numberOfPlayers*2 + " tiles 3 meters apart and stand between them");
-                setupMode = 3;
-                return;
-            }
-
             Intent intent = new Intent(SetupActivity.this, GameActivity.class);
             intent.putExtra("setup_data", new int[]{numberOfPlayers, difficulty});
             intent.putExtra("tile_ids", new int[]{player1_trueTile, player1_falseTile, player2_trueTile, player2_falseTile, player3_trueTile, player3_falseTile, player4_trueTile, player4_falseTile});
@@ -181,6 +193,7 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
+            killTTS();
             finish();
             return true;
         }
@@ -190,17 +203,6 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
 
     public boolean onCreateOptionsMenu(Menu menu) {
         return true;
-    }
-
-    // ------------------------------- //
-    // Text To Speech
-    public void textToSpeech(String textToSay) {
-        textToSpeechSystem = new TextToSpeech(this, status -> {
-            if (status == TextToSpeech.SUCCESS) {
-                textToSpeechSystem.setSpeechRate(1F);
-            textToSpeechSystem.speak(textToSay, TextToSpeech.QUEUE_FLUSH, null,"ID");
-            }
-        });
     }
 
     // ------------------------------- //
@@ -277,9 +279,14 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
 
                 break;
             default:
-                Log.d("tag", "ERROR: Wrong amount of players");
+                Log.d("tag", "ERROR: Wrong number of players");
                 break;
         }
+    }
+
+     private void killTTS() {
+        textToSpeechSystem.stop();
+        textToSpeechSystem.shutdown();
     }
 
     @Override
@@ -305,6 +312,7 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         connectedTiles = i;
         TextView pairTextView = findViewById(R.id.pairTextView);
         pairTextView.setText("Tiles pairing (connected tiles: " + i + ")");
+        Log.d("tag", "Number of connected tiles " + i);
     }
 
     @Override
@@ -317,6 +325,7 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
     @Override
     protected void onRestart() {
         super.onRestart();
+
         //connection.startMotoConnection(this);
         //connection.registerListener(this);
     }

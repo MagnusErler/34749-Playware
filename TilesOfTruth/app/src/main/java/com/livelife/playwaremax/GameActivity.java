@@ -44,7 +44,6 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     int randomQuestionNr;
     int numberOfQuestions = 1000;
     ArrayList<Integer> answeredQuestionsNr = new ArrayList<>(numberOfQuestions);
-    private TextToSpeech textToSpeechSystem;
 
     //Setup info
     int numberOfPlayers = 1;
@@ -68,7 +67,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     CountDownTimer timerRound;
     CountDownTimer timerGame;
     // ------------------------------- //
-    ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 40);
+    ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_MUSIC, 40);
     boolean cancelTimerRound = false;
     boolean cancelTimerGame = false;
     //Database
@@ -83,7 +82,6 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     String endpoint = "https://centerforplayware.com/api/index.php";
     SharedPreferences sharedPref;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -96,6 +94,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
 
         // Enable Back-button
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+
 
         // Data from SetupActivity
         int[] setup = getIntent().getIntArrayExtra("setup_data");
@@ -115,7 +114,6 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         player4_falseTile = tileIDs[7];
 
         startTimer_Game(baseGameTime);
-
         gameLogic(defaultArray, false, true);
     }
     @SuppressLint("SetTextI18n")
@@ -168,21 +166,24 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
             runOnUiThread(() -> questionTextView.setText(Question));
 
             //Toast.makeText(GameActivity.this, "Question: " + Question + ", Answer: " + answer_int, Toast.LENGTH_LONG).show();
-            textToSpeech(Question); // SHUT THE FUCK UP
-            if(!firstRound)timerRound.cancel(); //Cancel previous timer
+
+            SetupActivity.textToSpeechSystem.speak(Question, TextToSpeech.QUEUE_FLUSH, null, "ID");
+            if (timerRound != null) timerRound.cancel(); //Cancel previous timer
 
             startTimer_Round(getAdaptiveRoundTime(roundScore));
             roundScore = 0;
+
         }
     }
 
     int getAdaptiveRoundTime(int prevRoundScore) {
         int roundTime = 10000;
 
-        if (prevRoundScore/numberOfPlayers == 1) {
+        if (prevRoundScore/numberOfPlayers == 1 && adaptivityFactor > 0.5) { // corrections added
+            // for preventing the roundTimer from going to zero and breaking GameActivity
             adaptivityFactor -= 0.1;
         }
-        else {
+        else if (prevRoundScore/numberOfPlayers != 1) {
             adaptivityFactor += 0.1;
         }
         //Easy mode
@@ -247,6 +248,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     }
 
     void gameOver() {
+        connection.unregisterListener(this);
         //Find the highest number of playerScores and the player with that score
         int maxScore = 0;
         int maxScorePlayer = 0;
@@ -256,10 +258,9 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
                 maxScorePlayer = i;
             }
         }
-
         gameOver = true;
         stopTimer();
-        stopTTS();
+        SetupActivity.textToSpeechSystem.speak("Game over", TextToSpeech.QUEUE_FLUSH, null, "ID");
 
         AlertDialog.Builder gameOver_AlertDialog = new AlertDialog.Builder(this);
         gameOver_AlertDialog.setIcon(android.R.drawable.ic_dialog_alert);
@@ -275,10 +276,10 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
                     if (checkIfDeviceIsConnectedToInternet()) {
                         postGameWinner(input.getText().toString(), finalMaxScore);
                     }
-                    finish(); //Go back to previos activity
+                    finish(); //Go back to previous activity
                 });
         gameOver_AlertDialog.setNegativeButton("No", (dialogInterface, i) -> {
-                    finish(); //Go back to previos activity
+                    finish(); //Go back to previous activity
                 });
         gameOver_AlertDialog.setCancelable(false);
         gameOver_AlertDialog.show();
@@ -306,7 +307,8 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             stopTimer();
-            stopTTS();
+            SetupActivity.textToSpeechSystem.stop();
+            connection.unregisterListener(this);
             finish();
             return true;
         }
@@ -325,11 +327,6 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         timerGame.cancel();
         toneG.stopTone();
         //toneG.release();
-    }
-
-    void stopTTS() {
-        textToSpeechSystem.stop();
-        textToSpeechSystem.shutdown();
     }
 
     @Override
@@ -402,17 +399,6 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         }
     }
 
-    // ------------------------------- //
-    // Text to Speech
-    public void textToSpeech(String textToSay) {
-        textToSpeechSystem = new TextToSpeech(this, status -> {
-            if (status == TextToSpeech.SUCCESS) {
-                textToSpeechSystem.setSpeechRate(1.3F);
-                textToSpeechSystem.speak(textToSay, TextToSpeech.QUEUE_FLUSH, null, "ID");
-            }
-        });
-    }
-
     @Override
     public void onAntServiceConnected() {
         connection.setAllTilesToInit();
@@ -425,7 +411,8 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     public void onBackPressed() {
         super.onBackPressed();
         stopTimer();
-        stopTTS();
+        SetupActivity.textToSpeechSystem.stop();
+        connection.unregisterListener(this);
         finish();
     }
 
@@ -454,4 +441,5 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
             return HttpManager.getData(params[0]);
         }
     }
+
 }
