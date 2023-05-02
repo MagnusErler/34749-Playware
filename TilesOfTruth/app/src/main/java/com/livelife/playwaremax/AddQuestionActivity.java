@@ -87,6 +87,7 @@ public class AddQuestionActivity extends AppCompatActivity {
         // if addQuestion_btn is clicked
         findViewById(R.id.addQuestion_btn).setOnClickListener(v -> {
             if (menuIsVisible) {
+                menuIsVisible = true;
                 showAlertDialog_newQuestionSet();
             } else {
                 showAlertDialog_newQuestion(null, false, -1);
@@ -101,7 +102,12 @@ public class AddQuestionActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            finish();
+            if (!menuIsVisible) {
+                menuIsVisible = true;
+                displayAllQuestionSets();
+            } else {
+                finish();
+            }
             return true;
         }
 
@@ -111,7 +117,11 @@ public class AddQuestionActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        finish();
+        if (!menuIsVisible) {
+            displayAllQuestionSets();
+        } else {
+            finish();
+        }
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
