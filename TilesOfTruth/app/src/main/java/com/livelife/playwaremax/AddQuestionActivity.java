@@ -1,16 +1,19 @@
 package com.livelife.playwaremax;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
@@ -94,25 +97,33 @@ public class AddQuestionActivity extends AppCompatActivity {
     }
 
     void showAlertDialog() {
-        AlertDialog.Builder gameOver_AlertDialog = new AlertDialog.Builder(this);
-        gameOver_AlertDialog.setIcon(android.R.drawable.ic_dialog_alert);
-        gameOver_AlertDialog.setTitle("Please Question");
-        gameOver_AlertDialog.setMessage("Please add a question (example: Tigers can fly,False)");
+        final AlertDialog.Builder builder = new AlertDialog.Builder(AddQuestionActivity.this);
+        final View dialogView = getLayoutInflater().inflate(R.layout.alertdialog_add_question, null);
+        builder.setTitle("Please add a question (example: Tigers can fly)")
+                .setView(dialogView)
+                .setCancelable(true)
+                .setPositiveButton("Ok", (dialog, id) -> {
 
-        final EditText input = new EditText(AddQuestionActivity.this);
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
-        gameOver_AlertDialog.setView(input);
+                    // New question
+                    EditText newQuestion = dialogView.findViewById(R.id.newQuestion_EditText);
 
-        gameOver_AlertDialog.setPositiveButton("Enter", (dialogInterface, i) -> {
-            writeQuestionToSCV(input.getText().toString());
-        });
-        gameOver_AlertDialog.setNegativeButton("Cancel", (dialogInterface, i) -> {
-        });
-        gameOver_AlertDialog.setCancelable(false);
-        gameOver_AlertDialog.show();
+                    // New answer
+                    RadioGroup rg = dialogView.findViewById(R.id.radioPersonGroup);
+                    int selectedId = rg.getCheckedRadioButtonId();
+                    RadioButton radioButton = dialogView.findViewById(selectedId);
+
+                    Toast.makeText(getApplicationContext(), newQuestion.getText(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), radioButton.getText(), Toast.LENGTH_SHORT).show();
+
+                    writeQuestionToSCV(newQuestion.getText().toString(), Boolean.parseBoolean((String) radioButton.getText()));
+                })
+                .setNegativeButton("Cancel", (dialogInterface, i) -> dialogInterface.cancel());
+
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
-    void writeQuestionToSCV(String newQuestion) {
+    void writeQuestionToSCV(String newQuestion, boolean newAnswer) {
 
         Log.d("AddQuestionActivity", "writeQuestionToSCV: " + newQuestion);
 
