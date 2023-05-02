@@ -46,8 +46,7 @@ public class ScoreboardActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         gameSessions_ListView = findViewById(R.id.gameSessions_ListView);
-        gameSessions_ArrayAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, games_ArrayList);
+        gameSessions_ArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, games_ArrayList);
         gameSessions_ListView.setAdapter(gameSessions_ArrayAdapter);
         gameSessions_ListView.setOnItemClickListener((adapterView, arg1, position, arg3) -> {
         });

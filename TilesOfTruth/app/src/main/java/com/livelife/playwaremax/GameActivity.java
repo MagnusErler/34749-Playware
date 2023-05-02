@@ -33,7 +33,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Random;
 
@@ -394,7 +393,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     // ------------------------------- //
     public String getQuestionFromCSV(int lineNr) {
         try {
-            InputStream is = getResources().openRawResource(R.raw.questions);
+            InputStream is = getResources().openRawResource(R.raw.default_questions);
             BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
 
             for(int i = 0; i < lineNr-1; ++i)

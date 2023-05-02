@@ -3,46 +3,94 @@ package com.livelife.playwaremax;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.InputType;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 public class AddQuestionActivity extends AppCompatActivity {
+
+    ListView addQuestion_ListView;
+    ArrayList<String> addQuestion_ArrayList = new ArrayList<>();
+    ArrayAdapter<String> addQuestion_ArrayAdapter;
+
+    boolean insideDefaultQuestionSet = false;
+    boolean menuIsVisible = true;
+
+    String questionSet = "Nothing";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_question);
 
-        setTitle("Add Question");
+        setTitle("Add Question-set");
 
         // Enable Back-button
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
-        displayAllQuestionsFromCSV();
+        // Default Question set
+        addQuestion_ListView = findViewById(R.id.addQuestion_ListView);
+        addQuestion_ArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, addQuestion_ArrayList);
+        addQuestion_ListView.setAdapter(addQuestion_ArrayAdapter);
+        addQuestion_ListView.setOnItemClickListener((parent, view, position, id) -> {
+
+            if (Objects.equals(addQuestion_ArrayList.get(position), "Default Question-set")) {
+                questionSet = "Default Question-set";
+                insideDefaultQuestionSet = true;
+                menuIsVisible = false;
+
+                findViewById(R.id.addQuestion_btn).setVisibility(View.GONE);
+                displayAllQuestionsFromCSV();
+            }
+            // if the name of the question set starts with "Custom: "
+            else if (addQuestion_ArrayList.get(position).startsWith("Custom: ")) {
+                // remove "Custom: " from the name of the question set
+                questionSet = addQuestion_ArrayList.get(position).substring(8);
+                insideDefaultQuestionSet = false;
+                menuIsVisible = false;
+
+                findViewById(R.id.addQuestion_btn).setVisibility(View.VISIBLE);
+                displayAllQuestionsFromQuestionSet();
+            }
+
+            else {
+                if (!insideDefaultQuestionSet) {
+                    editQuestion(position);
+                }
+            }
+        });
+
+
+        displayAllQuestionSets();
 
         // if addQuestion_btn is clicked
         findViewById(R.id.addQuestion_btn).setOnClickListener(v -> {
-            showAlertDialog();
+            if (menuIsVisible) {
+                showAlertDialog_newQuestionSet();
+            } else {
+                showAlertDialog_newQuestion(null, false, -1);
+            }
         });
     }
 
@@ -68,54 +116,152 @@ public class AddQuestionActivity extends AppCompatActivity {
         return true;
     }
 
-    void displayAllQuestionsFromCSV() {
+    void showAlertDialog_newQuestionSet() {
+        AlertDialog.Builder gameOver_AlertDialog = new AlertDialog.Builder(this);
+        gameOver_AlertDialog.setIcon(android.R.drawable.ic_dialog_alert);
+        gameOver_AlertDialog.setTitle("Create a new question set");
+        //gameOver_AlertDialog.setMessage("Please fill in your name for the scoreboard");
 
-        TextView questions_TextView = findViewById(R.id.questions_TextView);
+        final EditText input = new EditText(AddQuestionActivity.this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        gameOver_AlertDialog.setView(input);
+
+        gameOver_AlertDialog.setPositiveButton("OK", (dialogInterface, i) -> {
+            // write a csv-file with the name of the new question-set
+            String fileName = "question_" + input.getText().toString() + ".csv";
+            try {
+                FileOutputStream fileOutputStream = openFileOutput(fileName, Context.MODE_PRIVATE);
+                fileOutputStream.write(("Question,Answer\n").getBytes());
+                fileOutputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            dialogInterface.cancel();
+            displayAllQuestionSets();
+        });
+        gameOver_AlertDialog.setNegativeButton("Cancel", (dialogInterface, i) -> {
+            dialogInterface.cancel();
+        });
+        gameOver_AlertDialog.setCancelable(false);
+        gameOver_AlertDialog.show();
+    }
+
+    void displayAllQuestionsFromQuestionSet() {
+        //Display the questions and answers from the question-set
+        addQuestion_ArrayList.clear();
 
         try {
-            // Open the CSV file as an InputStream
-            InputStream inputStream = getResources().openRawResource(R.raw.questions);
+            InputStream inputStream = openFileInput("question_" + questionSet + ".csv");
 
-            // Use a BufferedReader to read the lines of the file
+            Log.d("tot", "inputStream: " + inputStream);
+
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
             String line;
 
-            // Loop through each line of the file
             while ((line = reader.readLine()) != null) {
-                // Display the line in the TextView
-                questions_TextView.append(line + "\n");
-            }
 
-            // Close the BufferedReader
+                String question = line.split(",")[0];
+                String answer = line.split(",")[1];
+
+                addQuestion_ArrayList.add(question + " - " + answer);
+            }
             reader.close();
 
         } catch (IOException e) {
-            // Handle the exception
             e.printStackTrace();
         }
 
+        addQuestion_ArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, addQuestion_ArrayList);
+        addQuestion_ListView.setAdapter(addQuestion_ArrayAdapter);
     }
 
-    void showAlertDialog() {
+    void displayAllQuestionSets() {
+        addQuestion_ArrayList.clear();
+
+        addQuestion_ArrayList.add("Default Question-set");
+
+        File[] files = getFilesDir().listFiles();
+        assert files != null;
+        for (File file : files) {
+            if (file.getName().startsWith("question_")) {
+                addQuestion_ArrayList.add("Custom: " + file.getName().replace("question_", "").replace(".csv", ""));
+            }
+        }
+
+        addQuestion_ArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, addQuestion_ArrayList);
+        addQuestion_ListView.setAdapter(addQuestion_ArrayAdapter);
+    }
+
+    void displayAllQuestionsFromCSV() {
+        addQuestion_ArrayList.clear();
+
+        try {
+            InputStream inputStream = getResources().openRawResource(R.raw.default_questions);
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+
+                String question = line.split(",")[0];
+                String answer = line.split(",")[1];
+
+                addQuestion_ArrayList.add(question + " - " + answer);
+            }
+            reader.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        addQuestion_ArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, addQuestion_ArrayList);
+        addQuestion_ListView.setAdapter(addQuestion_ArrayAdapter);
+    }
+
+    void showAlertDialog_newQuestion(String question, boolean answer, int position) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(AddQuestionActivity.this);
-        final View dialogView = getLayoutInflater().inflate(R.layout.alertdialog_add_question, null);
-        builder.setTitle("Please add a question (example: Tigers can fly)")
-                .setView(dialogView)
+        final View dialogView = getLayoutInflater().inflate(R.layout.alertdialog_add_question_set, null);
+
+        EditText newQuestion = dialogView.findViewById(R.id.newQuestion_EditText);
+        RadioGroup rg = dialogView.findViewById(R.id.radioPersonGroup);
+
+        String alertDialog_Title;
+        if (question != null) {
+            newQuestion.setText(question);
+            if (answer) {
+                rg.check(R.id.true_btn);
+            } else {
+                rg.check(R.id.false_btn);
+            }
+            alertDialog_Title = "Edit question";
+        } else {
+            alertDialog_Title = "Add question";
+            position = -1;
+        }
+
+        int finalPosition = position;
+        builder.setView(dialogView)
+                .setTitle(alertDialog_Title)
                 .setCancelable(true)
                 .setPositiveButton("Ok", (dialog, id) -> {
 
                     // New question
-                    EditText newQuestion = dialogView.findViewById(R.id.newQuestion_EditText);
+                    if( TextUtils.isEmpty(newQuestion.getText())) {
+                        Toast.makeText(getApplicationContext(), "A question is required", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
 
                     // New answer
-                    RadioGroup rg = dialogView.findViewById(R.id.radioPersonGroup);
                     int selectedId = rg.getCheckedRadioButtonId();
+                    if(selectedId == -1) {
+                        Toast.makeText(getApplicationContext(), "An answer is required", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
                     RadioButton radioButton = dialogView.findViewById(selectedId);
 
-                    Toast.makeText(getApplicationContext(), newQuestion.getText(), Toast.LENGTH_SHORT).show();
-                    Toast.makeText(getApplicationContext(), radioButton.getText(), Toast.LENGTH_SHORT).show();
-
-                    writeQuestionToSCV(newQuestion.getText().toString(), Boolean.parseBoolean((String) radioButton.getText()));
+                    writeQuestionToCSV(newQuestion.getText().toString(), Boolean.parseBoolean((String) radioButton.getText()), finalPosition);
                 })
                 .setNegativeButton("Cancel", (dialogInterface, i) -> dialogInterface.cancel());
 
@@ -123,73 +269,33 @@ public class AddQuestionActivity extends AppCompatActivity {
         alert.show();
     }
 
-    void writeQuestionToSCV(String newQuestion, boolean newAnswer) {
+    void writeQuestionToCSV(String newQuestion, boolean newAnswer, int position) {
 
-        Log.d("AddQuestionActivity", "writeQuestionToSCV: " + newQuestion);
+        File file = new File(getApplicationContext().getFilesDir(), "question_" + questionSet + ".csv");
 
         try {
-            // Open the CSV file in the resources directory as an InputStream
-            InputStream inputStream = getResources().openRawResource(R.raw.questions);
+            FileWriter csvWriter = new FileWriter(file);
 
-            // Create a new file in the app's private storage directory to write the contents of the CSV file to
-            FileOutputStream outputStream = openFileOutput("questions.csv", Context.MODE_PRIVATE);
+            csvWriter.write(newQuestion + "," + newAnswer + "\n");
 
-            // Copy the contents of the CSV file to the new file using a byte buffer
-            byte[] buffer = new byte[1024];
-            int bytesRead;
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, bytesRead);
-            }
-
-            // Close the InputStream and the OutputStream
-            inputStream.close();
-            outputStream.close();
+            // close the FileWriter object
+            csvWriter.close();
 
         } catch (IOException e) {
-            // Handle the exception
+            Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
 
+        displayAllQuestionsFromQuestionSet();
 
-        Log.d("tag", "here");
+    }
 
-        try {
-            // Open the CSV file as an InputStream
-            InputStream inputStream = getResources().openRawResource(R.raw.questions);
+    void editQuestion(int position) {
 
-            // Use a BufferedReader to read the lines of the file
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-            String line;
-            List<String> lines = new ArrayList<>();
+        // get question from csv-file at position "position"
+        String question = addQuestion_ArrayList.get(position).split(" - ")[0];
+        boolean answer = Boolean.parseBoolean(addQuestion_ArrayList.get(position).split(" - ")[1]);
 
-            // Loop through each line of the file and add it to the List
-            while ((line = reader.readLine()) != null) {
-                lines.add(line);
-            }
-
-            // Modify the contents of the List as needed (e.g., change the first line)
-            lines.set(0, newQuestion);
-
-            // Close the BufferedReader
-            reader.close();
-
-            // Open the CSV file as a FileOutputStream
-            FileOutputStream outputStream = openFileOutput("questions.csv", Context.MODE_PRIVATE);
-
-            // Use a PrintWriter to write the modified lines back to the file
-            PrintWriter writer = new PrintWriter(new OutputStreamWriter(outputStream));
-            for (String modifiedLine : lines) {
-                writer.println(modifiedLine);
-            }
-
-            // Close the PrintWriter
-            writer.close();
-
-            displayAllQuestionsFromCSV();
-
-        } catch (IOException e) {
-            // Handle the exception
-            e.printStackTrace();
-        }
+        showAlertDialog_newQuestion(question, answer, position);
     }
 }
