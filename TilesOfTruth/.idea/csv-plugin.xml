@@ -10,6 +10,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/app/src/main/res/raw/default_questions.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/app/src/main/res/raw/questions.csv">
           <value>
             <Attribute>

@@ -61,7 +61,7 @@ public class AddQuestionActivity extends AppCompatActivity {
                 menuIsVisible = false;
 
                 findViewById(R.id.addQuestion_btn).setVisibility(View.GONE);
-                displayAllQuestionsFromCSV();
+                displayAllQuestionsFromDefaultQuestionSet();
             }
             // if the name of the question set starts with "Custom: "
             else if (addQuestion_ArrayList.get(position).startsWith("Custom: ")) {
@@ -92,6 +92,8 @@ public class AddQuestionActivity extends AppCompatActivity {
                 showAlertDialog_newQuestion(null, false, -1);
             }
         });
+
+        //deleteCSVFile("name");
     }
 
     // ------------------------------- //
@@ -131,7 +133,6 @@ public class AddQuestionActivity extends AppCompatActivity {
             String fileName = "question_" + input.getText().toString() + ".csv";
             try {
                 FileOutputStream fileOutputStream = openFileOutput(fileName, Context.MODE_PRIVATE);
-                fileOutputStream.write(("Question,Answer\n").getBytes());
                 fileOutputStream.close();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -145,78 +146,6 @@ public class AddQuestionActivity extends AppCompatActivity {
         });
         gameOver_AlertDialog.setCancelable(false);
         gameOver_AlertDialog.show();
-    }
-
-    void displayAllQuestionsFromQuestionSet() {
-        //Display the questions and answers from the question-set
-        addQuestion_ArrayList.clear();
-
-        try {
-            InputStream inputStream = openFileInput("question_" + questionSet + ".csv");
-
-            Log.d("tot", "inputStream: " + inputStream);
-
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-            String line;
-
-            while ((line = reader.readLine()) != null) {
-
-                String question = line.split(",")[0];
-                String answer = line.split(",")[1];
-
-                addQuestion_ArrayList.add(question + " - " + answer);
-            }
-            reader.close();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        addQuestion_ArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, addQuestion_ArrayList);
-        addQuestion_ListView.setAdapter(addQuestion_ArrayAdapter);
-    }
-
-    void displayAllQuestionSets() {
-        addQuestion_ArrayList.clear();
-
-        addQuestion_ArrayList.add("Default Question-set");
-
-        File[] files = getFilesDir().listFiles();
-        assert files != null;
-        for (File file : files) {
-            if (file.getName().startsWith("question_")) {
-                addQuestion_ArrayList.add("Custom: " + file.getName().replace("question_", "").replace(".csv", ""));
-            }
-        }
-
-        addQuestion_ArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, addQuestion_ArrayList);
-        addQuestion_ListView.setAdapter(addQuestion_ArrayAdapter);
-    }
-
-    void displayAllQuestionsFromCSV() {
-        addQuestion_ArrayList.clear();
-
-        try {
-            InputStream inputStream = getResources().openRawResource(R.raw.default_questions);
-
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-            String line;
-
-            while ((line = reader.readLine()) != null) {
-
-                String question = line.split(",")[0];
-                String answer = line.split(",")[1];
-
-                addQuestion_ArrayList.add(question + " - " + answer);
-            }
-            reader.close();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        addQuestion_ArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, addQuestion_ArrayList);
-        addQuestion_ListView.setAdapter(addQuestion_ArrayAdapter);
     }
 
     void showAlertDialog_newQuestion(String question, boolean answer, int position) {
@@ -269,12 +198,86 @@ public class AddQuestionActivity extends AppCompatActivity {
         alert.show();
     }
 
+    void displayAllQuestionsFromQuestionSet() {
+        //Display the questions and answers from the question-set
+        addQuestion_ArrayList.clear();
+
+        try {
+            InputStream inputStream = openFileInput("question_" + questionSet + ".csv");
+
+            Log.d("tot", "inputStream: " + inputStream);
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+
+                Log.d("tot", "line: " + line);
+
+                String question = line.split(",")[0];
+                String answer = line.split(",")[1];
+
+                addQuestion_ArrayList.add(question + " - " + answer);
+            }
+            reader.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        addQuestion_ArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, addQuestion_ArrayList);
+        addQuestion_ListView.setAdapter(addQuestion_ArrayAdapter);
+    }
+
+    void displayAllQuestionSets() {
+        addQuestion_ArrayList.clear();
+
+        addQuestion_ArrayList.add("Default Question-set");
+
+        File[] files = getFilesDir().listFiles();
+        assert files != null;
+        for (File file : files) {
+            if (file.getName().startsWith("question_")) {
+                addQuestion_ArrayList.add("Custom: " + file.getName().replace("question_", "").replace(".csv", ""));
+            }
+        }
+
+        addQuestion_ArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, addQuestion_ArrayList);
+        addQuestion_ListView.setAdapter(addQuestion_ArrayAdapter);
+    }
+
+    void displayAllQuestionsFromDefaultQuestionSet() {
+        addQuestion_ArrayList.clear();
+
+        try {
+            InputStream inputStream = getResources().openRawResource(R.raw.default_questions);
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+
+                String question = line.split(",")[0];
+                String answer = line.split(",")[1];
+
+                addQuestion_ArrayList.add(question + " - " + answer);
+            }
+            reader.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        addQuestion_ArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, addQuestion_ArrayList);
+        addQuestion_ListView.setAdapter(addQuestion_ArrayAdapter);
+    }
+
     void writeQuestionToCSV(String newQuestion, boolean newAnswer, int position) {
 
         File file = new File(getApplicationContext().getFilesDir(), "question_" + questionSet + ".csv");
 
         try {
-            FileWriter csvWriter = new FileWriter(file);
+            FileWriter csvWriter = new FileWriter(file, true);
 
             csvWriter.write(newQuestion + "," + newAnswer + "\n");
 
@@ -287,7 +290,6 @@ public class AddQuestionActivity extends AppCompatActivity {
         }
 
         displayAllQuestionsFromQuestionSet();
-
     }
 
     void editQuestion(int position) {
@@ -297,5 +299,14 @@ public class AddQuestionActivity extends AppCompatActivity {
         boolean answer = Boolean.parseBoolean(addQuestion_ArrayList.get(position).split(" - ")[1]);
 
         showAlertDialog_newQuestion(question, answer, position);
+    }
+
+    void deleteCSVFile(String name) {
+        File file = new File(getApplicationContext().getFilesDir(), "question_" + name + ".csv");
+        if (file.delete()) {
+            Log.d("Delete File", "File deleted successfully");
+        } else {
+            Log.d("Delete File", "Failed to delete file");
+        }
     }
 }
