@@ -113,6 +113,11 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         player4_trueTile = tileIDs[6];
         player4_falseTile = tileIDs[7];
 
+        Log.d("tot", "Game configuration:");
+        Log.d("tot", "player1_trueTile: " + player1_trueTile + " player1_falseTile: " + player1_falseTile + " player2_trueTile: " + player2_trueTile + " player2_falseTile: " + player2_falseTile + " player3_trueTile: " + player3_trueTile + " player3_falseTile: " + player3_falseTile + " player4_trueTile: " + player4_trueTile + " player4_falseTile: " + player4_falseTile);
+        Log.d("tot", "numberOfPlayers: " + numberOfPlayers);
+        Log.d("tot", "difficulty: " + difficulty);
+
         startTimer_Game(baseGameTime);
         gameLogic(defaultArray, false, true);
     }
@@ -199,6 +204,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
 
         return roundTime;
     }
+
     void startTimer_Round(int time) {
         TextView timerRound_TextView = findViewById(R.id.roundTimeTextView);
         TextView timerGame_TextView = findViewById(R.id.gameTimeTextView);
@@ -248,6 +254,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     }
 
     void gameOver() {
+        Log.d("tot", "Game over:");
         connection.unregisterListener(this);
         //Find the highest number of playerScores and the player with that score
         int maxScore = 0;
@@ -417,6 +424,8 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     }
 
     private void postGameWinner(String gameWinner, int score) {
+        Log.d("tot", "maxScore: " + score);
+        Log.d("tot", "gameWinner: " + gameWinner);
 
         RemoteHttpRequest requestPackage = new RemoteHttpRequest();
         requestPackage.setMethod("POST");

@@ -61,6 +61,8 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup);
 
+        Log.d("tot", "Starting setup game...");
+
         setTitle("Setup Game");
 
         // Enable Back-button
