@@ -85,10 +85,26 @@
             android:textSize="25sp"
             android:typeface="sans"
             app:cornerRadius="15dp"
-            app:layout_constraintBottom_toTopOf="@+id/activity_main_space3"
+            app:layout_constraintBottom_toTopOf="@+id/addQuestionButton"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintStart_toStartOf="@+id/guideline1"
             app:layout_constraintTop_toBottomOf="@+id/playButton"
+            android:paddingVertical="7.5dp"/>
+
+        <Button
+            android:id="@+id/addQuestionButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@drawable/button_selector"
+            android:stateListAnimator="@null"
+            android:text="Add Question"
+            android:textSize="25sp"
+            android:typeface="sans"
+            app:cornerRadius="15dp"
+            app:layout_constraintBottom_toTopOf="@+id/activity_main_space3"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintStart_toStartOf="@+id/guideline1"
+            app:layout_constraintTop_toBottomOf="@+id/scoreboardButton"
             android:paddingVertical="7.5dp"/>
 
         <Space
@@ -99,7 +115,7 @@
             app:layout_constraintBottom_toTopOf="@+id/illustrationImageView"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintStart_toStartOf="@+id/guideline1"
-            app:layout_constraintTop_toBottomOf="@+id/scoreboardButton" />
+            app:layout_constraintTop_toBottomOf="@+id/addQuestionButton" />
 
         <ImageView
             android:id="@+id/illustrationImageView"

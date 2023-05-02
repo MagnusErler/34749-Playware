@@ -21,5 +21,8 @@ public class MainActivity extends AppCompatActivity {
 
         Button scoreboard_Btn = findViewById(R.id.scoreboardButton);
         scoreboard_Btn.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, ScoreboardActivity.class)));
+
+        Button addQuestion_Btn = findViewById(R.id.addQuestionButton);
+        addQuestion_Btn.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, AddQuestionActivity.class)));
     }
 }
