@@ -7,6 +7,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.os.AsyncTask;
@@ -17,6 +18,8 @@ import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -268,27 +271,47 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         stopTimer();
         SetupActivity.textToSpeechSystem.speak("Game over", TextToSpeech.QUEUE_FLUSH, null, "ID");
 
-        AlertDialog.Builder gameOver_AlertDialog = new AlertDialog.Builder(this);
-        gameOver_AlertDialog.setIcon(android.R.drawable.ic_dialog_alert);
-        gameOver_AlertDialog.setTitle("Player " + (maxScorePlayer+1) + " won this game with " + maxScore + " points");
-        gameOver_AlertDialog.setMessage("Please fill in your name for the scoreboard");
-
-        final EditText input = new EditText(GameActivity.this);
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
-        gameOver_AlertDialog.setView(input);
-
-        int finalMaxScore = maxScore;
-        gameOver_AlertDialog.setPositiveButton("Enter", (dialogInterface, i) -> {
-                    if (checkIfDeviceIsConnectedToInternet()) {
-                        postGameWinner(input.getText().toString(), finalMaxScore);
-                    }
-                    finish(); //Go back to previous activity
-                });
-        gameOver_AlertDialog.setNegativeButton("No", (dialogInterface, i) -> {
-                    finish(); //Go back to previous activity
-                });
+        AlertDialog.Builder gameOver_builder = new AlertDialog.Builder(this);
+        //gameOver_AlertDialog.setTitle("Player " + (maxScorePlayer+1) + " won this game with " + maxScore + " points");
+        gameOver_builder.setView(R.layout.gameover_dialog);
+        AlertDialog gameOver_AlertDialog = gameOver_builder.create();
         gameOver_AlertDialog.setCancelable(false);
         gameOver_AlertDialog.show();
+
+        EditText playerEditText = gameOver_AlertDialog.findViewById(R.id.player_editText);
+        Button enterButton = gameOver_AlertDialog.findViewById(R.id.enterButton);
+        Button cancelButton = gameOver_AlertDialog.findViewById(R.id.cancelButton);
+        TextView dialogHighscoreTextView = gameOver_AlertDialog.findViewById(R.id.highscoreTextView);
+        TextView dialogPlayer1ScoreTextView = gameOver_AlertDialog.findViewById(R.id.player1scoreTextView);
+        TextView dialogPlayer2ScoreTextView = gameOver_AlertDialog.findViewById(R.id.player2scoreTextView);
+        TextView dialogPlayer3ScoreTextView = gameOver_AlertDialog.findViewById(R.id.player3scoreTextView);
+        TextView dialogPlayer4ScoreTextView = gameOver_AlertDialog.findViewById(R.id.player4scoreTextView);
+        dialogHighscoreTextView.setText("This game's highscore is: " + maxScore);
+        dialogPlayer1ScoreTextView.setText(playerScores[0]+"");
+        dialogPlayer2ScoreTextView.setText(playerScores[1]+"");
+        dialogPlayer3ScoreTextView.setText(playerScores[2]+"");
+        dialogPlayer4ScoreTextView.setText(playerScores[3]+"");
+
+
+        int finalMaxScore = maxScore;
+        enterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (checkIfDeviceIsConnectedToInternet()) {
+                    postGameWinner(playerEditText.getText().toString(), finalMaxScore);
+                }
+                gameOver_AlertDialog.cancel();
+                finish(); //Go back to previous activity
+            }
+        });
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                gameOver_AlertDialog.cancel();
+                finish(); //Go back to previous activity
+            }
+        });
+
     }
 
     // ------------------------------- //

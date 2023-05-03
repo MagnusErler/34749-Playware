@@ -25,4 +25,13 @@
     <string name="tiles_positioning">Tiles positioning</string>
     <string name="round_timer_string">Round: 0.00 s</string>
     <string name="game_timer_string">Game: 0 s</string>
+    <string name="gameover">Game over image</string>
+    <string name="highscore_textview">This game\'s highscore is: 0</string>
+    <string name="player">Player</string>
+    <string name="score">Score</string>
+    <string name="zero">0</string>
+    <string name="gameover_instruction">Type the winner(s) name(s) for the scoreboard</string>
+    <string name="name_s">Name(s)</string>
+    <string name="cancel">Cancel</string>
+    <string name="enter">Enter</string>
 </resources>

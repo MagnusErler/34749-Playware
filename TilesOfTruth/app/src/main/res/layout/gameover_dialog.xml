@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="?dialogPreferredPadding"
+    >
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.05" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.95" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.05" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.95" />
+
+    <ImageView
+        android:id="@+id/gameoverImageView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/gameover"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toTopOf="@+id/highscoreTextView"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintStart_toStartOf="@+id/guideline1"
+        app:layout_constraintTop_toTopOf="@id/guideline3"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:srcCompat="@drawable/gameover" />
+
+    <TextView
+        android:id="@+id/highscoreTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-black"
+        android:text="@string/highscore_textview"
+        android:textAlignment="center"
+        android:textSize="25sp"
+        app:layout_constraintBottom_toTopOf="@+id/scoreTableLayout"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintStart_toStartOf="@+id/guideline1"
+        app:layout_constraintTop_toBottomOf="@+id/gameoverImageView"
+        android:layout_marginTop="15dp"/>
+
+    <TableLayout
+        android:id="@+id/scoreTableLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/winnerTextView"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintStart_toStartOf="@+id/guideline1"
+        app:layout_constraintTop_toBottomOf="@+id/highscoreTextView">
+
+        <TableRow>
+
+            <TextView
+                android:layout_column="1"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="@string/player"
+                android:textSize="25sp" />
+
+            <TextView
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="@string/one_players"
+                android:textSize="25sp" />
+
+            <TextView
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="@string/two_players"
+                android:textSize="25sp" />
+
+            <TextView
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="@string/three_players"
+                android:textSize="25sp" />
+
+            <TextView
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="@string/four_players"
+                android:textSize="25sp" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:layout_column="1"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="@string/score"
+                android:textSize="25sp" />
+
+            <TextView
+                android:id="@+id/player1scoreTextView"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="@string/zero"
+                android:textSize="25sp" />
+
+            <TextView
+                android:id="@+id/player2scoreTextView"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="@string/zero"
+                android:textSize="25sp" />
+
+            <TextView
+                android:id="@+id/player3scoreTextView"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="@string/zero"
+                android:textSize="25sp" />
+
+            <TextView
+                android:id="@+id/player4scoreTextView"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="@string/zero"
+                android:textSize="25sp" />
+        </TableRow>
+    </TableLayout>
+
+    <TextView
+        android:id="@+id/winnerTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-black"
+        android:text="@string/gameover_instruction"
+        android:textAlignment="center"
+        android:textSize="25sp"
+        app:layout_constraintBottom_toTopOf="@+id/player_editText"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintStart_toStartOf="@+id/guideline1"
+        app:layout_constraintTop_toBottomOf="@+id/scoreTableLayout" />
+
+    <EditText
+        android:id="@+id/player_editText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:autofillHints="name"
+        android:backgroundTint="#60a0ff"
+        android:hint="@string/name_s"
+        android:inputType="text"
+        android:minHeight="48dp"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@id/buttonsLinearLayout"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/guideline1"
+        app:layout_constraintTop_toBottomOf="@+id/winnerTextView" />
+
+    <LinearLayout
+        android:id="@+id/buttonsLinearLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="@id/guideline4"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintStart_toStartOf="@+id/guideline1"
+        app:layout_constraintTop_toBottomOf="@id/player_editText"
+        >
+
+        <Button
+            android:id="@+id/cancelButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@drawable/button_selector"
+            android:stateListAnimator="@null"
+            android:text="@string/cancel"
+            android:textSize="25sp"
+            android:typeface="sans"
+            app:cornerRadius="15dp"
+            app:layout_constraintBottom_toTopOf="@+id/scoreboardButton"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintStart_toStartOf="@+id/guideline1"
+            app:layout_constraintTop_toBottomOf="@+id/activity_main_space2"
+            android:paddingVertical="7.5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/enterButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@drawable/button_selector"
+            android:stateListAnimator="@null"
+            android:text="@string/enter"
+            android:textSize="25sp"
+            android:typeface="sans"
+            app:cornerRadius="15dp"
+            app:layout_constraintBottom_toTopOf="@+id/scoreboardButton"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintStart_toStartOf="@+id/guideline1"
+            app:layout_constraintTop_toBottomOf="@+id/activity_main_space2"
+            android:paddingVertical="7.5dp"
+            android:layout_marginStart="5dp"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
