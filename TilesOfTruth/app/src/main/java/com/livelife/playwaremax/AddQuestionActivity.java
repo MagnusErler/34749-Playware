@@ -131,7 +131,7 @@ public class AddQuestionActivity extends AppCompatActivity {
 
     void showAlertDialog_newQuestionSet() {
         AlertDialog.Builder addQuestionSet_builder = new AlertDialog.Builder(this);
-        addQuestionSet_builder.setView(R.layout.alertdialog_add_question_set);
+        addQuestionSet_builder.setView(R.layout.dialog_add_question_set);
         AlertDialog addQuestionSet_AlertDialog = addQuestionSet_builder.create();
         addQuestionSet_AlertDialog.setCancelable(false);
         addQuestionSet_AlertDialog.show();
@@ -167,7 +167,7 @@ public class AddQuestionActivity extends AppCompatActivity {
 
     void showAlertDialog_newQuestion(String question, boolean answer, int position) {
         AlertDialog.Builder addQuestion_builder = new AlertDialog.Builder(this);
-        addQuestion_builder.setView(R.layout.alertdialog_add_question);
+        addQuestion_builder.setView(R.layout.dialog_add_question);
         AlertDialog addQuestion_AlertDialog = addQuestion_builder.create();
         addQuestion_AlertDialog.setCancelable(false);
         addQuestion_AlertDialog.show();
