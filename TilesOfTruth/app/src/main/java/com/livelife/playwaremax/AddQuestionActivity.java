@@ -3,17 +3,18 @@ package com.livelife.playwaremax;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -44,7 +45,7 @@ public class AddQuestionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_question);
 
-        setTitle("Add Question-set");
+        setTitle("Question sets");
 
         // Enable Back-button
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
@@ -129,45 +130,57 @@ public class AddQuestionActivity extends AppCompatActivity {
     }
 
     void showAlertDialog_newQuestionSet() {
-        AlertDialog.Builder gameOver_AlertDialog = new AlertDialog.Builder(this);
-        gameOver_AlertDialog.setIcon(android.R.drawable.ic_dialog_alert);
-        gameOver_AlertDialog.setTitle("Create a new question set");
-        //gameOver_AlertDialog.setMessage("Please fill in your name for the scoreboard");
+        AlertDialog.Builder addQuestionSet_builder = new AlertDialog.Builder(this);
+        addQuestionSet_builder.setView(R.layout.alertdialog_add_question_set);
+        AlertDialog addQuestionSet_AlertDialog = addQuestionSet_builder.create();
+        addQuestionSet_AlertDialog.setCancelable(false);
+        addQuestionSet_AlertDialog.show();
 
-        final EditText input = new EditText(AddQuestionActivity.this);
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
-        gameOver_AlertDialog.setView(input);
+        EditText addQuestionSetEditText = addQuestionSet_AlertDialog.findViewById(R.id.addQuestionSetEditText);
+        Button enterButton = addQuestionSet_AlertDialog.findViewById(R.id.enterButton);
+        Button cancelButton = addQuestionSet_AlertDialog.findViewById(R.id.cancelButton);
 
-        gameOver_AlertDialog.setPositiveButton("OK", (dialogInterface, i) -> {
-            // write a csv-file with the name of the new question-set
-            String fileName = "question_" + input.getText().toString() + ".csv";
-            try {
-                FileOutputStream fileOutputStream = openFileOutput(fileName, Context.MODE_PRIVATE);
-                fileOutputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+        enterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // write a csv-file with the name of the new question-set
+                String fileName = "question_" + addQuestionSetEditText.getText().toString() + ".csv";
+                try {
+                    FileOutputStream fileOutputStream = openFileOutput(fileName, Context.MODE_PRIVATE);
+                    fileOutputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                addQuestionSet_AlertDialog.cancel();
+                displayAllQuestionSets();
             }
+        });
 
-            dialogInterface.cancel();
-            displayAllQuestionSets();
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addQuestionSet_AlertDialog.cancel();
+            }
         });
-        gameOver_AlertDialog.setNegativeButton("Cancel", (dialogInterface, i) -> {
-            dialogInterface.cancel();
-        });
-        gameOver_AlertDialog.setCancelable(false);
-        gameOver_AlertDialog.show();
     }
 
     void showAlertDialog_newQuestion(String question, boolean answer, int position) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(AddQuestionActivity.this);
-        final View dialogView = getLayoutInflater().inflate(R.layout.alertdialog_add_question_set, null);
+        AlertDialog.Builder addQuestion_builder = new AlertDialog.Builder(this);
+        addQuestion_builder.setView(R.layout.alertdialog_add_question);
+        AlertDialog addQuestion_AlertDialog = addQuestion_builder.create();
+        addQuestion_AlertDialog.setCancelable(false);
+        addQuestion_AlertDialog.show();
 
-        EditText newQuestion = dialogView.findViewById(R.id.newQuestion_EditText);
-        RadioGroup rg = dialogView.findViewById(R.id.radioPersonGroup);
+        TextView title = addQuestion_AlertDialog.findViewById(R.id.addQuestionTextView);
+        EditText addQuestionEditText = addQuestion_AlertDialog.findViewById(R.id.addQuestionSetEditText);
+        RadioGroup rg = addQuestion_AlertDialog.findViewById(R.id.questionRadioGroup);
+        Button enterButton = addQuestion_AlertDialog.findViewById(R.id.enterButton);
+        Button cancelButton = addQuestion_AlertDialog.findViewById(R.id.cancelButton);
 
         String alertDialog_Title;
         if (question != null) {
-            newQuestion.setText(question);
+            addQuestionEditText.setText(question);
             if (answer) {
                 rg.check(R.id.true_btn);
             } else {
@@ -175,37 +188,44 @@ public class AddQuestionActivity extends AppCompatActivity {
             }
             alertDialog_Title = "Edit question";
         } else {
-            alertDialog_Title = "Add question";
+            alertDialog_Title = "Add question and the correct answer";
             position = -1;
         }
 
         int finalPosition = position;
-        builder.setView(dialogView)
-                .setTitle(alertDialog_Title)
-                .setCancelable(true)
-                .setPositiveButton("Ok", (dialog, id) -> {
+        title.setText(alertDialog_Title);
+        enterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // New question
+                if( TextUtils.isEmpty(addQuestionEditText.getText())) {
+                    Toast.makeText(getApplicationContext(), "A question is required", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
-                    // New question
-                    if( TextUtils.isEmpty(newQuestion.getText())) {
-                        Toast.makeText(getApplicationContext(), "A question is required", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
+                // New answer
+                int selectedId = rg.getCheckedRadioButtonId();
+                if(selectedId == -1) {
+                    Toast.makeText(getApplicationContext(), "An answer is required", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
-                    // New answer
-                    int selectedId = rg.getCheckedRadioButtonId();
-                    if(selectedId == -1) {
-                        Toast.makeText(getApplicationContext(), "An answer is required", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
+                RadioButton radioButton = addQuestion_AlertDialog.findViewById(selectedId);
 
-                    RadioButton radioButton = dialogView.findViewById(selectedId);
+                writeQuestionToCSV(addQuestionEditText.getText().toString(), Boolean.parseBoolean((String) radioButton.getText()), finalPosition);
+                addQuestion_AlertDialog.cancel();
+            }
+        });
 
-                    writeQuestionToCSV(newQuestion.getText().toString(), Boolean.parseBoolean((String) radioButton.getText()), finalPosition);
-                })
-                .setNegativeButton("Cancel", (dialogInterface, i) -> dialogInterface.cancel());
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addQuestion_AlertDialog.cancel();
+            }
+        });
 
-        AlertDialog alert = builder.create();
-        alert.show();
+        //AlertDialog alert = builder.create();
+        //alert.show();
     }
 
     void displayAllQuestionsFromQuestionSet() {

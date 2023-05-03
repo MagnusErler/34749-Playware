@@ -34,4 +34,10 @@
     <string name="name_s">Name(s)</string>
     <string name="cancel">Cancel</string>
     <string name="enter">Enter</string>
+    <string name="plus">+</string>
+    <string name="question_sets">QUESTION SETS</string>
+    <string name="question">Question</string>
+    <string name="addquestion_instruction">Add question and the correct answer</string>
+    <string name="questionset_instruction">Add question set</string>
+    <string name="questionset_hint">Question set\'s name</string>
 </resources>

@@ -7,14 +7,12 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.speech.tts.TextToSpeech;
-import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -273,12 +271,12 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
 
         AlertDialog.Builder gameOver_builder = new AlertDialog.Builder(this);
         //gameOver_AlertDialog.setTitle("Player " + (maxScorePlayer+1) + " won this game with " + maxScore + " points");
-        gameOver_builder.setView(R.layout.gameover_dialog);
+        gameOver_builder.setView(R.layout.alertdialog_gameover);
         AlertDialog gameOver_AlertDialog = gameOver_builder.create();
         gameOver_AlertDialog.setCancelable(false);
         gameOver_AlertDialog.show();
 
-        EditText playerEditText = gameOver_AlertDialog.findViewById(R.id.player_editText);
+        EditText winnerEditText = gameOver_AlertDialog.findViewById(R.id.winnerEditText);
         Button enterButton = gameOver_AlertDialog.findViewById(R.id.enterButton);
         Button cancelButton = gameOver_AlertDialog.findViewById(R.id.cancelButton);
         TextView dialogHighscoreTextView = gameOver_AlertDialog.findViewById(R.id.highscoreTextView);
@@ -298,7 +296,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
             @Override
             public void onClick(View view) {
                 if (checkIfDeviceIsConnectedToInternet()) {
-                    postGameWinner(playerEditText.getText().toString(), finalMaxScore);
+                    postGameWinner(winnerEditText.getText().toString(), finalMaxScore);
                 }
                 gameOver_AlertDialog.cancel();
                 finish(); //Go back to previous activity

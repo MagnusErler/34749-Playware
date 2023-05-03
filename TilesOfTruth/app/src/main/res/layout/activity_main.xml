@@ -97,7 +97,7 @@
             android:layout_height="wrap_content"
             android:backgroundTint="@drawable/button_selector"
             android:stateListAnimator="@null"
-            android:text="Add Question"
+            android:text="@string/question_sets"
             android:textSize="25sp"
             android:typeface="sans"
             app:cornerRadius="15dp"

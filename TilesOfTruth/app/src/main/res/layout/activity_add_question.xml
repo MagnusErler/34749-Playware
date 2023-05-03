@@ -6,8 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".AddQuestionActivity">
 
-
-
     <ListView
         android:id="@+id/addQuestion_ListView"
         android:layout_width="0dp"
@@ -23,8 +21,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/rounded_corner"
-        android:text="+"
-        android:textSize="50dp"
+        android:text="@string/plus"
+        android:textSize="50sp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
         app:layout_constraintBottom_toBottomOf="parent"

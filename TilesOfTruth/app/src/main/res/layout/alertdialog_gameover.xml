@@ -152,26 +152,27 @@
         android:text="@string/gameover_instruction"
         android:textAlignment="center"
         android:textSize="25sp"
-        app:layout_constraintBottom_toTopOf="@+id/player_editText"
+        app:layout_constraintBottom_toTopOf="@+id/winnerEditText"
         app:layout_constraintEnd_toStartOf="@+id/guideline2"
         app:layout_constraintStart_toStartOf="@+id/guideline1"
-        app:layout_constraintTop_toBottomOf="@+id/scoreTableLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/scoreTableLayout"
+        />
 
     <EditText
-        android:id="@+id/player_editText"
+        android:id="@+id/winnerEditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:autofillHints="name"
-        android:backgroundTint="#60a0ff"
         android:hint="@string/name_s"
         android:inputType="text"
         android:minHeight="48dp"
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@id/buttonsLinearLayout"
         app:layout_constraintEnd_toStartOf="@+id/guideline2"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@+id/guideline1"
-        app:layout_constraintTop_toBottomOf="@+id/winnerTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/winnerTextView"
+        android:theme="@style/Theme.playwaremax"
+         />
 
     <LinearLayout
         android:id="@+id/buttonsLinearLayout"
@@ -182,7 +183,7 @@
         app:layout_constraintBottom_toBottomOf="@id/guideline4"
         app:layout_constraintEnd_toStartOf="@+id/guideline2"
         app:layout_constraintStart_toStartOf="@+id/guideline1"
-        app:layout_constraintTop_toBottomOf="@id/player_editText"
+        app:layout_constraintTop_toBottomOf="@id/winnerEditText"
         >
 
         <Button
@@ -192,13 +193,9 @@
             android:backgroundTint="@drawable/button_selector"
             android:stateListAnimator="@null"
             android:text="@string/cancel"
-            android:textSize="25sp"
+            android:textSize="20sp"
             android:typeface="sans"
             app:cornerRadius="15dp"
-            app:layout_constraintBottom_toTopOf="@+id/scoreboardButton"
-            app:layout_constraintEnd_toStartOf="@+id/guideline2"
-            app:layout_constraintStart_toStartOf="@+id/guideline1"
-            app:layout_constraintTop_toBottomOf="@+id/activity_main_space2"
             android:paddingVertical="7.5dp"
             android:layout_marginEnd="5dp"
             android:layout_weight="1" />
@@ -210,16 +207,11 @@
             android:backgroundTint="@drawable/button_selector"
             android:stateListAnimator="@null"
             android:text="@string/enter"
-            android:textSize="25sp"
+            android:textSize="20sp"
             android:typeface="sans"
             app:cornerRadius="15dp"
-            app:layout_constraintBottom_toTopOf="@+id/scoreboardButton"
-            app:layout_constraintEnd_toStartOf="@+id/guideline2"
-            app:layout_constraintStart_toStartOf="@+id/guideline1"
-            app:layout_constraintTop_toBottomOf="@+id/activity_main_space2"
             android:paddingVertical="7.5dp"
             android:layout_marginStart="5dp"
             android:layout_weight="1" />
-
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
