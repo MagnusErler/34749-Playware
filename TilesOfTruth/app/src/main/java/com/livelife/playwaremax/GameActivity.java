@@ -7,14 +7,12 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.speech.tts.TextToSpeech;
-import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,11 +29,13 @@ import com.livelife.motolibrary.MotoConnection;
 import com.livelife.motolibrary.OnAntEventListener;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Random;
 
@@ -44,8 +44,8 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     MotoConnection connection = MotoConnection.getInstance();
 
     int randomQuestionNr;
-    int numberOfQuestions = 1000;
-    ArrayList<Integer> answeredQuestionsNr = new ArrayList<>(numberOfQuestions);
+    int numberOfQuestions = 0;
+    ArrayList<Integer> answeredQuestionsNr;
 
     //Setup info
     int numberOfPlayers = 1;
@@ -80,6 +80,8 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     int baseRoundTimeHard = 5000;
     int baseGameTime = 30000;
 
+    String questionSet = "Default Question-set";
+
     double adaptivityFactor = 1.0;
     String endpoint = "https://centerforplayware.com/api/index.php";
     SharedPreferences sharedPref;
@@ -99,6 +101,30 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
 
 
         // Data from SetupActivity
+        questionSet = getIntent().getStringExtra("question_set");
+
+        // Get number of questions in question set
+        InputStream inputStream;
+        if (questionSet.equals("Default Question-set")) {
+            inputStream = getResources().openRawResource(R.raw.default_questions);
+        } else {
+            try {
+                inputStream = openFileInput("question_" + questionSet + ".csv");
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+        try {
+            while (reader.readLine() != null) {
+                numberOfQuestions++;
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        answeredQuestionsNr = new ArrayList<>(numberOfQuestions);
+
         int[] setup = getIntent().getIntArrayExtra("setup_data");
         numberOfPlayers = setup[0];
         difficulty = setup[1];
@@ -121,10 +147,20 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         Log.d("tot", "difficulty: " + difficulty);
 
         startTimer_Game(baseGameTime);
-        gameLogic(defaultArray, false, true);
+        try {
+            gameLogic(defaultArray, false, true);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
     @SuppressLint("SetTextI18n")
-    void gameLogic(int[] playerPressed, Boolean timeOut, Boolean firstRound) {
+    void gameLogic(int[] playerPressed, Boolean timeOut, Boolean firstRound) throws FileNotFoundException {
+
+        if (answeredQuestionsNr.size() >= numberOfQuestions) {
+            gameOver = true;
+            gameOver();
+        }
+
         //Get Score UI elements
         // TextViews
         TextView player1ScoreTextView = findViewById(R.id.player1scoreTextView);
@@ -164,8 +200,14 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
             } while (answeredQuestionsNr.contains(randomQuestionNr));
             answeredQuestionsNr.add(randomQuestionNr);
 
+            Log.d("tot", "size of answeredQuestionsNr: " + answeredQuestionsNr.size());
+
+            Log.d("tot", "randomQuestionNr: " + randomQuestionNr);
+            Log.d("tot", "numberOfQuestions: " + numberOfQuestions);
+
             // Question update
-            String[] QuestionAnswer = getQuestionFromCSV(randomQuestionNr).split(",");
+            String[] QuestionAnswer = getQuestionFromQuestionSet(randomQuestionNr).split(",");
+            Log.d("tot", "QuestionAnswer: " + Arrays.toString(QuestionAnswer));
             String Question = QuestionAnswer[0];
             answer_bool = Boolean.parseBoolean(QuestionAnswer[1]);
             answer_int = answer_bool ? 1 : 0;
@@ -230,7 +272,11 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
             public void onFinish() {
                 runOnUiThread(() -> timerRound_TextView.setText("Round Over"));
 
-                gameLogic(defaultArray, true,false);
+                try {
+                    gameLogic(defaultArray, true,false);
+                } catch (FileNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
             }
 
         };
@@ -256,7 +302,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     }
 
     void gameOver() {
-        Log.d("tot", "Game over:");
+        Log.d("tot", "Game over");
         connection.unregisterListener(this);
         //Find the highest number of playerScores and the player with that score
         int maxScore = 0;
@@ -404,25 +450,44 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
             } else {
                 Log.d("tile_press", "ERROR: Tile not found");
             }
-            gameLogic(pressArray,false,false);
+            try {
+                gameLogic(pressArray,false,false);
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
     // ------------------------------- //
     public int getRandomNumber(int max) {
-        return new Random().nextInt(max) + 1;
+        return new Random().nextInt((max - 1) + 1) + 1;
     }
 
     // ------------------------------- //
-    public String getQuestionFromCSV(int lineNr) {
+    public String getQuestionFromQuestionSet(int lineNr) {
         try {
-            InputStream is = getResources().openRawResource(R.raw.default_questions);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+            InputStream inputStream;
 
-            for(int i = 0; i < lineNr-1; ++i)
-                reader.readLine();
-            return reader.readLine();
+            Log.d("tag", "questionSet: " + questionSet);
 
+            if (questionSet.equals("Default Question-set")) {
+                inputStream = getResources().openRawResource(R.raw.default_questions);
+            } else {
+                inputStream = openFileInput("question_" + questionSet + ".csv");
+            }
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+
+            Log.d("tag", "reader: " + reader);
+            Log.d("tag", "lineNr: " + lineNr);
+
+            String question = "";
+            // Skip lines until the lineNr is reached and return the question
+            for(int i = 0; i < lineNr; ++i)
+                question = reader.readLine();
+            reader.close();
+            Log.d("tag", "question: " + question);
+            return question;
         } catch (Resources.NotFoundException | IOException e) {
             throw new RuntimeException(e);
         }

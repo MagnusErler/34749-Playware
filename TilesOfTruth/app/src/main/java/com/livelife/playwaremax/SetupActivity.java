@@ -7,6 +7,7 @@ import static com.livelife.motolibrary.AntData.LED_COLOR_RED;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
@@ -193,62 +194,26 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
 
             NumberPicker picker = dialogView.findViewById(R.id.number_picker);
 
-            /*String[] questionSets = new String[50];
-
-            questionSets[0] = "Default Question-set";
-            int numberOfQuestionSets = 0;
-
-            File[] files = getFilesDir().listFiles();
-            assert files != null;
-            for (File file : files) {
-                if (file.getName().startsWith("question_")) {
-                    numberOfQuestionSets++;
-                    questionSets[numberOfQuestionSets] = file.getName().replace("question_", "").replace(".csv", "");
-                }
-            }
-            numberOfQuestionSets++;
-
-            questionSets[49] = String.valueOf(numberOfQuestionSets);
-
-            //Transfer questionSets to questionSets2 with correct size (numberOfQuestionSets)
-            String[] questionSets2 = new String[numberOfQuestionSets];
-            System.arraycopy(questionSets, 0, questionSets2, 0, numberOfQuestionSets);
-            questionSets = questionSets2;
-
-            Log.d("tag", "j: " + numberOfQuestionSets);
-
-            // Toast questionSets
-            for (String questionSet : questionSets) {
-                Log.d("tag", "Question set: " + questionSet);
-            }*/
-
-
-            Pair<String[], Integer> questionSetsPair = getAllQuestionSets();
-            String[] questionSets = questionSetsPair.first;
-            int numQuestionSets = questionSetsPair.second;
+            String[] questionSets = getAllQuestionSets();
             Log.d("tag", "Question sets array: " + Arrays.toString(questionSets));
-            Log.d("tag", "Number of question sets: " + numQuestionSets);
-            String[] displayedQuestionSets = Arrays.copyOf(questionSets, numQuestionSets);
-            Log.d("tag", "Displayed question sets array: " + Arrays.toString(displayedQuestionSets));
-            picker.setDisplayedValues(displayedQuestionSets);
-
-            //picker.setMinValue(0);
+            picker.setDisplayedValues(questionSets);
+            picker.setMinValue(0);
+            picker.setMaxValue(questionSets.length - 1);
 
             builder.setView(dialogView)
                     .setTitle("Choose between Question sets")
                     .setCancelable(false)
                     .setPositiveButton("Ok", (dialog, id) -> {
-                        Toast.makeText(this, "here: " + questionSets[picker.getValue()], Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(SetupActivity.this, GameActivity.class);
+                        intent.putExtra("setup_data", new int[]{numberOfPlayers, difficulty});
+                        intent.putExtra("tile_ids", new int[]{player1_trueTile, player1_falseTile, player2_trueTile, player2_falseTile, player3_trueTile, player3_falseTile, player4_trueTile, player4_falseTile});
+                        intent.putExtra("question_set", questionSets[picker.getValue()]);
+                        startActivity(intent);
                     })
                     .setNegativeButton("Cancel", (dialogInterface, i) -> dialogInterface.cancel());
 
             AlertDialog alert = builder.create();
             alert.show();
-
-            /*Intent intent = new Intent(SetupActivity.this, GameActivity.class);
-            intent.putExtra("setup_data", new int[]{numberOfPlayers, difficulty});
-            intent.putExtra("tile_ids", new int[]{player1_trueTile, player1_falseTile, player2_trueTile, player2_falseTile, player3_trueTile, player3_falseTile, player4_trueTile, player4_falseTile});
-            startActivity(intent);*/
         });
     }
 
@@ -269,27 +234,20 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         return true;
     }
 
-    Pair<String[], Integer> getAllQuestionSets() {
-
-        String[] questionSets = new String[50];
-
+    String[] getAllQuestionSets() {
+        String[] questionSets = new String[Objects.requireNonNull(getFilesDir().listFiles()).length + 1];
         questionSets[0] = "Default Question-set";
-        int i = 1;
-
+        int numQuestionSets = 1;
         File[] files = getFilesDir().listFiles();
         assert files != null;
         for (File file : files) {
             if (file.getName().startsWith("question_")) {
-
-                questionSets[i] = file.getName().replace("question_", "").replace(".csv", "");
-                i++;
+                questionSets[numQuestionSets] = file.getName().replace("question_", "").replace(".csv", "");
+                numQuestionSets++;
             }
         }
-
-        questionSets[49] = String.valueOf(i);
-
-        return new Pair<>(questionSets, i);
-
+        questionSets[numQuestionSets] = String.valueOf(numQuestionSets - 1);
+        return Arrays.copyOf(questionSets, numQuestionSets);
     }
 
     // ------------------------------- //
