@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="?dialogPreferredPadding"
@@ -43,11 +42,41 @@
         android:textAlignment="textStart"
         android:textSize="25sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@id/challenge_player_difficulty_TextView"
+        app:layout_constraintBottom_toTopOf="@id/challenge_player_challenger_TextView"
         app:layout_constraintEnd_toStartOf="@+id/guideline2"
         app:layout_constraintStart_toStartOf="@+id/guideline1"
         app:layout_constraintTop_toBottomOf="@+id/guideline3"
         app:layout_constraintVertical_chainStyle="packed"/>
+
+    <TextView
+        android:id="@+id/challenge_player_challenger_TextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif"
+        android:text="@string/challenger_name_instruction"
+        android:textAlignment="viewStart"
+        android:textSize="25sp"
+        app:layout_constraintBottom_toTopOf="@+id/challenge_player_challenger_EditText"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintStart_toStartOf="@+id/guideline1"
+        app:layout_constraintTop_toBottomOf="@id/challenge_player_title_TextView"
+         />
+
+    <EditText
+        android:id="@+id/challenge_player_challenger_EditText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:autofillHints="name"
+        android:hint="@string/challenger_name"
+        android:inputType="text"
+        android:minHeight="48dp"
+        android:textSize="20sp"
+        android:theme="@style/Theme.playwaremax"
+        app:layout_constraintBottom_toTopOf="@id/challenge_player_difficulty_TextView"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintStart_toStartOf="@+id/guideline1"
+        app:layout_constraintTop_toBottomOf="@+id/challenge_player_challenger_TextView"
+        android:layout_marginBottom="15dp"/>
 
     <TextView
         android:id="@+id/challenge_player_difficulty_TextView"
@@ -59,8 +88,8 @@
         app:layout_constraintBottom_toTopOf="@id/challenge_difficultyRadioGroup"
         app:layout_constraintEnd_toStartOf="@+id/guideline2"
         app:layout_constraintStart_toStartOf="@+id/guideline1"
-        app:layout_constraintTop_toBottomOf="@+id/challenge_player_title_TextView"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/challenge_player_challenger_EditText"
+         />
 
     <RadioGroup
         android:id="@+id/challenge_difficultyRadioGroup"

@@ -52,4 +52,6 @@
     <string name="challenge">Challenge</string>
     <string name="challenges">Challenges</string>
     <string name="delete">Delete</string>
+    <string name="challenger_name_instruction">Type your name</string>
+    <string name="challenger_name">Name</string>
 </resources>
