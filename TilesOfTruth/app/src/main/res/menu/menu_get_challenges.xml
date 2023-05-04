@@ -6,6 +6,7 @@
         android:id="@+id/getChallenges_MenuItem"
         android:title="@string/challenges"
         app:showAsAction="always"
+        android:icon="@drawable/challengeicon"
         />
 
 </menu>
