@@ -1,11 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="?dialogPreferredPadding">
 
-    <NumberPicker
-        android:id="@+id/challenge_accept_challenge_picker"
-        android:layout_width="match_parent"
-        android:layout_height="180dp" />
+    <androidx.constraintlayout.widget.Guideline
+    android:id="@+id/guideline1"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    app:layout_constraintGuide_percent="0.05" />
+
+    <androidx.constraintlayout.widget.Guideline
+    android:id="@+id/guideline2"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    app:layout_constraintGuide_percent="0.95" />
+
+    <androidx.constraintlayout.widget.Guideline
+    android:id="@+id/guideline3"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    app:layout_constraintGuide_percent="0.05" />
+
+    <androidx.constraintlayout.widget.Guideline
+    android:id="@+id/guideline4"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    app:layout_constraintGuide_percent="0.95" />
+
+    <TextView
+        android:id="@+id/accepting_challenge_TextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/challenge_title"
+        android:textAlignment="textStart"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/accepting_challenge_message_TextView"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintStart_toStartOf="@+id/guideline1"
+        app:layout_constraintTop_toBottomOf="@+id/guideline3"
+        app:layout_constraintVertical_chainStyle="packed"/>
+
+    <TextView
+        android:id="@+id/accepting_challenge_message_TextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/challenge_message"
+        android:textAlignment="textStart"
+        android:textSize="25sp"
+        app:layout_constraintBottom_toTopOf="@id/accepting_challenge_buttonsLinearLayout"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintStart_toStartOf="@+id/guideline1"
+        app:layout_constraintTop_toBottomOf="@+id/accepting_challenge_TextView"
+        />
+
+    <LinearLayout
+        android:id="@+id/accepting_challenge_buttonsLinearLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="@id/guideline4"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintStart_toStartOf="@+id/guideline1"
+        app:layout_constraintTop_toBottomOf="@id/accepting_challenge_message_TextView"
+        >
+
+        <Button
+            android:id="@+id/accepting_challenge_cancelButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@drawable/button_selector"
+            android:stateListAnimator="@null"
+            android:text="@string/cancel"
+            android:textSize="20sp"
+            android:typeface="sans"
+            app:cornerRadius="15dp"
+            android:paddingVertical="7.5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/accepting_challenge_enterButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@drawable/button_selector"
+            android:stateListAnimator="@null"
+            android:text="@string/accept"
+            android:textSize="20sp"
+            android:typeface="sans"
+            app:cornerRadius="15dp"
+            android:paddingVertical="7.5dp"
+            android:layout_marginStart="5dp"
+            android:layout_weight="1" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -40,4 +40,7 @@
     <string name="addquestion_instruction">Add question and the correct answer</string>
     <string name="questionset_instruction">Add question set</string>
     <string name="questionset_hint">Question set\'s name</string>
+    <string name="challenge_title">You have been challenged!</string>
+    <string name="challenge_message">Do you want to accept the challenge?</string>
+    <string name="accept">Accept</string>
 </resources>
