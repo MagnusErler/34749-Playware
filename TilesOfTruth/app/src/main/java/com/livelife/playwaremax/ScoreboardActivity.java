@@ -277,12 +277,12 @@ public class ScoreboardActivity extends AppCompatActivity {
                     //listFromJson_ArrayList.clear();
                     //games_ArrayList.clear();
 
-                    if (!showChallenges) {
-                        runOnUiThread(() -> {
-                            games_ArrayList.clear();
-                            gameSessions_ArrayAdapter.notifyDataSetChanged();
-                        });
-                    }
+                    //if (!showChallenges) {
+                        //runOnUiThread(() -> {
+                    games_ArrayList.clear();
+                    gameSessions_ArrayAdapter.notifyDataSetChanged();
+                        //});
+                    //}
 
                     JSONArray sessions = jsonObject.getJSONArray("results");
                     for(int i = 0; i < sessions.length();i++) {
@@ -335,8 +335,7 @@ public class ScoreboardActivity extends AppCompatActivity {
                                 //Log.d("tot", "parts[1]: " + parts[1] + " parts[2]: " + parts[2] + " parts[3]: " + challenge_deviceTokenFromChallenger);
 
                                 if (Objects.equals(challenge_deviceTokenFromChallenger, getDeviceToken())) {
-                                    Log.d("tot", "deviceToken are the same");
-                                    Toast.makeText(ScoreboardActivity.this, "deviceToken are the same", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(ScoreboardActivity.this, "You have no incoming challenges", Toast.LENGTH_SHORT).show();
                                     return;
                                 }
 

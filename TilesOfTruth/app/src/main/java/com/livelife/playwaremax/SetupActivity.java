@@ -98,9 +98,6 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
 
         if (challenge_accepted) {
 
-            Toast.makeText(this, "challenge_accepted: " + challenge_accepted, Toast.LENGTH_SHORT).show();
-            Toast.makeText(this, "difficulty: " + difficulty, Toast.LENGTH_SHORT).show();
-
             if (difficulty == 1) {
                 easyDifficultyButton.setChecked(true);
             } else if (difficulty == 3) {

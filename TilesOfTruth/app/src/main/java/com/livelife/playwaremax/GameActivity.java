@@ -130,8 +130,6 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         numberOfPlayers = setup[0];
         difficulty = setup[1];
 
-        Log.d("tot", "difficulty: " + difficulty);
-
         int[] tileIDs = getIntent().getIntArrayExtra("tile_ids");
         //Toast.makeText(GameActivity.this, "Number of players: " + setup[0] + " Difficulty: " + difficulty, Toast.LENGTH_LONG).show();
 
