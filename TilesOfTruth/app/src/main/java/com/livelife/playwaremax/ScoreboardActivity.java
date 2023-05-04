@@ -12,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -67,18 +68,18 @@ public class ScoreboardActivity extends AppCompatActivity {
 
             // get text from listview at position "position" and split it into an array
             String[] gameSession = games_ArrayList.get(position).split(",");
-            String name = gameSession[0];
+            String nameOfUserToBeChallenged = gameSession[0];
             //get name after "Name: "
-            name = name.substring(6);
+            nameOfUserToBeChallenged = nameOfUserToBeChallenged.substring(6);
             String score = gameSession[1];
             String difficulty = gameSession[2];
             String deviceToken = gameSession[3];
             //get deviceToken after "DeviceToken: "
             deviceToken = deviceToken.substring(14);
 
-            Log.d("tot", "name: " + name + " deviceToken: " + deviceToken);
+            Log.d("tot", "name: " + nameOfUserToBeChallenged + " deviceToken: " + deviceToken);
 
-            showChallengeUser(name, deviceToken);
+            showChallengeUser(nameOfUserToBeChallenged, deviceToken);
         });
 
         if (!checkIfDeviceIsConnectedToInternet()) {
@@ -139,19 +140,22 @@ public class ScoreboardActivity extends AppCompatActivity {
                     break;
             }
 
-            postChallengeUser(difficulty, nameOfUserToBeChallenged, deviceTokenOfUserToBeChallenged);
+            EditText challenge_player_challenger_EditText = challengeUser_AlertDialog.findViewById(R.id.challenge_player_challenger_EditText);
+            String nameOfChallenger = challenge_player_challenger_EditText.getText().toString();
+
+            postChallengeUser(difficulty, nameOfChallenger, deviceTokenOfUserToBeChallenged);
 
             challengeUser_AlertDialog.cancel();
         });
     }
 
-    void postChallengeUser(int difficulty, String nameOfUserToBeChallenged, String deviceTokenOfUserToBeChallenged) {
+    void postChallengeUser(int difficulty, String nameOfChallenger, String deviceTokenOfUserToBeChallenged) {
 
         RemoteHttpRequest requestPackage = new RemoteHttpRequest();
         requestPackage.setMethod("POST");
         requestPackage.setUrl(endpoint);
         requestPackage.setParam("method", "postGameSession");
-        requestPackage.setParam("device_token", "Challenge," + difficulty + "," + nameOfUserToBeChallenged + "," + deviceTokenOfUserToBeChallenged);
+        requestPackage.setParam("device_token", "Challenge," + difficulty + "," + nameOfChallenger + "," + deviceTokenOfUserToBeChallenged);
 
         requestPackage.setParam("game_time","30");
         requestPackage.setParam("game_id", "1");
@@ -311,7 +315,7 @@ public class ScoreboardActivity extends AppCompatActivity {
                             if (parts[0].equals("Challenge")) {
 
                                 int callenge_difficulty = Integer.parseInt(parts[1]);
-                                String challenge_name = parts[2];
+                                String challengeByName = parts[2];
                                 challenge_deviceTokenFromChallenger = parts[3];
 
                                 Log.d("tot", "parts[1]: " + parts[1] + " parts[2]: " + parts[2] + " parts[3]: " + challenge_deviceTokenFromChallenger);
@@ -340,7 +344,7 @@ public class ScoreboardActivity extends AppCompatActivity {
                                 acceptChallengeUser_AlertDialog.show();
 
                                 TextView accepting_challenge_TextView = acceptChallengeUser_AlertDialog.findViewById(R.id.accepting_challenge_TextView);
-                                accepting_challenge_TextView.setText("You have been challenged by " + challenge_name + " on " + challenge_difficulty_text + " difficulty!");
+                                accepting_challenge_TextView.setText("You have been challenged by " + challengeByName + " on " + challenge_difficulty_text + " difficulty!");
 
                                 Button accepting_challenge_cancelButton = acceptChallengeUser_AlertDialog.findViewById(R.id.accepting_challenge_cancelButton);
                                 Button accepting_challenge_enterButton = acceptChallengeUser_AlertDialog.findViewById(R.id.accepting_challenge_enterButton);
