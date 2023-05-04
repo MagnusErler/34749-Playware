@@ -50,4 +50,6 @@
     <string name="challenge_player_title">Challenge</string>
     <string name="challenge_player_difficulty">Choose the challenge difficulty</string>
     <string name="challenge">Challenge</string>
+    <string name="challenges">Challenges</string>
+    <string name="delete">Delete</string>
 </resources>
