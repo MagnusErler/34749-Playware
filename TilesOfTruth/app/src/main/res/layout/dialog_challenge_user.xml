@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RadioGroup
+        android:id="@+id/challenge_RadioGroup"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintStart_toStartOf="@+id/guideline1"
+        app:layout_constraintTop_toBottomOf="@id/addQuestionSetEditText"
+        app:layout_constraintBottom_toTopOf="@id/buttonsLinearLayout">
+
+        <RadioButton
+            android:id="@+id/challenge_easy_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:buttonTint="@color/blue_light"
+            android:text="Easy" />
+
+        <RadioButton
+            android:id="@+id/challenge_normal_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:buttonTint="@color/blue_light"
+            android:text="Normal" />
+
+        <RadioButton
+            android:id="@+id/challenge_hard_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:buttonTint="@color/blue_light"
+            android:text="Hard" />
+    </RadioGroup>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

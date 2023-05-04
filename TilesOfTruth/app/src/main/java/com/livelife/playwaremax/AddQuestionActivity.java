@@ -31,7 +31,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class AddQuestionActivity extends AppCompatActivity {
 
@@ -64,12 +63,45 @@ public class AddQuestionActivity extends AppCompatActivity {
 
             if (deleteQuestionSet) {
                 if (!Objects.equals(addQuestion_ArrayList.get(position), "Default Question-set")) {
-                    Log.d("tot", "showDialog_deleteQuestionSet(): " + showDialog_deleteQuestionSet());
-                    if (showDialog_deleteQuestionSet()) {
+
+                    questionSet = addQuestion_ArrayList.get(position).substring(8);
+
+                    Log.d("tot", "questionSet1: " + questionSet);
+
+                    // takeing the text after "Custom: " and before ".csv"
+                    int startIndex = questionSet.indexOf(":") + 2;
+                    questionSet = questionSet.substring(startIndex);
+
+                    Log.d("tot", "questionSet2: " + questionSet);
+
+                    AlertDialog.Builder addQuestionSet_builder = new AlertDialog.Builder(this);
+                    addQuestionSet_builder.setView(R.layout.dialog_delete_question_set);
+                    AlertDialog deleteQuestionSet_AlertDialog = addQuestionSet_builder.create();
+                    deleteQuestionSet_AlertDialog.setCancelable(false);
+                    deleteQuestionSet_AlertDialog.show();
+
+                    Button yes_Btn = deleteQuestionSet_AlertDialog.findViewById(R.id.yes_btn);
+                    Button no_Btn = deleteQuestionSet_AlertDialog.findViewById(R.id.no_btn);
+
+                    yes_Btn.setOnClickListener(v -> {
                         Toast.makeText(this, "Deleting...", Toast.LENGTH_SHORT).show();
+
+                        Toast.makeText(this, "questionSet: " + questionSet, Toast.LENGTH_SHORT).show();
+
+                        // delete the question set
                         deleteQuestionSetFile(questionSet);
+
                         displayAllQuestionSets(deleteQuestionSet);
-                    }
+                        deleteQuestionSet_AlertDialog.cancel();
+                    });
+
+                    no_Btn.setOnClickListener(v -> {
+                        deleteQuestionSet_AlertDialog.cancel();
+                    });
+
+
+
+
                 } else {
                     Toast.makeText(getApplicationContext(), "You cannot delete the default question set", Toast.LENGTH_SHORT).show();
                 }
@@ -208,32 +240,6 @@ public class AddQuestionActivity extends AppCompatActivity {
         });
 
         cancelButton.setOnClickListener(view -> addQuestionSet_AlertDialog.cancel());
-    }
-
-    boolean showDialog_deleteQuestionSet() {
-        AlertDialog.Builder addQuestionSet_builder = new AlertDialog.Builder(this);
-        addQuestionSet_builder.setView(R.layout.dialog_delete_question_set);
-        AlertDialog deleteQuestionSet_AlertDialog = addQuestionSet_builder.create();
-        deleteQuestionSet_AlertDialog.setCancelable(false);
-        deleteQuestionSet_AlertDialog.show();
-
-        Button yes_Btn = deleteQuestionSet_AlertDialog.findViewById(R.id.yes_btn);
-        Button no_Btn = deleteQuestionSet_AlertDialog.findViewById(R.id.no_btn);
-
-
-        AtomicBoolean deleteQuestionSet_privat = new AtomicBoolean(false);
-
-        yes_Btn.setOnClickListener(v -> {
-            deleteQuestionSet_privat.set(true);
-            deleteQuestionSet_AlertDialog.cancel();
-        });
-
-        no_Btn.setOnClickListener(view -> {
-            deleteQuestionSet_privat.set(false);
-            deleteQuestionSet_AlertDialog.cancel();
-        });
-
-        return deleteQuestionSet_privat.get();
     }
 
     void showDialog_newQuestion(String question, boolean answer, int position) {

@@ -1,5 +1,6 @@
 package com.livelife.playwaremax;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -49,6 +50,9 @@ public class ScoreboardActivity extends AppCompatActivity {
         gameSessions_ArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, games_ArrayList);
         gameSessions_ListView.setAdapter(gameSessions_ArrayAdapter);
         gameSessions_ListView.setOnItemClickListener((adapterView, arg1, position, arg3) -> {
+            Toast.makeText(this, "games_ArrayList.get(position): " + games_ArrayList.get(position), Toast.LENGTH_SHORT).show();
+            //games_ArrayList.get(position);
+            showChallengeUser();
         });
 
         if (!checkIfDeviceIsConnectedToInternet()) {
@@ -77,6 +81,20 @@ public class ScoreboardActivity extends AppCompatActivity {
             }
             getGameWinner();
         });
+    }
+
+    void showChallengeUser() {
+        AlertDialog.Builder addQuestion_builder = new AlertDialog.Builder(this);
+        addQuestion_builder.setView(R.layout.dialog_challenge_user);
+        AlertDialog addQuestion_AlertDialog = addQuestion_builder.create();
+        addQuestion_AlertDialog.setCancelable(false);
+        addQuestion_AlertDialog.show();
+
+        RadioGroup rg = addQuestion_AlertDialog.findViewById(R.id.challenge_RadioGroup);
+
+        int selectedId = rg.getCheckedRadioButtonId();
+        Toast.makeText(getApplicationContext(), "selectedId: " + selectedId, Toast.LENGTH_SHORT).show();
+
     }
 
     // ------------------------------- //
