@@ -291,7 +291,7 @@ public class ScoreboardActivity extends AppCompatActivity {
                         //Split string into two varibale seperated by ","
                         String[] parts = session.getString("device_token").split(",");
                         // Winner og a game
-                        if (parts[0].equals("Winner1")) {
+                        if (parts[0].equals("Winner2")) {
                             String gameWinner_Name = parts[1];
                             String gameWinner_Score = parts[2];
                             int gameWinner_Difficulty = Integer.parseInt(parts[3]);
@@ -308,10 +308,13 @@ public class ScoreboardActivity extends AppCompatActivity {
                                 difficulty_text = "Easy";
                             }
 
+                            Log.d("tot", "sortByDifficulty: " + sortByDifficulty + ", gameWinner_Difficulty: " + gameWinner_Difficulty);
+
                             if (sortByDifficulty == gameWinner_Difficulty) {
                                 games_ArrayList.add("Name: " + gameWinner_Name + ", Score: " + gameWinner_Score + ", Difficulty: " + difficulty_text + ", DeviceToken: " + deviceToken);
                             }
 
+                            //All
                             if (sortByDifficulty == 0) {
                                 games_ArrayList.add("Name: " + gameWinner_Name + ", Score: " + gameWinner_Score + ", Difficulty: " + difficulty_text + ", DeviceToken: " + deviceToken);
                             }

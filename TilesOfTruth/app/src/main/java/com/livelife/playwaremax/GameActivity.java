@@ -521,9 +521,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         requestPackage.setMethod("POST");
         requestPackage.setUrl(endpoint);
         requestPackage.setParam("method", "postGameSession");
-        Toast.makeText(this, "getDeviceToken(): " + getDeviceToken(), Toast.LENGTH_SHORT).show();
-        Log.d("tot", "Winner1," + gameWinner + "," + score + "," + difficulty + "," + getDeviceToken());
-        requestPackage.setParam("device_token", "Winner1," + gameWinner + "," + score + "," + difficulty + "," + getDeviceToken());
+        requestPackage.setParam("device_token", "Winner2," + gameWinner + "," + score + "," + difficulty + "," + getDeviceToken());
         requestPackage.setParam("game_time","30");
         requestPackage.setParam("game_id", "1");
         requestPackage.setParam("group_id", "420");
