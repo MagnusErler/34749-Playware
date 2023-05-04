@@ -121,8 +121,6 @@ public class ScoreboardActivity extends AppCompatActivity {
             challengeUser_AlertDialog.cancel();
         });
 
-
-
     }
 
     String[] getAllQuestionSets() {
@@ -159,9 +157,15 @@ public class ScoreboardActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
+
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
             finish();
             return true;
+        }
+
+        if (id == R.id.editQuestionSet_MenuItem) {
+            showIncomingChallenges();
         }
 
         return super.onOptionsItemSelected(item);
@@ -171,6 +175,22 @@ public class ScoreboardActivity extends AppCompatActivity {
         return true;
     }
 
+    void showIncomingChallenges() {
+        final View dialogView = getLayoutInflater().inflate(R.layout.dialog_accepting_challenges, null);
+        NumberPicker picker = dialogView.findViewById(R.id.challenge_accept_challenge_picker);
+
+        String[] questionSets = getChallenges();
+        picker.setDisplayedValues(questionSets);
+        picker.setMinValue(0);
+        picker.setMaxValue(questionSets.length - 1);
+
+        Toast.makeText(this, "questionSets[picker.getValue()]: " + questionSets[picker.getValue()], Toast.LENGTH_SHORT).show();
+    }
+
+    String[] getChallenges() {
+        String[] challenges = new String[]{"Challenge 1", "Challenge 2", "Challenge 3"};
+        return challenges;
+    }
 
     private void getGameWinner() {
         RemoteHttpRequest requestPackage = new RemoteHttpRequest();

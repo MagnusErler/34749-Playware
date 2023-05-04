@@ -184,6 +184,7 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         Button startGameButton = findViewById(R.id.startGameButton);
         startGameButton.setOnClickListener(v -> {
 
+            // FOR DEBUGGING
             /*if (numberOfPlayers > connectedTiles/2) {
                 Toast.makeText(this, "Not enough tiles connected", Toast.LENGTH_SHORT).show();
                 return;
