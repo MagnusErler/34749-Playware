@@ -49,4 +49,5 @@
     <string name="yes">Yes</string>
     <string name="challenge_player_title">Challenge</string>
     <string name="challenge_player_difficulty">Choose the challenge difficulty</string>
+    <string name="challenge">Challenge</string>
 </resources>

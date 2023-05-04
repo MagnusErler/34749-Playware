@@ -68,11 +68,11 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="15dp"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@id/challenge_buttonsLinearLayout"
+        app:layout_constraintBottom_toTopOf="@id/challenge_accept_btn"
         app:layout_constraintEnd_toEndOf="@id/guideline2"
         app:layout_constraintStart_toStartOf="@id/guideline1"
         app:layout_constraintTop_toBottomOf="@id/challenge_player_difficulty_TextView"
-        app:layout_constraintVertical_chainStyle="packed">
+        >
 
         <RadioButton
             android:id="@+id/challenge_easy_btn"
@@ -127,44 +127,19 @@
             android:textSize="25sp" />
     </RadioGroup>
 
-    <LinearLayout
-        android:id="@+id/challenge_buttonsLinearLayout"
+    <Button
+        android:id="@+id/challenge_accept_btn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal"
+        android:backgroundTint="@drawable/button_selector"
+        android:paddingVertical="7.5dp"
+        android:stateListAnimator="@null"
+        android:text="@string/challenge"
+        android:textSize="25sp"
+        android:typeface="sans"
+        app:cornerRadius="15dp"
         app:layout_constraintBottom_toBottomOf="@id/guideline4"
         app:layout_constraintEnd_toStartOf="@+id/guideline2"
         app:layout_constraintStart_toStartOf="@+id/guideline1"
-        app:layout_constraintTop_toBottomOf="@id/challenge_difficultyRadioGroup">
-
-        <Button
-            android:id="@+id/challenge_cancel_btn"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="5dp"
-            android:layout_weight="1"
-            android:backgroundTint="@drawable/button_selector"
-            android:paddingVertical="7.5dp"
-            android:stateListAnimator="@null"
-            android:text="@string/cancel"
-            android:textSize="20sp"
-            android:typeface="sans"
-            app:cornerRadius="15dp" />
-
-        <Button
-            android:id="@+id/challenge_accept_btn"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:layout_weight="1"
-            android:backgroundTint="@drawable/button_selector"
-            android:paddingVertical="7.5dp"
-            android:stateListAnimator="@null"
-            android:text="@string/enter"
-            android:textSize="20sp"
-            android:typeface="sans"
-            app:cornerRadius="15dp" />
-    </LinearLayout>
-
+        app:layout_constraintTop_toBottomOf="@id/challenge_difficultyRadioGroup"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

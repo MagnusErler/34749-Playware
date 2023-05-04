@@ -80,8 +80,8 @@ public class AddQuestionActivity extends AppCompatActivity {
                     deleteQuestionSet_AlertDialog.setCancelable(false);
                     deleteQuestionSet_AlertDialog.show();
 
-                    Button yes_Btn = deleteQuestionSet_AlertDialog.findViewById(R.id.yes_btn);
-                    Button no_Btn = deleteQuestionSet_AlertDialog.findViewById(R.id.no_btn);
+                    Button yes_Btn = deleteQuestionSet_AlertDialog.findViewById(R.id.delete_question_set_yes_btn);
+                    Button no_Btn = deleteQuestionSet_AlertDialog.findViewById(R.id.delete_question_set_no_btn);
 
                     yes_Btn.setOnClickListener(v -> {
                         Toast.makeText(this, "Deleting...", Toast.LENGTH_SHORT).show();

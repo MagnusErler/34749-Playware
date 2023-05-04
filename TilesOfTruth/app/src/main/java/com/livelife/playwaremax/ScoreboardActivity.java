@@ -108,7 +108,7 @@ public class ScoreboardActivity extends AppCompatActivity {
         picker.setMaxValue(questionSets.length - 1);*/
 
         Button challenge_enter_btn = challengeUser_AlertDialog.findViewById(R.id.challenge_accept_btn);
-        Button challenge_cancel_btn = challengeUser_AlertDialog.findViewById(R.id.challenge_cancel_btn);
+        //Button challenge_cancel_btn = challengeUser_AlertDialog.findViewById(R.id.challenge_cancel_btn);
         challenge_enter_btn.setOnClickListener(view -> {
             // difficulty radio
             RadioGroup rg = challengeUser_AlertDialog.findViewById(R.id.challenge_difficultyRadioGroup);
@@ -121,9 +121,10 @@ public class ScoreboardActivity extends AppCompatActivity {
             challengeUser_AlertDialog.cancel();
         });
 
-        challenge_cancel_btn.setOnClickListener(view -> {
+        /*challenge_cancel_btn.setOnClickListener(view -> {
             challengeUser_AlertDialog.cancel();
         });
+        */
 
     }
 
@@ -200,7 +201,7 @@ public class ScoreboardActivity extends AppCompatActivity {
 
     void showIncomingChallenges() {
         final View dialogView = getLayoutInflater().inflate(R.layout.dialog_accepting_challenges, null);
-        NumberPicker picker = dialogView.findViewById(R.id.challenge_accept_challenge_picker);
+        /*NumberPicker picker = dialogView.findViewById(R.id.challenge_accept_challenge_picker);
 
         String[] questionSets = getChallenges();
         picker.setDisplayedValues(questionSets);
@@ -208,7 +209,9 @@ public class ScoreboardActivity extends AppCompatActivity {
         picker.setMaxValue(questionSets.length - 1);
 
         Toast.makeText(this, "questionSets[picker.getValue()]: " + questionSets[picker.getValue()], Toast.LENGTH_SHORT).show();
+*/
     }
+
 
     String[] getChallenges() {
         String[] challenges = new String[]{"Challenge 1", "Challenge 2", "Challenge 3"};
