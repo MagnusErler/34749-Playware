@@ -272,7 +272,7 @@ public class ScoreboardActivity extends AppCompatActivity {
                             if (gameWinner_Difficulty == 1){
                                 difficulty_text = "Easy";
                             } else if (gameWinner_Difficulty == 2){
-                                difficulty_text = "Medium";
+                                difficulty_text = "Normal";
                             } else if (gameWinner_Difficulty == 3){
                                 difficulty_text = "Hard";
                             } else {
@@ -299,19 +299,19 @@ public class ScoreboardActivity extends AppCompatActivity {
                             if (callenge_difficulty == 1){
                                 difficulty_text = "Easy";
                             } else if (callenge_difficulty == 2){
-                                difficulty_text = "Medium";
+                                difficulty_text = "Normal";
                             } else if (callenge_difficulty == 3){
                                 difficulty_text = "Hard";
                             } else {
                                 difficulty_text = "Easy";
                             }
 
-                            AlertDialog.Builder challengeUser_builder = new AlertDialog.Builder(getApplicationContext());
+                            /*AlertDialog.Builder challengeUser_builder = new AlertDialog.Builder(getApplicationContext());
                             challengeUser_builder.setView(R.layout.dialog_accepting_challenges);
                             AlertDialog acceptChallengeUser_AlertDialog = challengeUser_builder.create();
                             acceptChallengeUser_AlertDialog.setCancelable(true);
                             acceptChallengeUser_AlertDialog.setCanceledOnTouchOutside(true);
-                            acceptChallengeUser_AlertDialog.show();
+                            acceptChallengeUser_AlertDialog.show();*/
 
                             View view = getLayoutInflater().inflate(R.layout.dialog_accepting_challenges, null);
                             TextView accepting_challenge_challengeText = view.findViewById(R.id.accepting_challenge_challengeText);
