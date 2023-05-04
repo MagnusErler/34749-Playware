@@ -2,13 +2,20 @@ package com.livelife.playwaremax;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.NumberPicker;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
@@ -18,7 +25,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -84,17 +93,52 @@ public class ScoreboardActivity extends AppCompatActivity {
     }
 
     void showChallengeUser() {
-        AlertDialog.Builder addQuestion_builder = new AlertDialog.Builder(this);
-        addQuestion_builder.setView(R.layout.dialog_challenge_user);
-        AlertDialog addQuestion_AlertDialog = addQuestion_builder.create();
-        addQuestion_AlertDialog.setCancelable(false);
-        addQuestion_AlertDialog.show();
+        AlertDialog.Builder challengeUser_builder = new AlertDialog.Builder(this);
+        challengeUser_builder.setView(R.layout.dialog_challenge_user);
+        AlertDialog challengeUser_AlertDialog = challengeUser_builder.create();
+        challengeUser_AlertDialog.setCancelable(true);
+        challengeUser_AlertDialog.setCanceledOnTouchOutside(true);
+        challengeUser_AlertDialog.show();
 
-        RadioGroup rg = addQuestion_AlertDialog.findViewById(R.id.challenge_RadioGroup);
+        Button challenge_enter_btn = challengeUser_AlertDialog.findViewById(R.id.challenge_enter_btn);
+        challenge_enter_btn.setOnClickListener(view -> {
+            // difficulty radio
+            RadioGroup rg = challengeUser_AlertDialog.findViewById(R.id.challenge_RadioGroup);
+            int selectedId = rg.getCheckedRadioButtonId();
 
-        int selectedId = rg.getCheckedRadioButtonId();
-        Toast.makeText(getApplicationContext(), "selectedId: " + selectedId, Toast.LENGTH_SHORT).show();
+            // question set picker
+            final View dialogView = getLayoutInflater().inflate(R.layout.dialog_challenge_user, null);
+            NumberPicker picker = dialogView.findViewById(R.id.challenge_question_set_picker);
 
+            String[] questionSets = getAllQuestionSets();
+            picker.setDisplayedValues(questionSets);
+            picker.setMinValue(0);
+            picker.setMaxValue(questionSets.length - 1);
+
+            Toast.makeText(this, "questionSets[picker.getValue()]: " + questionSets[picker.getValue()], Toast.LENGTH_SHORT).show();
+
+            Toast.makeText(getApplicationContext(), "selectedId: " + selectedId, Toast.LENGTH_SHORT).show();
+            challengeUser_AlertDialog.cancel();
+        });
+
+
+
+    }
+
+    String[] getAllQuestionSets() {
+        String[] questionSets = new String[Objects.requireNonNull(getFilesDir().listFiles()).length + 1];
+        questionSets[0] = "Default Question-set";
+        int numQuestionSets = 1;
+        File[] files = getFilesDir().listFiles();
+        assert files != null;
+        for (File file : files) {
+            if (file.getName().startsWith("question_")) {
+                questionSets[numQuestionSets] = file.getName().replace("question_", "").replace(".csv", "");
+                numQuestionSets++;
+            }
+        }
+        //questionSets[numQuestionSets] = String.valueOf(numQuestionSets - 1);
+        return Arrays.copyOf(questionSets, numQuestionSets);
     }
 
     // ------------------------------- //

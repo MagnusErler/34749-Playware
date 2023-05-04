@@ -2,18 +2,16 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
     <RadioGroup
         android:id="@+id/challenge_RadioGroup"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toStartOf="@+id/guideline2"
-        app:layout_constraintStart_toStartOf="@+id/guideline1"
-        app:layout_constraintTop_toBottomOf="@id/addQuestionSetEditText"
-        app:layout_constraintBottom_toTopOf="@id/buttonsLinearLayout">
+        android:orientation="horizontal">
 
         <RadioButton
             android:id="@+id/challenge_easy_btn"
@@ -39,5 +37,18 @@
             android:buttonTint="@color/blue_light"
             android:text="Hard" />
     </RadioGroup>
+
+    <NumberPicker
+        android:id="@+id/challenge_question_set_picker"
+        android:layout_width="match_parent"
+        android:layout_height="180dp" />
+
+    <Button
+        android:id="@+id/challenge_enter_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Challenge"
+        tools:layout_editor_absoluteX="60dp"
+        tools:layout_editor_absoluteY="71dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
