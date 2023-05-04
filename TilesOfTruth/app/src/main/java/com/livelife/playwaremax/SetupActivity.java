@@ -246,7 +246,7 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
                 numQuestionSets++;
             }
         }
-        questionSets[numQuestionSets] = String.valueOf(numQuestionSets - 1);
+        //questionSets[numQuestionSets] = String.valueOf(numQuestionSets - 1);
         return Arrays.copyOf(questionSets, numQuestionSets);
     }
 
