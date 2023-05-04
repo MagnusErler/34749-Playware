@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -114,8 +115,6 @@ public class ScoreboardActivity extends AppCompatActivity {
             RadioGroup rg = challengeUser_AlertDialog.findViewById(R.id.challenge_difficultyRadioGroup);
             int difficulty = rg.getCheckedRadioButtonId();
 
-            Log.d("tot", "difficulty: " + difficulty);
-
             postChallengeUser(difficulty);
 
             challengeUser_AlertDialog.cancel();
@@ -133,7 +132,7 @@ public class ScoreboardActivity extends AppCompatActivity {
         requestPackage.setMethod("POST");
         requestPackage.setUrl(endpoint);
         requestPackage.setParam("method", "postGameSession");
-        requestPackage.setParam("device_token", "ToT2," + difficulty);
+        requestPackage.setParam("device_token", "Challenge," + difficulty + ",deviceToken:" + getDeviceToken());
 
         requestPackage.setParam("game_time","30");
         requestPackage.setParam("game_id", "1");
@@ -200,22 +199,19 @@ public class ScoreboardActivity extends AppCompatActivity {
     }
 
     void showIncomingChallenges() {
-        final View dialogView = getLayoutInflater().inflate(R.layout.dialog_accepting_challenges, null);
-        /*NumberPicker picker = dialogView.findViewById(R.id.challenge_accept_challenge_picker);
+        Toast.makeText(this, "Loading incoming challenges", Toast.LENGTH_SHORT).show();
 
-        String[] questionSets = getChallenges();
-        picker.setDisplayedValues(questionSets);
-        picker.setMinValue(0);
-        picker.setMaxValue(questionSets.length - 1);
+        RemoteHttpRequest requestPackage = new RemoteHttpRequest();
+        requestPackage.setMethod("GET");
+        requestPackage.setUrl(endpoint);
+        requestPackage.setParam("method", "getGameSessions"); // The method name
+        requestPackage.setParam("device_token", getDeviceToken()); // Your device token
+        requestPackage.setParam("group_id", "420"); // Your group ID
 
-        Toast.makeText(this, "questionSets[picker.getValue()]: " + questionSets[picker.getValue()], Toast.LENGTH_SHORT).show();
-*/
-    }
+        Downloader downloader = new Downloader(); //Instantiation of the Async task
+        //that’s defined below
 
-
-    String[] getChallenges() {
-        String[] challenges = new String[]{"Challenge 1", "Challenge 2", "Challenge 3"};
-        return challenges;
+        downloader.execute(requestPackage);
     }
 
     private void getGameWinner() {
@@ -265,10 +261,12 @@ public class ScoreboardActivity extends AppCompatActivity {
 
                         //Split string into two varibale seperated by ","
                         String[] parts = session.getString("device_token").split(",");
-                        if (parts[0].equals("ToT2")) {
+                        // Winner og a game
+                        if (parts[0].equals("Winner")) {
                             String gameWinner_Name = parts[1];
                             String gameWinner_Score = parts[2];
                             int gameWinner_Difficulty = Integer.parseInt(parts[3]);
+                            String deviceToken = parts[3];
 
                             String difficulty_text;
                             if (gameWinner_Difficulty == 1){
@@ -282,12 +280,43 @@ public class ScoreboardActivity extends AppCompatActivity {
                             }
 
                             if (sortByDifficulty == gameWinner_Difficulty) {
-                                games_ArrayList.add("Name: " + gameWinner_Name + ", Score: " + gameWinner_Score + ", Difficulty: " + difficulty_text);
+                                games_ArrayList.add("Name: " + gameWinner_Name + ", Score: " + gameWinner_Score + ", Difficulty: " + difficulty_text + "DeviceToken: " + deviceToken);
                             }
 
                             if (sortByDifficulty == 0) {
-                                games_ArrayList.add("Name: " + gameWinner_Name + ", Score: " + gameWinner_Score + ", Difficulty: " + difficulty_text);
+                                games_ArrayList.add("Name: " + gameWinner_Name + ", Score: " + gameWinner_Score + ", Difficulty: " + difficulty_text + "DeviceToken: " + deviceToken);
                             }
+                        }
+
+                        // Posting a challenge
+                        if (parts[0].equals("Challenge")) {
+                            Toast.makeText(ScoreboardActivity.this, "Here", Toast.LENGTH_SHORT).show();
+
+                            int callenge_difficulty = Integer.parseInt(parts[1]);
+                            String deviceToken = parts[2];
+
+                            String difficulty_text;
+                            if (callenge_difficulty == 1){
+                                difficulty_text = "Easy";
+                            } else if (callenge_difficulty == 2){
+                                difficulty_text = "Medium";
+                            } else if (callenge_difficulty == 3){
+                                difficulty_text = "Hard";
+                            } else {
+                                difficulty_text = "Easy";
+                            }
+
+                            AlertDialog.Builder challengeUser_builder = new AlertDialog.Builder(getApplicationContext());
+                            challengeUser_builder.setView(R.layout.dialog_accepting_challenges);
+                            AlertDialog acceptChallengeUser_AlertDialog = challengeUser_builder.create();
+                            acceptChallengeUser_AlertDialog.setCancelable(true);
+                            acceptChallengeUser_AlertDialog.setCanceledOnTouchOutside(true);
+                            acceptChallengeUser_AlertDialog.show();
+
+                            View view = getLayoutInflater().inflate(R.layout.dialog_accepting_challenges, null);
+                            TextView accepting_challenge_challengeText = view.findViewById(R.id.accepting_challenge_challengeText);
+                            accepting_challenge_challengeText.setText("Difficulty: " + difficulty_text + "deviceToken: " + deviceToken);
+
                         }
                     }
                     gameSessions_ArrayAdapter.notifyDataSetChanged();

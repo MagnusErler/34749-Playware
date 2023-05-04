@@ -84,9 +84,6 @@ public class AddQuestionActivity extends AppCompatActivity {
                     Button no_Btn = deleteQuestionSet_AlertDialog.findViewById(R.id.delete_question_set_no_btn);
 
                     yes_Btn.setOnClickListener(v -> {
-                        Toast.makeText(this, "Deleting...", Toast.LENGTH_SHORT).show();
-
-                        Toast.makeText(this, "questionSet: " + questionSet, Toast.LENGTH_SHORT).show();
 
                         // delete the question set
                         deleteQuestionSetFile(questionSet);

@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Random;
+import java.util.UUID;
 
 public class GameActivity extends AppCompatActivity implements OnAntEventListener {
 
@@ -518,7 +519,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         requestPackage.setMethod("POST");
         requestPackage.setUrl(endpoint);
         requestPackage.setParam("method", "postGameSession");
-        requestPackage.setParam("device_token", "ToT2," + gameWinner + "," + score + "," + difficulty);
+        requestPackage.setParam("device_token", "Winner," + gameWinner + "," + score + "," + difficulty + ",deviceToken:" + getDeviceToken());
 
         requestPackage.setParam("game_time","30");
         requestPackage.setParam("game_id", "1");
@@ -529,6 +530,17 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         Downloader downloader = new Downloader();
 
         downloader.execute(requestPackage);
+    }
+
+    private String getDeviceToken() {
+        String device_token = sharedPref.getString("device_token",null);
+
+        if(device_token == null) { // If device_token was never saved and null create one
+            device_token =  UUID.randomUUID().toString(); // Get a new device_token
+            sharedPref.edit().putString("device_token",device_token).apply(); // save it to shared preferences so next time will be used
+        }
+
+        return device_token;
     }
 
     private static class Downloader extends AsyncTask<RemoteHttpRequest, String, String> {
