@@ -77,10 +77,10 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         connection = MotoConnection.getInstance();
         sound = MotoSound.getInstance();
 
-        connection.startMotoConnection(this);
+        //connection.startMotoConnection(this); TEMP comment
         
-        connection.saveRfFrequency(66);
-        connection.setDeviceId(2);
+        //connection.saveRfFrequency(66); TEMP comment
+        //connection.setDeviceId(2); TEMP comment
         //connection.registerListener(this);
 
         // ------ Difficulty ------
