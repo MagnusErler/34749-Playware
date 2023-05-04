@@ -79,7 +79,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     int baseRoundTimeEasy = 10000;
     int baseRoundTimeNormal = 7500;
     int baseRoundTimeHard = 5000;
-    int baseGameTime = 30000;
+    int baseGameTime = 10000;       //30000
 
     String questionSet = "Default Question-set";
 
@@ -129,6 +129,8 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         int[] setup = getIntent().getIntArrayExtra("setup_data");
         numberOfPlayers = setup[0];
         difficulty = setup[1];
+
+        Log.d("tot", "difficulty: " + difficulty);
 
         int[] tileIDs = getIntent().getIntArrayExtra("tile_ids");
         //Toast.makeText(GameActivity.this, "Number of players: " + setup[0] + " Difficulty: " + difficulty, Toast.LENGTH_LONG).show();
@@ -519,8 +521,9 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
         requestPackage.setMethod("POST");
         requestPackage.setUrl(endpoint);
         requestPackage.setParam("method", "postGameSession");
-        requestPackage.setParam("device_token", "Winner," + gameWinner + "," + score + "," + difficulty + ",deviceToken:" + getDeviceToken());
-
+        Toast.makeText(this, "getDeviceToken(): " + getDeviceToken(), Toast.LENGTH_SHORT).show();
+        Log.d("tot", "Winner1," + gameWinner + "," + score + "," + difficulty + "," + getDeviceToken());
+        requestPackage.setParam("device_token", "Winner1," + gameWinner + "," + score + "," + difficulty + "," + getDeviceToken());
         requestPackage.setParam("game_time","30");
         requestPackage.setParam("game_id", "1");
         requestPackage.setParam("group_id", "420");
@@ -539,7 +542,6 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
             device_token =  UUID.randomUUID().toString(); // Get a new device_token
             sharedPref.edit().putString("device_token",device_token).apply(); // save it to shared preferences so next time will be used
         }
-
         return device_token;
     }
 

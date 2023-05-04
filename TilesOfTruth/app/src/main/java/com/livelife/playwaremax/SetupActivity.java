@@ -87,7 +87,9 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         //connection.registerListener(this);
 
         challenge_accepted = getIntent().getBooleanExtra("challenge_accepted", false);
-        difficulty = getIntent().getIntExtra("difficulty", 0);
+        if (challenge_accepted) {
+            difficulty = getIntent().getIntExtra("difficulty", 0);
+        }
 
         // ------ Difficulty ------
         RadioButton easyDifficultyButton = findViewById(R.id.easyDifficultyButton);
@@ -249,6 +251,7 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
                     .setCancelable(false)
                     .setPositiveButton("Ok", (dialog, id) -> {
                         Intent intent = new Intent(SetupActivity.this, GameActivity.class);
+                        Log.d("tot", "setup difficulty: " + difficulty);
                         intent.putExtra("setup_data", new int[]{numberOfPlayers, difficulty});
                         intent.putExtra("tile_ids", new int[]{player1_trueTile, player1_falseTile, player2_trueTile, player2_falseTile, player3_trueTile, player3_falseTile, player4_trueTile, player4_falseTile});
                         intent.putExtra("question_set", questionSets[picker.getValue()]);
