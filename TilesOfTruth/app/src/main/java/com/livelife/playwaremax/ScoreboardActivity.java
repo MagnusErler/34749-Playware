@@ -2,20 +2,17 @@ package com.livelife.playwaremax;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.NumberPicker;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,6 +32,11 @@ public class ScoreboardActivity extends AppCompatActivity {
     ListView gameSessions_ListView;
     ArrayAdapter<String> gameSessions_ArrayAdapter;
     ArrayList<String> games_ArrayList = new ArrayList<>();
+
+    boolean showChallenges = false;
+
+    String challenge_difficulty_text;
+    String challenge_deviceToken;
 
     //Database
     String endpoint = "https://centerforplayware.com/api/index.php";
@@ -109,11 +111,24 @@ public class ScoreboardActivity extends AppCompatActivity {
         picker.setMaxValue(questionSets.length - 1);*/
 
         Button challenge_enter_btn = challengeUser_AlertDialog.findViewById(R.id.challenge_accept_btn);
+        RadioGroup rg = challengeUser_AlertDialog.findViewById(R.id.challenge_difficultyRadioGroup);
         //Button challenge_cancel_btn = challengeUser_AlertDialog.findViewById(R.id.challenge_cancel_btn);
         challenge_enter_btn.setOnClickListener(view -> {
-            // difficulty radio
-            RadioGroup rg = challengeUser_AlertDialog.findViewById(R.id.challenge_difficultyRadioGroup);
-            int difficulty = rg.getCheckedRadioButtonId();
+
+            int checkedId = rg.getCheckedRadioButtonId();
+
+            int difficulty = 0;
+            switch(checkedId){
+                case R.id.challenge_easy_btn:
+                    difficulty = 1;
+                    break;
+                case R.id.challenge_normal_btn:
+                    difficulty = 2;
+                    break;
+                case R.id.challenge_hard_btn:
+                    difficulty = 3;
+                    break;
+            }
 
             postChallengeUser(difficulty);
 
@@ -128,6 +143,7 @@ public class ScoreboardActivity extends AppCompatActivity {
     }
 
     void postChallengeUser(int difficulty) {
+
         RemoteHttpRequest requestPackage = new RemoteHttpRequest();
         requestPackage.setMethod("POST");
         requestPackage.setUrl(endpoint);
@@ -199,6 +215,9 @@ public class ScoreboardActivity extends AppCompatActivity {
     }
 
     void showIncomingChallenges() {
+
+        showChallenges = true;
+
         Toast.makeText(this, "Loading incoming challenges", Toast.LENGTH_SHORT).show();
 
         RemoteHttpRequest requestPackage = new RemoteHttpRequest();
@@ -289,34 +308,53 @@ public class ScoreboardActivity extends AppCompatActivity {
                         }
 
                         // Posting a challenge
-                        if (parts[0].equals("Challenge")) {
-                            Toast.makeText(ScoreboardActivity.this, "Here", Toast.LENGTH_SHORT).show();
+                        if (showChallenges) {
+                            showChallenges = false;
+                            if (parts[0].equals("Challenge")) {
 
-                            int callenge_difficulty = Integer.parseInt(parts[1]);
-                            String deviceToken = parts[2];
+                                int callenge_difficulty = Integer.parseInt(parts[1]);
+                                challenge_deviceToken = parts[2];
 
-                            String difficulty_text;
-                            if (callenge_difficulty == 1){
-                                difficulty_text = "Easy";
-                            } else if (callenge_difficulty == 2){
-                                difficulty_text = "Normal";
-                            } else if (callenge_difficulty == 3){
-                                difficulty_text = "Hard";
-                            } else {
-                                difficulty_text = "Easy";
+                                if (callenge_difficulty == 1) {
+                                    challenge_difficulty_text = "Easy";
+                                } else if (callenge_difficulty == 2) {
+                                    challenge_difficulty_text = "Normal";
+                                } else if (callenge_difficulty == 3) {
+                                    challenge_difficulty_text = "Hard";
+                                } else {
+                                    challenge_difficulty_text = "Easy";
+                                }
+
+                                /*AlertDialog.Builder challengeUser_builder = new AlertDialog.Builder(getApplicationContext());
+                                challengeUser_builder.setView(R.layout.dialog_accepting_challenges);
+                                AlertDialog acceptChallengeUser_AlertDialog = challengeUser_builder.create();
+                                acceptChallengeUser_AlertDialog.setCancelable(true);
+                                acceptChallengeUser_AlertDialog.setCanceledOnTouchOutside(true);
+                                acceptChallengeUser_AlertDialog.show();*/
+
+
+                                new AlertDialog.Builder(ScoreboardActivity.this)
+                                        .setTitle("Accept challenge")
+                                        .setMessage("Difficulty: " + challenge_difficulty_text + ", deviceToken: " + challenge_deviceToken)
+
+                                        // Specifying a listener allows you to take an action before dismissing the dialog.
+                                        // The dialog is automatically dismissed when a dialog button is clicked.
+                                        .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                                            Toast.makeText(ScoreboardActivity.this, "callenge_difficulty: " + callenge_difficulty, Toast.LENGTH_SHORT).show();
+                                            Intent intent = new Intent(ScoreboardActivity.this, SetupActivity.class);
+                                            intent.putExtra("difficulty", callenge_difficulty);
+                                            intent.putExtra("challenge_accepted", true);
+                                            startActivity(intent);
+                                            // Continue with delete operation
+                                        })
+
+                                        // A null listener allows the button to dismiss the dialog and take no further action.
+                                        .setNegativeButton(android.R.string.no, null)
+                                        .setIcon(android.R.drawable.ic_dialog_alert)
+                                        .show();
+
+
                             }
-
-                            /*AlertDialog.Builder challengeUser_builder = new AlertDialog.Builder(getApplicationContext());
-                            challengeUser_builder.setView(R.layout.dialog_accepting_challenges);
-                            AlertDialog acceptChallengeUser_AlertDialog = challengeUser_builder.create();
-                            acceptChallengeUser_AlertDialog.setCancelable(true);
-                            acceptChallengeUser_AlertDialog.setCanceledOnTouchOutside(true);
-                            acceptChallengeUser_AlertDialog.show();*/
-
-                            View view = getLayoutInflater().inflate(R.layout.dialog_accepting_challenges, null);
-                            TextView accepting_challenge_challengeText = view.findViewById(R.id.accepting_challenge_challengeText);
-                            accepting_challenge_challengeText.setText("Difficulty: " + difficulty_text + "deviceToken: " + deviceToken);
-
                         }
                     }
                     gameSessions_ArrayAdapter.notifyDataSetChanged();

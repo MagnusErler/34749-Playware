@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -61,6 +62,8 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
 
     int setupMode = 1;
 
+    boolean challenge_accepted;
+
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,22 +86,51 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         //connection.setDeviceId(2); TEMP comment
         //connection.registerListener(this);
 
+        challenge_accepted = getIntent().getBooleanExtra("challenge_accepted", false);
+        difficulty = getIntent().getIntExtra("difficulty", 0);
+
         // ------ Difficulty ------
-        Button easyDifficultyButton = findViewById(R.id.easyDifficultyButton);
-        Button normalDifficultyButton = findViewById(R.id.normalDifficultyButton);
-        Button hardDifficultyButton = findViewById(R.id.hardDifficultyButton);
+        RadioButton easyDifficultyButton = findViewById(R.id.easyDifficultyButton);
+        RadioButton normalDifficultyButton = findViewById(R.id.normalDifficultyButton);
+        RadioButton hardDifficultyButton = findViewById(R.id.hardDifficultyButton);
 
-        easyDifficultyButton.setOnClickListener(v -> {
-            difficulty = 1;
-        });
+        if (challenge_accepted) {
 
-        normalDifficultyButton.setOnClickListener(v -> {
-            difficulty = 2;
-        });
+            Toast.makeText(this, "challenge_accepted: " + challenge_accepted, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "difficulty: " + difficulty, Toast.LENGTH_SHORT).show();
 
-        hardDifficultyButton.setOnClickListener(v -> {
-            difficulty = 3;
-        });
+            if (difficulty == 1) {
+                easyDifficultyButton.setChecked(true);
+            } else if (difficulty == 3) {
+                hardDifficultyButton.setChecked(true);
+            } else {
+                normalDifficultyButton.setChecked(true);
+            }
+
+            easyDifficultyButton.setClickable(false);
+            normalDifficultyButton.setClickable(false);
+            hardDifficultyButton.setClickable(false);
+
+            easyDifficultyButton.setClickable(false);
+            normalDifficultyButton.setClickable(false);
+            hardDifficultyButton.setClickable(false);
+
+            //TODO: Change colour of buttons
+        } else {
+            easyDifficultyButton.setOnClickListener(v -> {
+                difficulty = 1;
+            });
+
+            normalDifficultyButton.setOnClickListener(v -> {
+                difficulty = 2;
+            });
+
+            hardDifficultyButton.setOnClickListener(v -> {
+                difficulty = 3;
+            });
+        }
+
+
 
         // ------ Text to Speech initialization ------
         textToSpeechSystem = new TextToSpeech(SetupActivity.this, new TextToSpeech.OnInitListener() {
@@ -158,6 +190,17 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         numberOfPlayersTextView = findViewById(R.id.numberOfPlayersTextView);
         playersRadioGroup = findViewById(R.id.playersRadioGroup);
         positioningImageView = findViewById(R.id.positioningImageView);
+
+        if (challenge_accepted) {
+            RadioButton twoPlayersButton = findViewById(R.id.twoPlayersButton);
+            RadioButton threePlayersButton = findViewById(R.id.threePlayersButton);
+            RadioButton fourPlayersButton = findViewById(R.id.fourPlayersButton);
+
+            //Disbale buttons
+            twoPlayersButton.setClickable(false);
+            threePlayersButton.setClickable(false);
+            fourPlayersButton.setClickable(false);
+        }
 
         playersRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             switch(checkedId) {
