@@ -2,20 +2,18 @@ package com.livelife.playwaremax;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.NumberPicker;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
@@ -59,7 +57,7 @@ public class ScoreboardActivity extends AppCompatActivity {
         gameSessions_ArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, games_ArrayList);
         gameSessions_ListView.setAdapter(gameSessions_ArrayAdapter);
         gameSessions_ListView.setOnItemClickListener((adapterView, arg1, position, arg3) -> {
-            Toast.makeText(this, "games_ArrayList.get(position): " + games_ArrayList.get(position), Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "games_ArrayList.get(position): " + games_ArrayList.get(position), Toast.LENGTH_SHORT).show();
             //games_ArrayList.get(position);
             showChallengeUser();
         });
@@ -100,27 +98,51 @@ public class ScoreboardActivity extends AppCompatActivity {
         challengeUser_AlertDialog.setCanceledOnTouchOutside(true);
         challengeUser_AlertDialog.show();
 
-        Button challenge_enter_btn = challengeUser_AlertDialog.findViewById(R.id.challenge_enter_btn);
+        // question set picker
+        //NumberPicker picker = challengeUser_AlertDialog.findViewById(R.id.challenge_question_set_picker);
+
+        /*String[] questionSets = getAllQuestionSets();
+        Log.d("tot", "questionSets: " + Arrays.toString(questionSets));
+        picker.setDisplayedValues(questionSets);
+        picker.setMinValue(0);
+        picker.setMaxValue(questionSets.length - 1);*/
+
+        Button challenge_enter_btn = challengeUser_AlertDialog.findViewById(R.id.challenge_accept_btn);
+        Button challenge_cancel_btn = challengeUser_AlertDialog.findViewById(R.id.challenge_cancel_btn);
         challenge_enter_btn.setOnClickListener(view -> {
             // difficulty radio
-            RadioGroup rg = challengeUser_AlertDialog.findViewById(R.id.challenge_RadioGroup);
-            int selectedId = rg.getCheckedRadioButtonId();
+            RadioGroup rg = challengeUser_AlertDialog.findViewById(R.id.challenge_difficultyRadioGroup);
+            int difficulty = rg.getCheckedRadioButtonId();
 
-            // question set picker
-            final View dialogView = getLayoutInflater().inflate(R.layout.dialog_challenge_user, null);
-            NumberPicker picker = dialogView.findViewById(R.id.challenge_question_set_picker);
+            Log.d("tot", "difficulty: " + difficulty);
 
-            String[] questionSets = getAllQuestionSets();
-            picker.setDisplayedValues(questionSets);
-            picker.setMinValue(0);
-            picker.setMaxValue(questionSets.length - 1);
+            postChallengeUser(difficulty);
 
-            Toast.makeText(this, "questionSets[picker.getValue()]: " + questionSets[picker.getValue()], Toast.LENGTH_SHORT).show();
-
-            Toast.makeText(getApplicationContext(), "selectedId: " + selectedId, Toast.LENGTH_SHORT).show();
             challengeUser_AlertDialog.cancel();
         });
 
+        challenge_cancel_btn.setOnClickListener(view -> {
+            challengeUser_AlertDialog.cancel();
+        });
+
+    }
+
+    void postChallengeUser(int difficulty) {
+        RemoteHttpRequest requestPackage = new RemoteHttpRequest();
+        requestPackage.setMethod("POST");
+        requestPackage.setUrl(endpoint);
+        requestPackage.setParam("method", "postGameSession");
+        requestPackage.setParam("device_token", "ToT2," + difficulty);
+
+        requestPackage.setParam("game_time","30");
+        requestPackage.setParam("game_id", "1");
+        requestPackage.setParam("group_id", "420");
+        requestPackage.setParam("game_type_id", "1");
+        requestPackage.setParam("game_score", "10");
+
+        ScoreboardActivity.Downloader downloader = new ScoreboardActivity.Downloader();
+
+        downloader.execute(requestPackage);
     }
 
     String[] getAllQuestionSets() {
@@ -135,7 +157,6 @@ public class ScoreboardActivity extends AppCompatActivity {
                 numQuestionSets++;
             }
         }
-        //questionSets[numQuestionSets] = String.valueOf(numQuestionSets - 1);
         return Arrays.copyOf(questionSets, numQuestionSets);
     }
 
@@ -164,7 +185,7 @@ public class ScoreboardActivity extends AppCompatActivity {
             return true;
         }
 
-        if (id == R.id.editQuestionSet_MenuItem) {
+        if (id == R.id.getChallenges_MenuItem) {
             showIncomingChallenges();
         }
 
@@ -172,6 +193,8 @@ public class ScoreboardActivity extends AppCompatActivity {
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_get_challenges, menu);
         return true;
     }
 
