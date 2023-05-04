@@ -3,7 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="?dialogPreferredPadding"
+    >
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline1"
@@ -33,16 +35,43 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.95" />
 
+    <TextView
+        android:id="@+id/challenge_player_title_TextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/challenge_player_title"
+        android:textAlignment="textStart"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/challenge_player_difficulty_TextView"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintStart_toStartOf="@+id/guideline1"
+        app:layout_constraintTop_toBottomOf="@+id/guideline3"
+        app:layout_constraintVertical_chainStyle="packed"/>
+
+    <TextView
+        android:id="@+id/challenge_player_difficulty_TextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/challenge_player_difficulty"
+        android:textAlignment="textStart"
+        android:textSize="25sp"
+        app:layout_constraintBottom_toTopOf="@id/challenge_difficultyRadioGroup"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintStart_toStartOf="@+id/guideline1"
+        app:layout_constraintTop_toBottomOf="@+id/challenge_player_title_TextView"
+        />
+
     <RadioGroup
         android:id="@+id/challenge_difficultyRadioGroup"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="15dp"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@id/challenge_question_set_picker"
+        app:layout_constraintBottom_toTopOf="@id/challenge_buttonsLinearLayout"
         app:layout_constraintEnd_toEndOf="@id/guideline2"
         app:layout_constraintStart_toStartOf="@id/guideline1"
-        app:layout_constraintTop_toBottomOf="@id/guideline3"
+        app:layout_constraintTop_toBottomOf="@id/challenge_player_difficulty_TextView"
         app:layout_constraintVertical_chainStyle="packed">
 
         <RadioButton
@@ -98,15 +127,6 @@
             android:textSize="25sp" />
     </RadioGroup>
 
-    <NumberPicker
-        android:id="@+id/challenge_question_set_picker"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/challenge_buttonsLinearLayout"
-        app:layout_constraintEnd_toEndOf="@id/guideline2"
-        app:layout_constraintStart_toStartOf="@id/guideline1"
-        app:layout_constraintTop_toBottomOf="@id/challenge_difficultyRadioGroup" />
-
     <LinearLayout
         android:id="@+id/challenge_buttonsLinearLayout"
         android:layout_width="0dp"
@@ -116,7 +136,7 @@
         app:layout_constraintBottom_toBottomOf="@id/guideline4"
         app:layout_constraintEnd_toStartOf="@+id/guideline2"
         app:layout_constraintStart_toStartOf="@+id/guideline1"
-        app:layout_constraintTop_toBottomOf="@id/challenge_question_set_picker">
+        app:layout_constraintTop_toBottomOf="@id/challenge_difficultyRadioGroup">
 
         <Button
             android:id="@+id/challenge_cancel_btn"
