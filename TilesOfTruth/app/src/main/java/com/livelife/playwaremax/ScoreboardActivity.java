@@ -293,19 +293,24 @@ public class ScoreboardActivity extends AppCompatActivity {
                             Log.d("tot", "sortByDifficulty: " + sortByDifficulty + ", gameWinner_Difficulty: " + gameWinner_Difficulty);
 
                             if (sortByDifficulty == gameWinner_Difficulty) {
-                                games_ArrayList.add("Name: " + gameWinner_Name + "\nScore: " + gameWinner_Score + "\nDifficulty: " + difficulty_text + "\nDeviceToken: " + deviceToken);
+                                games_ArrayList.add("Name: " + gameWinner_Name + ", Score: " + gameWinner_Score + ", Difficulty: " + difficulty_text + ", DeviceToken: " + deviceToken);
                             }
 
                             //All
                             if (sortByDifficulty == 0) {
-                                games_ArrayList.add("Name: " + gameWinner_Name + "\nScore: " + gameWinner_Score + "\nDifficulty: " + difficulty_text + "\nDeviceToken: " + deviceToken);
+                                games_ArrayList.add("Name: " + gameWinner_Name + ", Score: " + gameWinner_Score + ", Difficulty: " + difficulty_text + ", DeviceToken: " + deviceToken);
                             }
                         }
 
                         // Posting a challenge
                         if (showChallenges) {
+
+                            Log.d("tot", "1");
+
                             showChallenges = false;
                             if (parts[0].equals("Challenge")) {
+
+                                Log.d("tot", "2");
 
                                 int challenge_difficulty = Integer.parseInt(parts[1]);
                                 String challengerName = parts[2];
@@ -349,6 +354,8 @@ public class ScoreboardActivity extends AppCompatActivity {
 
                                     acceptChallengeUser_AlertDialog.cancel();
                                 });
+                            } else {
+                                Toast.makeText(ScoreboardActivity.this, "You have no incoming challenges", Toast.LENGTH_SHORT).show();
                             }
                         }
                     }

@@ -107,6 +107,9 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
             Toast.makeText(SetupActivity.this, "Turn up the volume!", Toast.LENGTH_LONG).show();
         }
 
+        Button startGameButton = findViewById(R.id.startGameButton);
+        startGameButton.setBackgroundColor(getResources().getColor(R.color.blue_dark));
+
         // ------ Difficulty ------
         RadioButton easyDifficultyButton = findViewById(R.id.easyDifficultyButton);
         RadioButton normalDifficultyButton = findViewById(R.id.normalDifficultyButton);
@@ -180,6 +183,8 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
                     connection.pairTilesStart();
                     textToSpeechSystem.speak("Turn on and press " + numberOfPlayers*2 + "tiles you want to use", TextToSpeech.QUEUE_FLUSH, null,"ID");
                     pairingButton.setText("Next");
+                    startGameButton.setBackgroundColor(getResources().getColor(R.color.grayed_out));
+                    startGameButton.setClickable(false);
                     setupMode = 2;
                     break;
                 case 2:
@@ -192,6 +197,12 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
                 case 3:
                     setupTilesPosition(numberOfPlayers);
                     textToSpeechSystem.speak("Setup complete", TextToSpeech.QUEUE_FLUSH, null,"ID");
+
+                    // set it to blue_dark
+                    startGameButton.setBackgroundColor(getResources().getColor(R.color.blue_dark));
+                    startGameButton.setClickable(true);
+
+
                     connection.unregisterListener(this);
                     pairingButton.setText("Start Pairing");
                     setupMode = 1;
@@ -276,7 +287,6 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
             setupTilesPosition(numberOfPlayers);
         });
 
-        Button startGameButton = findViewById(R.id.startGameButton);
         startGameButton.setOnClickListener(v -> {
 
             String[] questionSets = getAllQuestionSets();
@@ -311,18 +321,17 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
 
             enterButton.setOnClickListener(view -> {
                 // FOR DEBUGGING
-                /*if (numberOfPlayers > connectedTiles/2) {
+                if (numberOfPlayers > connectedTiles/2) {
                     Toast.makeText(this, "Not enough tiles connected", Toast.LENGTH_SHORT).show();
-                    return;
-                } else {*/
-                Intent intent = new Intent(SetupActivity.this, GameActivity.class);
-                Log.d("tot", "setup difficulty: " + difficulty);
-                intent.putExtra("setup_data", new int[]{numberOfPlayers, difficulty});
-                intent.putExtra("tile_ids", new int[]{player1_trueTile, player1_falseTile, player2_trueTile, player2_falseTile, player3_trueTile, player3_falseTile, player4_trueTile, player4_falseTile});
-                intent.putExtra("question_set", questionSets[picker.getValue()]);
-                startActivity(intent);
-                chooseQuestionSet_AlertDialog.cancel();
-                //}
+                } else {
+                    Intent intent = new Intent(SetupActivity.this, GameActivity.class);
+                    Log.d("tot", "setup difficulty: " + difficulty);
+                    intent.putExtra("setup_data", new int[]{numberOfPlayers, difficulty});
+                    intent.putExtra("tile_ids", new int[]{player1_trueTile, player1_falseTile, player2_trueTile, player2_falseTile, player3_trueTile, player3_falseTile, player4_trueTile, player4_falseTile});
+                    intent.putExtra("question_set", questionSets[picker.getValue()]);
+                    startActivity(intent);
+                    chooseQuestionSet_AlertDialog.cancel();
+                }
             });
 
             cancelButton.setOnClickListener(view -> chooseQuestionSet_AlertDialog.cancel());
