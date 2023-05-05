@@ -158,9 +158,11 @@ public class AddQuestionActivity extends AppCompatActivity {
 
                 if (deleteQuestion) {
                     deleteQuestion = false;
+                    editQuestionSet_MenuItem.setIcon(ContextCompat.getDrawable(this, R.drawable.trashcanicon));
                     displayAllQuestionsFromQuestionSet(deleteQuestion);
                 } else {
                     deleteQuestion = true;
+                    editQuestionSet_MenuItem.setIcon(ContextCompat.getDrawable(this, R.drawable.trashcanicontriggered));
                     displayAllQuestionsFromQuestionSet(deleteQuestion);
                 }
 
