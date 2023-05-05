@@ -65,13 +65,11 @@ public class ScoreboardActivity extends AppCompatActivity {
             String nameOfUserToBeChallenged = gameSession[0];
             //get name after "Name: "
             nameOfUserToBeChallenged = nameOfUserToBeChallenged.substring(6);
-            String score = gameSession[1];
-            String difficulty = gameSession[2];
+            //String score = gameSession[1];
+            //String difficulty = gameSession[2];
             String deviceTokenOfUserToBeChallenged = gameSession[3];
             //get deviceToken after "DeviceToken: "
             deviceTokenOfUserToBeChallenged = deviceTokenOfUserToBeChallenged.substring(14);
-
-            Log.d("tot", "name: " + nameOfUserToBeChallenged + " deviceTokenOfUserToBeChallenged: " + deviceTokenOfUserToBeChallenged);
 
             showChallengeUser(nameOfUserToBeChallenged, deviceTokenOfUserToBeChallenged);
         });
@@ -291,12 +289,12 @@ public class ScoreboardActivity extends AppCompatActivity {
                             Log.d("tot", "sortByDifficulty: " + sortByDifficulty + ", gameWinner_Difficulty: " + gameWinner_Difficulty);
 
                             if (sortByDifficulty == gameWinner_Difficulty) {
-                                games_ArrayList.add("Name: " + gameWinner_Name + ", Score: " + gameWinner_Score + ", Difficulty: " + difficulty_text + ", DeviceToken: " + deviceToken);
+                                games_ArrayList.add("Name: " + gameWinner_Name + "\nScore: " + gameWinner_Score + "\nDifficulty: " + difficulty_text + "\nDeviceToken: " + deviceToken);
                             }
 
                             //All
                             if (sortByDifficulty == 0) {
-                                games_ArrayList.add("Name: " + gameWinner_Name + ", Score: " + gameWinner_Score + ", Difficulty: " + difficulty_text + ", DeviceToken: " + deviceToken);
+                                games_ArrayList.add("Name: " + gameWinner_Name + "\nScore: " + gameWinner_Score + "\nDifficulty: " + difficulty_text + "\nDeviceToken: " + deviceToken);
                             }
                         }
 
@@ -308,7 +306,7 @@ public class ScoreboardActivity extends AppCompatActivity {
                                 int challenge_difficulty = Integer.parseInt(parts[1]);
                                 String challengerName = parts[2];
                                 String challenge_deviceTokenFromChallenger = parts[3];
-                                String challenge_deviceTokenOfUserToBeChallenged = parts[4];
+                                //String challenge_deviceTokenOfUserToBeChallenged = parts[4];
 
                                 if (Objects.equals(challenge_deviceTokenFromChallenger, getDeviceToken())) {
                                     Toast.makeText(ScoreboardActivity.this, "You have no incoming challenges", Toast.LENGTH_SHORT).show();
@@ -337,9 +335,7 @@ public class ScoreboardActivity extends AppCompatActivity {
 
                                 Button accepting_challenge_cancelButton = acceptChallengeUser_AlertDialog.findViewById(R.id.accepting_challenge_cancelButton);
                                 Button accepting_challenge_enterButton = acceptChallengeUser_AlertDialog.findViewById(R.id.accepting_challenge_enterButton);
-                                accepting_challenge_cancelButton.setOnClickListener(view -> {
-                                    acceptChallengeUser_AlertDialog.cancel();
-                                });
+                                accepting_challenge_cancelButton.setOnClickListener(view -> acceptChallengeUser_AlertDialog.cancel());
 
                                 accepting_challenge_enterButton.setOnClickListener(view -> {
                                     Intent intent = new Intent(ScoreboardActivity.this, SetupActivity.class);

@@ -20,6 +20,7 @@ import android.widget.NumberPicker;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -376,9 +377,16 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
 
         changeFreq_OK_Button.setOnClickListener(view -> {
 
+            if (changeFreq_EditText.getText().toString().equals("")) {
+                Toast.makeText(this, "Please enter a frequency", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             motoTilesFreq = Integer.parseInt(changeFreq_EditText.getText().toString());
 
             connection.saveRfFrequency(motoTilesFreq);
+
+            Toast.makeText(this, "Frequency changed to " + motoTilesFreq, Toast.LENGTH_SHORT).show();
 
             changeFreq_AlertDialog.cancel();
         });
