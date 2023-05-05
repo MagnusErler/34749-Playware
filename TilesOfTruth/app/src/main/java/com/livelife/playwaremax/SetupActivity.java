@@ -77,8 +77,8 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         // Enable Back-button
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
-        connection = MotoConnection.getInstance();
-        sound = MotoSound.getInstance();
+        //connection = MotoConnection.getInstance();
+        //sound = MotoSound.getInstance();
 
         //connection.startMotoConnection(this); TEMP comment
         
