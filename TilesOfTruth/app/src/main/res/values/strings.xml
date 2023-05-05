@@ -54,4 +54,6 @@
     <string name="delete">Delete</string>
     <string name="challenger_name_instruction">Type your name</string>
     <string name="challenger_name">Name</string>
+    <string name="choose_question_set">Choose a question set</string>
+    <string name="select">Select</string>
 </resources>

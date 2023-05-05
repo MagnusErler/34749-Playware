@@ -11,7 +11,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
-import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,7 +20,6 @@ import android.widget.NumberPicker;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -226,16 +224,16 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         Button startGameButton = findViewById(R.id.startGameButton);
         startGameButton.setOnClickListener(v -> {
 
-            // FOR DEBUGGING
-            /*if (numberOfPlayers > connectedTiles/2) {
-                Toast.makeText(this, "Not enough tiles connected", Toast.LENGTH_SHORT).show();
-                return;
-            }*/
 
-            final AlertDialog.Builder builder = new AlertDialog.Builder(SetupActivity.this);
-            final View dialogView = getLayoutInflater().inflate(R.layout.dialog_choose_question_set, null);
 
-            NumberPicker picker = dialogView.findViewById(R.id.number_picker);
+            AlertDialog.Builder chooseQuestionSet_builder = new AlertDialog.Builder(this);
+            //gameOver_AlertDialog.setTitle("Player " + (maxScorePlayer+1) + " won this game with " + maxScore + " points");
+            chooseQuestionSet_builder.setView(R.layout.dialog_choose_question_set);
+            AlertDialog chooseQuestionSet_AlertDialog = chooseQuestionSet_builder.create();
+            chooseQuestionSet_AlertDialog.setCancelable(false);
+            chooseQuestionSet_AlertDialog.show();
+
+            NumberPicker picker = chooseQuestionSet_AlertDialog.findViewById(R.id.choose_question_set_number_picker);
 
             String[] questionSets = getAllQuestionSets();
             Log.d("tag", "Question sets array: " + Arrays.toString(questionSets));
@@ -243,21 +241,34 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
             picker.setMinValue(0);
             picker.setMaxValue(questionSets.length - 1);
 
-            builder.setView(dialogView)
-                    .setTitle("Choose between Question sets")
-                    .setCancelable(false)
-                    .setPositiveButton("Ok", (dialog, id) -> {
-                        Intent intent = new Intent(SetupActivity.this, GameActivity.class);
-                        Log.d("tot", "setup difficulty: " + difficulty);
-                        intent.putExtra("setup_data", new int[]{numberOfPlayers, difficulty});
-                        intent.putExtra("tile_ids", new int[]{player1_trueTile, player1_falseTile, player2_trueTile, player2_falseTile, player3_trueTile, player3_falseTile, player4_trueTile, player4_falseTile});
-                        intent.putExtra("question_set", questionSets[picker.getValue()]);
-                        startActivity(intent);
-                    })
-                    .setNegativeButton("Cancel", (dialogInterface, i) -> dialogInterface.cancel());
+            Button enterButton = chooseQuestionSet_AlertDialog.findViewById(R.id.choose_question_set_enterButton);
+            Button cancelButton = chooseQuestionSet_AlertDialog.findViewById(R.id.choose_question_set_cancelButton);
 
-            AlertDialog alert = builder.create();
-            alert.show();
+            enterButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // FOR DEBUGGING
+                    /*if (numberOfPlayers > connectedTiles/2) {
+                        Toast.makeText(this, "Not enough tiles connected", Toast.LENGTH_SHORT).show();
+                        return;
+                    } else {*/
+                    Intent intent = new Intent(SetupActivity.this, GameActivity.class);
+                    Log.d("tot", "setup difficulty: " + difficulty);
+                    intent.putExtra("setup_data", new int[]{numberOfPlayers, difficulty});
+                    intent.putExtra("tile_ids", new int[]{player1_trueTile, player1_falseTile, player2_trueTile, player2_falseTile, player3_trueTile, player3_falseTile, player4_trueTile, player4_falseTile});
+                    intent.putExtra("question_set", questionSets[picker.getValue()]);
+                    startActivity(intent);
+                    chooseQuestionSet_AlertDialog.cancel();
+                    //}
+                }
+            });
+
+            cancelButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    chooseQuestionSet_AlertDialog.cancel();
+                }
+            });
         });
     }
 
