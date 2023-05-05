@@ -108,11 +108,11 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
             normalDifficultyButton.setClickable(false);
             hardDifficultyButton.setClickable(false);
 
-            easyDifficultyButton.setClickable(false);
-            normalDifficultyButton.setClickable(false);
-            hardDifficultyButton.setClickable(false);
+            // grayout buttons
+            easyDifficultyButton.setBackground(getDrawable(R.drawable.radio_button_qrayed_out));
+            normalDifficultyButton.setBackground(getDrawable(R.drawable.radio_button_qrayed_out));
+            hardDifficultyButton.setBackground(getDrawable(R.drawable.radio_button_qrayed_out));
 
-            //TODO: Change colour of buttons
         } else {
             easyDifficultyButton.setOnClickListener(v -> {
                 difficulty = 1;
@@ -181,14 +181,22 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         positioningImageView = findViewById(R.id.positioningImageView);
 
         if (challenge_accepted) {
+            RadioButton onePlayersButton = findViewById(R.id.onePlayersButton);
             RadioButton twoPlayersButton = findViewById(R.id.twoPlayersButton);
             RadioButton threePlayersButton = findViewById(R.id.threePlayersButton);
             RadioButton fourPlayersButton = findViewById(R.id.fourPlayersButton);
 
             //Disbale buttons
+            onePlayersButton.setClickable(false);
             twoPlayersButton.setClickable(false);
             threePlayersButton.setClickable(false);
             fourPlayersButton.setClickable(false);
+
+            // grayout buttons
+            onePlayersButton.setBackground(getDrawable(R.drawable.radio_button_qrayed_out));
+            twoPlayersButton.setBackground(getDrawable(R.drawable.radio_button_qrayed_out));
+            threePlayersButton.setBackground(getDrawable(R.drawable.radio_button_qrayed_out));
+            fourPlayersButton.setBackground(getDrawable(R.drawable.radio_button_qrayed_out));
         }
 
         playersRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
