@@ -186,7 +186,11 @@ public class ScoreboardActivity extends AppCompatActivity {
         }
 
         if (id == R.id.getChallenges_MenuItem) {
-            showIncomingChallenges();
+            if (checkIfDeviceIsConnectedToInternet()) {
+                showIncomingChallenges();
+            } else {
+                Toast.makeText(getApplicationContext(), "You are not connected to the internet!", Toast.LENGTH_LONG).show();
+            }
         }
 
         return super.onOptionsItemSelected(item);
