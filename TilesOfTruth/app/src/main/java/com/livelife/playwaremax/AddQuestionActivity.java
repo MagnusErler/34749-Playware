@@ -23,9 +23,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -43,6 +45,7 @@ public class AddQuestionActivity extends AppCompatActivity {
     boolean menuIsVisible = true;
 
     boolean deleteQuestionSet = false;
+    boolean deleteQuestion = false;
 
     String questionSet = "Nothing";
 
@@ -67,46 +70,9 @@ public class AddQuestionActivity extends AppCompatActivity {
         addQuestion_ListView.setOnItemClickListener((parent, view, position, id) -> {
 
             if (deleteQuestionSet) {
-                if (!Objects.equals(addQuestion_ArrayList.get(position), "Default Question-set")) {
-
-                    questionSet = addQuestion_ArrayList.get(position).substring(8);
-
-                    Log.d("tot", "questionSet1: " + questionSet);
-
-                    // takeing the text after "Custom: " and before ".csv"
-                    int startIndex = questionSet.indexOf(":") + 2;
-                    questionSet = questionSet.substring(startIndex);
-
-                    Log.d("tot", "questionSet2: " + questionSet);
-
-                    AlertDialog.Builder addQuestionSet_builder = new AlertDialog.Builder(this);
-                    addQuestionSet_builder.setView(R.layout.dialog_delete_question_set);
-                    AlertDialog deleteQuestionSet_AlertDialog = addQuestionSet_builder.create();
-                    deleteQuestionSet_AlertDialog.setCancelable(false);
-                    deleteQuestionSet_AlertDialog.show();
-
-                    Button yes_Btn = deleteQuestionSet_AlertDialog.findViewById(R.id.delete_question_set_yes_btn);
-                    Button no_Btn = deleteQuestionSet_AlertDialog.findViewById(R.id.delete_question_set_no_btn);
-
-                    yes_Btn.setOnClickListener(v -> {
-
-                        // delete the question set
-                        deleteQuestionSetFile(questionSet);
-
-                        displayAllQuestionSets(deleteQuestionSet);
-                        deleteQuestionSet_AlertDialog.cancel();
-                    });
-
-                    no_Btn.setOnClickListener(v -> {
-                        deleteQuestionSet_AlertDialog.cancel();
-                    });
-
-
-
-
-                } else {
-                    Toast.makeText(getApplicationContext(), "You cannot delete the default question set", Toast.LENGTH_SHORT).show();
-                }
+                showDialog_deleteQuestionSet(position);
+            } else if (deleteQuestion) {
+                showDialog_deleteQuestion(position);
             } else {
                 if (Objects.equals(addQuestion_ArrayList.get(position), "Default Question-set")) {
                     questionSet = "Default Question-set";
@@ -125,7 +91,7 @@ public class AddQuestionActivity extends AppCompatActivity {
 
                     findViewById(R.id.addQuestion_btn).setVisibility(View.VISIBLE);
 
-                    displayAllQuestionsFromQuestionSet();
+                    displayAllQuestionsFromQuestionSet(false);
                 } else {
                     if (!insideDefaultQuestionSet) {
                         editQuestion(position);
@@ -186,6 +152,21 @@ public class AddQuestionActivity extends AppCompatActivity {
         }
 
         if (id == R.id.editQuestionSet_MenuItem) {
+
+            if (!menuIsVisible) {
+                //showDialog_deleteQuestion();
+
+                if (deleteQuestion) {
+                    deleteQuestion = false;
+                    displayAllQuestionsFromQuestionSet(deleteQuestion);
+                } else {
+                    deleteQuestion = true;
+                    displayAllQuestionsFromQuestionSet(deleteQuestion);
+                }
+
+                return true;
+            }
+
             if (deleteQuestionSet) {
                 editQuestionSet_MenuItem.setIcon(ContextCompat.getDrawable(this, R.drawable.trashcanicon));
                 deleteQuestionSet = false;
@@ -200,6 +181,92 @@ public class AddQuestionActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    void showDialog_deleteQuestion(int position) {
+        AlertDialog.Builder deleteQuestion_builder = new AlertDialog.Builder(this);
+        deleteQuestion_builder.setView(R.layout.dialog_delete_question);
+        AlertDialog deleteQuestion_AlertDialog = deleteQuestion_builder.create();
+        deleteQuestion_AlertDialog.setCancelable(false);
+        deleteQuestion_AlertDialog.show();
+
+        Button yes_Btn = deleteQuestion_AlertDialog.findViewById(R.id.delete_question_yes_btn);
+        Button no_Btn = deleteQuestion_AlertDialog.findViewById(R.id.delete_question_no_btn);
+
+        yes_Btn.setOnClickListener(v -> {
+            deleteQuestion(questionSet, position);
+
+            displayAllQuestionsFromQuestionSet(deleteQuestion);
+            deleteQuestion_AlertDialog.cancel();
+        });
+
+        no_Btn.setOnClickListener(v -> {
+            deleteQuestion_AlertDialog.cancel();
+        });
+    }
+
+    void deleteQuestion(String questionSet, int position) {
+        File file = new File(getFilesDir(), "question_" + questionSet + ".csv");
+
+        // delete the question at position "position" from the file
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            String line;
+            StringBuilder stringBuilder = new StringBuilder();
+            int numLines = 0;
+            while ((line = reader.readLine()) != null) {
+                if (numLines != position) {
+                    stringBuilder.append(line).append("\n");
+                }
+                numLines++;
+            }
+            reader.close();
+
+            BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+            writer.write(stringBuilder.toString());
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void showDialog_deleteQuestionSet(int position) {
+        if (!Objects.equals(addQuestion_ArrayList.get(position), "Default Question-set")) {
+
+            questionSet = addQuestion_ArrayList.get(position).substring(8);
+
+            Log.d("tot", "questionSet1: " + questionSet);
+
+            // takeing the text after "Custom: " and before ".csv"
+            int startIndex = questionSet.indexOf(":") + 2;
+            questionSet = questionSet.substring(startIndex);
+
+            Log.d("tot", "questionSet2: " + questionSet);
+
+            AlertDialog.Builder addQuestionSet_builder = new AlertDialog.Builder(this);
+            addQuestionSet_builder.setView(R.layout.dialog_delete_question_set);
+            AlertDialog deleteQuestionSet_AlertDialog = addQuestionSet_builder.create();
+            deleteQuestionSet_AlertDialog.setCancelable(false);
+            deleteQuestionSet_AlertDialog.show();
+
+            Button yes_Btn = deleteQuestionSet_AlertDialog.findViewById(R.id.delete_question_set_yes_btn);
+            Button no_Btn = deleteQuestionSet_AlertDialog.findViewById(R.id.delete_question_set_no_btn);
+
+            yes_Btn.setOnClickListener(v -> {
+
+                // delete the question set
+                deleteQuestionSetFile(questionSet);
+
+                displayAllQuestionSets(deleteQuestionSet);
+                deleteQuestionSet_AlertDialog.cancel();
+            });
+
+            no_Btn.setOnClickListener(v -> {
+                deleteQuestionSet_AlertDialog.cancel();
+            });
+        } else {
+            Toast.makeText(getApplicationContext(), "You cannot delete the default question set", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -212,8 +279,6 @@ public class AddQuestionActivity extends AppCompatActivity {
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
-
-
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_edit_question_set, menu);
         editQuestionSet_MenuItem = menu.findItem(R.id.editQuestionSet_MenuItem);
@@ -315,7 +380,7 @@ public class AddQuestionActivity extends AppCompatActivity {
 
     }
 
-    void displayAllQuestionsFromQuestionSet() {
+    void displayAllQuestionsFromQuestionSet(boolean delete) {
         //Display the questions and answers from the question-set
         addQuestion_ArrayList.clear();
 
@@ -334,7 +399,11 @@ public class AddQuestionActivity extends AppCompatActivity {
                 String question = line.split(",")[0];
                 String answer = line.split(",")[1];
 
-                addQuestion_ArrayList.add(question + " - " + answer);
+                if (delete) {
+                    addQuestion_ArrayList.add("Delete \t\t - \t\t " + question + " - " + answer);
+                } else {
+                    addQuestion_ArrayList.add(question + " - " + answer);
+                }
             }
             reader.close();
 
@@ -446,7 +515,7 @@ public class AddQuestionActivity extends AppCompatActivity {
             }
         }
 
-        displayAllQuestionsFromQuestionSet();
+        displayAllQuestionsFromQuestionSet(false);
     }
 
     void editQuestion(int position) {
