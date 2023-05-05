@@ -112,11 +112,6 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         RadioButton normalDifficultyButton = findViewById(R.id.normalDifficultyButton);
         RadioButton hardDifficultyButton = findViewById(R.id.hardDifficultyButton);
 
-        // default position
-        easyDifficultyButton.setBackground(getDrawable(R.drawable.radio_button_default));
-        normalDifficultyButton.setBackground(getDrawable(R.drawable.radio_button_checked));
-        hardDifficultyButton.setBackground(getDrawable(R.drawable.radio_button_default));
-
         if (challenge_accepted) {
 
             if (difficulty == 1) {
@@ -148,26 +143,14 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
 
         } else {
             easyDifficultyButton.setOnClickListener(v -> {
-                easyDifficultyButton.setBackground(getDrawable(R.drawable.radio_button_checked));
-                normalDifficultyButton.setBackground(getDrawable(R.drawable.radio_button_default));
-                hardDifficultyButton.setBackground(getDrawable(R.drawable.radio_button_default));
-
                 difficulty = 1;
             });
 
             normalDifficultyButton.setOnClickListener(v -> {
-                easyDifficultyButton.setBackground(getDrawable(R.drawable.radio_button_default));
-                normalDifficultyButton.setBackground(getDrawable(R.drawable.radio_button_checked));
-                hardDifficultyButton.setBackground(getDrawable(R.drawable.radio_button_default));
-
                 difficulty = 2;
             });
 
             hardDifficultyButton.setOnClickListener(v -> {
-                easyDifficultyButton.setBackground(getDrawable(R.drawable.radio_button_default));
-                normalDifficultyButton.setBackground(getDrawable(R.drawable.radio_button_default));
-                hardDifficultyButton.setBackground(getDrawable(R.drawable.radio_button_checked));
-
                 difficulty = 3;
             });
         }
