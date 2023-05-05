@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.RadioButton;
@@ -361,7 +362,28 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
     }
 
     void showChangeTilesFreqDialog() {
-        connection.saveRfFrequency(motoTilesFreq);
+        AlertDialog.Builder changeFreq_builder = new AlertDialog.Builder(this);
+        changeFreq_builder.setView(R.layout.dialog_change_tiles_freq);
+        AlertDialog changeFreq_AlertDialog = changeFreq_builder.create();
+        changeFreq_AlertDialog.setCancelable(true);
+        changeFreq_AlertDialog.setCanceledOnTouchOutside(true);
+        changeFreq_AlertDialog.show();
+
+        EditText changeFreq_EditText = changeFreq_AlertDialog.findViewById(R.id.changeFreq_EditText);
+
+        Button changeFreq_OK_Button = changeFreq_AlertDialog.findViewById(R.id.changeFreq_OK_Button);
+        Button changeFreq_Cancel_Button = changeFreq_AlertDialog.findViewById(R.id.changeFreq_Cancel_Button);
+
+        changeFreq_OK_Button.setOnClickListener(view -> {
+
+            motoTilesFreq = Integer.parseInt(changeFreq_EditText.getText().toString());
+
+            connection.saveRfFrequency(motoTilesFreq);
+
+            changeFreq_AlertDialog.cancel();
+        });
+
+        changeFreq_Cancel_Button.setOnClickListener(view -> changeFreq_AlertDialog.cancel());
     }
 
     String[] getAllQuestionSets() {
