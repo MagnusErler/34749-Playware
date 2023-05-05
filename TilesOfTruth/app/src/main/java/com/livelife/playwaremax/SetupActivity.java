@@ -130,19 +130,16 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
 
 
         // ------ Text to Speech initialization ------
-        textToSpeechSystem = new TextToSpeech(SetupActivity.this, new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                if (status == TextToSpeech.SUCCESS) {
-                int result = textToSpeechSystem.setLanguage(Locale.ENGLISH);
-                    if (result == TextToSpeech.LANG_MISSING_DATA ||
-                        result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                        Log.e("error", "This Language is not supported");
-                    }
-                    textToSpeechSystem.setSpeechRate(1.5F);
-                    } else
-                        Log.e("error", "Initialization Failed!");
-            }
+        textToSpeechSystem = new TextToSpeech(SetupActivity.this, status -> {
+            if (status == TextToSpeech.SUCCESS) {
+            int result = textToSpeechSystem.setLanguage(Locale.ENGLISH);
+                if (result == TextToSpeech.LANG_MISSING_DATA ||
+                    result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                    Log.e("error", "This Language is not supported");
+                }
+                textToSpeechSystem.setSpeechRate(1.5F);
+                } else
+                    Log.e("error", "Initialization Failed!");
         });
 
         // ------ Pairing Tiles ------
@@ -170,11 +167,6 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
                     connection.unregisterListener(this);
                     pairingButton.setText("Start Pairing");
                     setupMode = 1;
-                    /*
-                    for (int numaa = 0; numaa < connection.connectedTiles.size(); numaa++) { //DEBUG
-                        Log.d("tag","Connected tiles' ID " + connection.connectedTiles.get(numaa));
-                    }
-                     */
                     break;
                 default:
                     pairingButton.setText("Error");
@@ -224,7 +216,19 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         Button startGameButton = findViewById(R.id.startGameButton);
         startGameButton.setOnClickListener(v -> {
 
+            String[] questionSets = getAllQuestionSets();
 
+            // if only the default question set is available, start the game
+            if (questionSets.length == 1) {
+                Intent intent = new Intent(SetupActivity.this, GameActivity.class);
+                Log.d("tot", "setup difficulty: " + difficulty);
+                intent.putExtra("setup_data", new int[]{numberOfPlayers, difficulty});
+                intent.putExtra("tile_ids", new int[]{player1_trueTile, player1_falseTile, player2_trueTile, player2_falseTile, player3_trueTile, player3_falseTile, player4_trueTile, player4_falseTile});
+                intent.putExtra("question_set", "Default Question-set");
+                startActivity(intent);
+                return;
+            }
+            // else show a dialog to choose the question set
 
             AlertDialog.Builder chooseQuestionSet_builder = new AlertDialog.Builder(this);
             //gameOver_AlertDialog.setTitle("Player " + (maxScorePlayer+1) + " won this game with " + maxScore + " points");
@@ -235,8 +239,6 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
 
             NumberPicker picker = chooseQuestionSet_AlertDialog.findViewById(R.id.choose_question_set_number_picker);
 
-            String[] questionSets = getAllQuestionSets();
-            Log.d("tag", "Question sets array: " + Arrays.toString(questionSets));
             picker.setDisplayedValues(questionSets);
             picker.setMinValue(0);
             picker.setMaxValue(questionSets.length - 1);
@@ -244,31 +246,23 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
             Button enterButton = chooseQuestionSet_AlertDialog.findViewById(R.id.choose_question_set_enterButton);
             Button cancelButton = chooseQuestionSet_AlertDialog.findViewById(R.id.choose_question_set_cancelButton);
 
-            enterButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    // FOR DEBUGGING
-                    /*if (numberOfPlayers > connectedTiles/2) {
-                        Toast.makeText(this, "Not enough tiles connected", Toast.LENGTH_SHORT).show();
-                        return;
-                    } else {*/
-                    Intent intent = new Intent(SetupActivity.this, GameActivity.class);
-                    Log.d("tot", "setup difficulty: " + difficulty);
-                    intent.putExtra("setup_data", new int[]{numberOfPlayers, difficulty});
-                    intent.putExtra("tile_ids", new int[]{player1_trueTile, player1_falseTile, player2_trueTile, player2_falseTile, player3_trueTile, player3_falseTile, player4_trueTile, player4_falseTile});
-                    intent.putExtra("question_set", questionSets[picker.getValue()]);
-                    startActivity(intent);
-                    chooseQuestionSet_AlertDialog.cancel();
-                    //}
-                }
+            enterButton.setOnClickListener(view -> {
+                // FOR DEBUGGING
+                /*if (numberOfPlayers > connectedTiles/2) {
+                    Toast.makeText(this, "Not enough tiles connected", Toast.LENGTH_SHORT).show();
+                    return;
+                } else {*/
+                Intent intent = new Intent(SetupActivity.this, GameActivity.class);
+                Log.d("tot", "setup difficulty: " + difficulty);
+                intent.putExtra("setup_data", new int[]{numberOfPlayers, difficulty});
+                intent.putExtra("tile_ids", new int[]{player1_trueTile, player1_falseTile, player2_trueTile, player2_falseTile, player3_trueTile, player3_falseTile, player4_trueTile, player4_falseTile});
+                intent.putExtra("question_set", questionSets[picker.getValue()]);
+                startActivity(intent);
+                chooseQuestionSet_AlertDialog.cancel();
+                //}
             });
 
-            cancelButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    chooseQuestionSet_AlertDialog.cancel();
-                }
-            });
+            cancelButton.setOnClickListener(view -> chooseQuestionSet_AlertDialog.cancel());
         });
     }
 
@@ -391,14 +385,13 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
 
     @Override
     public void onMessageReceived(byte[] bytes, long l) {
-
-        int command = AntData.getCommand(bytes);
+        /*int command = AntData.getCommand(bytes);
         int tileId = AntData.getId(bytes);
         int color = AntData.getColorFromPress(bytes);
 
         if(command == EVENT_PRESS) {
             Log.d("tag", "tileID: " + tileId);
-        }
+        }*/
     }
 
     @Override

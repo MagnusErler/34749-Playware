@@ -103,6 +103,10 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
 
         // Data from SetupActivity
         questionSet = getIntent().getStringExtra("question_set");
+        // if questionSet is null, set it to default
+        if (questionSet == null) {
+            questionSet = "Default Question-set";
+        }
 
         // Get number of questions in question set
         InputStream inputStream;
