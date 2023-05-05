@@ -158,8 +158,6 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
             });
         }
 
-
-
         // ------ Text to Speech initialization ------
         textToSpeechSystem = new TextToSpeech(SetupActivity.this, status -> {
             if (status == TextToSpeech.SUCCESS) {
@@ -168,7 +166,7 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
                     result == TextToSpeech.LANG_NOT_SUPPORTED) {
                     Log.e("error", "This Language is not supported");
                 }
-                textToSpeechSystem.setSpeechRate(1.5F);
+                textToSpeechSystem.setSpeechRate(1F);
                 } else
                     Log.e("error", "Initialization Failed!");
         });
@@ -181,21 +179,39 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
                     //Starting pairing tiles -> tiles a spinning
                     connection.registerListener(this);
                     connection.pairTilesStart();
-                    textToSpeechSystem.speak("Turn on and press " + numberOfPlayers*2 + "tiles you want to use", TextToSpeech.QUEUE_FLUSH, null,"ID");
+                    textToSpeechSystem.speak("Turn on " + numberOfPlayers*2 + "tiles you want to use", TextToSpeech.QUEUE_FLUSH, null,"ID");
                     pairingButton.setText("Next");
                     startGameButton.setBackgroundColor(getResources().getColor(R.color.grayed_out));
                     startGameButton.setClickable(false);
                     setupMode = 2;
                     break;
                 case 2:
-                    //Stopping pairing tiles -> tiles are OFF
-                    connection.pairTilesStop();
-                    textToSpeechSystem.speak("Place the " + numberOfPlayers*2 + " tiles 3 meters apart and stand between them", TextToSpeech.QUEUE_FLUSH, null,"ID");
+
+                    textToSpeechSystem.speak("Press the " + numberOfPlayers*2 + "tiles", TextToSpeech.QUEUE_FLUSH, null,"ID");
                     pairingButton.setText("Next");
+
                     setupMode = 3;
                     break;
                 case 3:
+                    //Stopping pairing tiles -> tiles are OFF
+                    connection.pairTilesStop();
+
+                    textToSpeechSystem.speak("Make sure the " + numberOfPlayers*2 + " tiles have been connected", TextToSpeech.QUEUE_FLUSH, null,"ID");
+
+                    pairingButton.setText("Next");
+                    setupMode = 4;
+                    break;
+                case 4:
                     setupTilesPosition(numberOfPlayers);
+
+                    textToSpeechSystem.speak("Place the " + numberOfPlayers*2 + " tiles 3 meters apart and stand between them", TextToSpeech.QUEUE_FLUSH, null,"ID");
+
+                    pairingButton.setText("Next");
+
+                    setupMode = 5;
+                    break;
+                case 5:
+
                     textToSpeechSystem.speak("Setup complete", TextToSpeech.QUEUE_FLUSH, null,"ID");
 
                     // set it to blue_dark
@@ -293,12 +309,17 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
 
             // if only the default question set is available, start the game
             if (questionSets.length == 1) {
-                Intent intent = new Intent(SetupActivity.this, GameActivity.class);
-                Log.d("tot", "setup difficulty: " + difficulty);
-                intent.putExtra("setup_data", new int[]{numberOfPlayers, difficulty});
-                intent.putExtra("tile_ids", new int[]{player1_trueTile, player1_falseTile, player2_trueTile, player2_falseTile, player3_trueTile, player3_falseTile, player4_trueTile, player4_falseTile});
-                intent.putExtra("question_set", "Default Question-set");
-                startActivity(intent);
+
+                if (numberOfPlayers > connectedTiles/2) {
+                    Toast.makeText(this, "Not enough tiles connected", Toast.LENGTH_SHORT).show();
+                } else {
+                    Intent intent = new Intent(SetupActivity.this, GameActivity.class);
+                    Log.d("tot", "setup difficulty: " + difficulty);
+                    intent.putExtra("setup_data", new int[]{numberOfPlayers, difficulty});
+                    intent.putExtra("tile_ids", new int[]{player1_trueTile, player1_falseTile, player2_trueTile, player2_falseTile, player3_trueTile, player3_falseTile, player4_trueTile, player4_falseTile});
+                    intent.putExtra("question_set", "Default Question-set");
+                    startActivity(intent);
+                }
                 return;
             }
             // else show a dialog to choose the question set
@@ -320,7 +341,6 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
             Button cancelButton = chooseQuestionSet_AlertDialog.findViewById(R.id.choose_question_set_cancelButton);
 
             enterButton.setOnClickListener(view -> {
-                // FOR DEBUGGING
                 if (numberOfPlayers > connectedTiles/2) {
                     Toast.makeText(this, "Not enough tiles connected", Toast.LENGTH_SHORT).show();
                 } else {
