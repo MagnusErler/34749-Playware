@@ -45,12 +45,16 @@ public class AddQuestionActivity extends AppCompatActivity {
 
     String questionSet = "Nothing";
 
+    MenuItem editQuestionSet_MenuItem;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_question);
 
         setTitle("Question sets");
+
+        invalidateOptionsMenu();
 
         // Enable Back-button
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
@@ -172,6 +176,7 @@ public class AddQuestionActivity extends AppCompatActivity {
             if (!menuIsVisible) {
                 menuIsVisible = true;
                 displayAllQuestionSets(false);
+                editQuestionSet_MenuItem.setVisible(true);
                 findViewById(R.id.addQuestion_btn).setVisibility(View.VISIBLE);
             } else {
                 finish();
@@ -197,14 +202,21 @@ public class AddQuestionActivity extends AppCompatActivity {
         super.onBackPressed();
         if (!menuIsVisible) {
             displayAllQuestionSets(false);
+            editQuestionSet_MenuItem.setVisible(true);
         } else {
             finish();
         }
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
+
+
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_edit_question_set, menu);
+        editQuestionSet_MenuItem = menu.findItem(R.id.editQuestionSet_MenuItem);
+
+        editQuestionSet_MenuItem.setVisible(true);
+
         return true;
     }
 
@@ -361,6 +373,11 @@ public class AddQuestionActivity extends AppCompatActivity {
     }
 
     void displayAllQuestionsFromDefaultQuestionSet() {
+
+        //Disable the delete button (editQuestionSet_MenuItem)
+        editQuestionSet_MenuItem.setVisible(false);
+
+
         addQuestion_ArrayList.clear();
 
         try {
