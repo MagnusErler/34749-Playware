@@ -4,7 +4,7 @@
     <item
         android:id="@+id/editQuestionSet_MenuItem"
         android:title="@string/delete"
-        android:icon="@drawable/deleteicon"
+        android:icon="@drawable/trashcanicon"
         app:showAsAction="always"
         />
 </menu>
