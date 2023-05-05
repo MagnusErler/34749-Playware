@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -57,6 +58,8 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
 
     int setupMode = 1;
 
+    int motoTilesFreq = 66;
+
     boolean challenge_accepted;
 
     @SuppressLint("SetTextI18n")
@@ -81,6 +84,13 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         //connection.setDeviceId(2); TEMP comment
         //connection.registerListener(this);
 
+        MotoConnection connection = MotoConnection.getInstance();
+
+        connection.startMotoConnection(this);
+
+        connection.saveRfFrequency(motoTilesFreq);
+        connection.setDeviceId(2);
+
         challenge_accepted = getIntent().getBooleanExtra("challenge_accepted", false);
         if (challenge_accepted) {
             difficulty = getIntent().getIntExtra("difficulty", 0);
@@ -90,6 +100,11 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         RadioButton easyDifficultyButton = findViewById(R.id.easyDifficultyButton);
         RadioButton normalDifficultyButton = findViewById(R.id.normalDifficultyButton);
         RadioButton hardDifficultyButton = findViewById(R.id.hardDifficultyButton);
+
+        // default position
+        easyDifficultyButton.setBackground(getDrawable(R.drawable.radio_button_default));
+        normalDifficultyButton.setBackground(getDrawable(R.drawable.radio_button_checked));
+        hardDifficultyButton.setBackground(getDrawable(R.drawable.radio_button_default));
 
         if (challenge_accepted) {
 
@@ -107,26 +122,41 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
 
             //depending on difficulty gray out the other buttons
             if (difficulty == 1) {
+                easyDifficultyButton.setBackground(getDrawable(R.drawable.radio_button_checked));
                 normalDifficultyButton.setBackground(getDrawable(R.drawable.radio_button_qrayed_out));
                 hardDifficultyButton.setBackground(getDrawable(R.drawable.radio_button_qrayed_out));
             } else if (difficulty == 2) {
                 easyDifficultyButton.setBackground(getDrawable(R.drawable.radio_button_qrayed_out));
+                normalDifficultyButton.setBackground(getDrawable(R.drawable.radio_button_checked));
                 hardDifficultyButton.setBackground(getDrawable(R.drawable.radio_button_qrayed_out));
             } else {
                 easyDifficultyButton.setBackground(getDrawable(R.drawable.radio_button_qrayed_out));
                 normalDifficultyButton.setBackground(getDrawable(R.drawable.radio_button_qrayed_out));
+                hardDifficultyButton.setBackground(getDrawable(R.drawable.radio_button_checked));
             }
 
         } else {
             easyDifficultyButton.setOnClickListener(v -> {
+                easyDifficultyButton.setBackground(getDrawable(R.drawable.radio_button_checked));
+                normalDifficultyButton.setBackground(getDrawable(R.drawable.radio_button_default));
+                hardDifficultyButton.setBackground(getDrawable(R.drawable.radio_button_default));
+
                 difficulty = 1;
             });
 
             normalDifficultyButton.setOnClickListener(v -> {
+                easyDifficultyButton.setBackground(getDrawable(R.drawable.radio_button_default));
+                normalDifficultyButton.setBackground(getDrawable(R.drawable.radio_button_checked));
+                hardDifficultyButton.setBackground(getDrawable(R.drawable.radio_button_default));
+
                 difficulty = 2;
             });
 
             hardDifficultyButton.setOnClickListener(v -> {
+                easyDifficultyButton.setBackground(getDrawable(R.drawable.radio_button_default));
+                normalDifficultyButton.setBackground(getDrawable(R.drawable.radio_button_default));
+                hardDifficultyButton.setBackground(getDrawable(R.drawable.radio_button_checked));
+
                 difficulty = 3;
             });
         }
@@ -184,11 +214,18 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         playersRadioGroup = findViewById(R.id.playersRadioGroup);
         positioningImageView = findViewById(R.id.positioningImageView);
 
+        RadioButton onePlayersButton = findViewById(R.id.onePlayersButton);
+        RadioButton twoPlayersButton = findViewById(R.id.twoPlayersButton);
+        RadioButton threePlayersButton = findViewById(R.id.threePlayersButton);
+        RadioButton fourPlayersButton = findViewById(R.id.fourPlayersButton);
+
+        // default position
+        onePlayersButton.setBackground(getDrawable(R.drawable.radio_button_checked));
+        twoPlayersButton.setBackground(getDrawable(R.drawable.radio_button_default));
+        threePlayersButton.setBackground(getDrawable(R.drawable.radio_button_default));
+        fourPlayersButton.setBackground(getDrawable(R.drawable.radio_button_default));
+
         if (challenge_accepted) {
-            RadioButton onePlayersButton = findViewById(R.id.onePlayersButton);
-            RadioButton twoPlayersButton = findViewById(R.id.twoPlayersButton);
-            RadioButton threePlayersButton = findViewById(R.id.threePlayersButton);
-            RadioButton fourPlayersButton = findViewById(R.id.fourPlayersButton);
 
             //Disbale buttons
             onePlayersButton.setClickable(false);
@@ -206,18 +243,38 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         playersRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             switch(checkedId) {
                 case R.id.twoPlayersButton:
+                    onePlayersButton.setBackground(getDrawable(R.drawable.radio_button_default));
+                    twoPlayersButton.setBackground(getDrawable(R.drawable.radio_button_checked));
+                    threePlayersButton.setBackground(getDrawable(R.drawable.radio_button_default));
+                    fourPlayersButton.setBackground(getDrawable(R.drawable.radio_button_default));
+
                     positioningImageView.setImageResource(R.drawable.two_players);
                     numberOfPlayers = 2;
                     break;
                 case R.id.threePlayersButton:
+                    onePlayersButton.setBackground(getDrawable(R.drawable.radio_button_default));
+                    twoPlayersButton.setBackground(getDrawable(R.drawable.radio_button_default));
+                    threePlayersButton.setBackground(getDrawable(R.drawable.radio_button_checked));
+                    fourPlayersButton.setBackground(getDrawable(R.drawable.radio_button_default));
+
                     positioningImageView.setImageResource(R.drawable.three_players);
                     numberOfPlayers = 3;
                     break;
                 case R.id.fourPlayersButton:
+                    onePlayersButton.setBackground(getDrawable(R.drawable.radio_button_default));
+                    twoPlayersButton.setBackground(getDrawable(R.drawable.radio_button_default));
+                    threePlayersButton.setBackground(getDrawable(R.drawable.radio_button_default));
+                    fourPlayersButton.setBackground(getDrawable(R.drawable.radio_button_checked));
+
                     positioningImageView.setImageResource(R.drawable.four_players);
                     numberOfPlayers = 4;
                     break;
                 default:
+                    onePlayersButton.setBackground(getDrawable(R.drawable.radio_button_checked));
+                    twoPlayersButton.setBackground(getDrawable(R.drawable.radio_button_default));
+                    threePlayersButton.setBackground(getDrawable(R.drawable.radio_button_default));
+                    fourPlayersButton.setBackground(getDrawable(R.drawable.radio_button_default));
+
                     positioningImageView.setImageResource(R.drawable.one_players);
                     numberOfPlayers = 1;
                     break;
@@ -282,17 +339,29 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
     // For going back to previous activity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
+
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
             killTTS();
             finish();
             return true;
+        }
+
+        if (id == R.id.changeTilesFreq_MenuItem) {
+            showChangeTilesFreqDialog();
         }
 
         return super.onOptionsItemSelected(item);
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_change_tiles_freq, menu);
         return true;
+    }
+
+    void showChangeTilesFreqDialog() {
+        connection.saveRfFrequency(motoTilesFreq);
     }
 
     String[] getAllQuestionSets() {
