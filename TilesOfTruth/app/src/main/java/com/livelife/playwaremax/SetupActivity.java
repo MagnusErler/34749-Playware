@@ -86,7 +86,7 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         //connection.setDeviceId(2); TEMP comment
         //connection.registerListener(this);
 
-        MotoConnection connection = MotoConnection.getInstance();
+        connection = MotoConnection.getInstance();
 
         connection.startMotoConnection(this);
 
