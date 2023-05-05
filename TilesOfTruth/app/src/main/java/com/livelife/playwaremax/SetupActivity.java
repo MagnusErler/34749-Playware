@@ -6,7 +6,9 @@ import static com.livelife.motolibrary.AntData.LED_COLOR_RED;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
@@ -97,6 +99,12 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
         challenge_accepted = getIntent().getBooleanExtra("challenge_accepted", false);
         if (challenge_accepted) {
             difficulty = getIntent().getIntExtra("difficulty", 0);
+        }
+
+        // Volume check
+        AudioManager audio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        if(audio.getStreamVolume(AudioManager.STREAM_MUSIC) == 0) {
+            Toast.makeText(SetupActivity.this, "Turn up the volume!", Toast.LENGTH_LONG).show();
         }
 
         // ------ Difficulty ------
