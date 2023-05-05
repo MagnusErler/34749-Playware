@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -186,10 +187,12 @@ public class AddQuestionActivity extends AppCompatActivity {
 
         if (id == R.id.editQuestionSet_MenuItem) {
             if (deleteQuestionSet) {
+                editQuestionSet_MenuItem.setIcon(ContextCompat.getDrawable(this, R.drawable.trashcanicon));
                 deleteQuestionSet = false;
                 displayAllQuestionSets(deleteQuestionSet);
             } else {
                 deleteQuestionSet = true;
+                editQuestionSet_MenuItem.setIcon(ContextCompat.getDrawable(this, R.drawable.trashcanicontriggered));
                 displayAllQuestionSets(deleteQuestionSet);
             }
         }
