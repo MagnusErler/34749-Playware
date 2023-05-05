@@ -108,10 +108,17 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
             normalDifficultyButton.setClickable(false);
             hardDifficultyButton.setClickable(false);
 
-            // grayout buttons
-            easyDifficultyButton.setBackground(getDrawable(R.drawable.radio_button_qrayed_out));
-            normalDifficultyButton.setBackground(getDrawable(R.drawable.radio_button_qrayed_out));
-            hardDifficultyButton.setBackground(getDrawable(R.drawable.radio_button_qrayed_out));
+            //depending on difficulty gray out the other buttons
+            if (difficulty == 1) {
+                normalDifficultyButton.setBackground(getDrawable(R.drawable.radio_button_qrayed_out));
+                hardDifficultyButton.setBackground(getDrawable(R.drawable.radio_button_qrayed_out));
+            } else if (difficulty == 2) {
+                easyDifficultyButton.setBackground(getDrawable(R.drawable.radio_button_qrayed_out));
+                hardDifficultyButton.setBackground(getDrawable(R.drawable.radio_button_qrayed_out));
+            } else {
+                easyDifficultyButton.setBackground(getDrawable(R.drawable.radio_button_qrayed_out));
+                normalDifficultyButton.setBackground(getDrawable(R.drawable.radio_button_qrayed_out));
+            }
 
         } else {
             easyDifficultyButton.setOnClickListener(v -> {
@@ -193,7 +200,7 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
             fourPlayersButton.setClickable(false);
 
             // grayout buttons
-            onePlayersButton.setBackground(getDrawable(R.drawable.radio_button_qrayed_out));
+            //onePlayersButton.setBackground(getDrawable(R.drawable.radio_button_qrayed_out));
             twoPlayersButton.setBackground(getDrawable(R.drawable.radio_button_qrayed_out));
             threePlayersButton.setBackground(getDrawable(R.drawable.radio_button_qrayed_out));
             fourPlayersButton.setBackground(getDrawable(R.drawable.radio_button_qrayed_out));
