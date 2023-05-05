@@ -2,7 +2,6 @@ package com.livelife.playwaremax;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -32,7 +31,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Objects;
 
 public class AddQuestionActivity extends AppCompatActivity {
@@ -108,7 +106,6 @@ public class AddQuestionActivity extends AppCompatActivity {
         // if addQuestion_btn is clicked
         findViewById(R.id.addQuestion_btn).setOnClickListener(v -> {
             if (menuIsVisible) {
-                menuIsVisible = true;
                 showDialog_newQuestionSet();
             } else {
                 showDialog_newQuestion(null, false, -1);
@@ -116,22 +113,6 @@ public class AddQuestionActivity extends AppCompatActivity {
         });
 
         //deleteQuestionSetFile("hey");
-    }
-
-    String[] getAllQuestionSets() {
-        String[] questionSets = new String[Objects.requireNonNull(getFilesDir().listFiles()).length + 1];
-        questionSets[0] = "Default Question-set";
-        int numQuestionSets = 1;
-        File[] files = getFilesDir().listFiles();
-        assert files != null;
-        for (File file : files) {
-            if (file.getName().startsWith("question_")) {
-                questionSets[numQuestionSets] = file.getName().replace("question_", "").replace(".csv", "");
-                numQuestionSets++;
-            }
-        }
-        questionSets[numQuestionSets] = String.valueOf(numQuestionSets - 1);
-        return Arrays.copyOf(questionSets, numQuestionSets);
     }
 
     // ------------------------------- //
@@ -172,7 +153,7 @@ public class AddQuestionActivity extends AppCompatActivity {
             if (deleteQuestionSet) {
                 editQuestionSet_MenuItem.setIcon(ContextCompat.getDrawable(this, R.drawable.trashcanicon));
                 deleteQuestionSet = false;
-                displayAllQuestionSets(deleteQuestionSet);
+                displayAllQuestionSets(false);
             } else {
                 deleteQuestionSet = true;
                 editQuestionSet_MenuItem.setIcon(ContextCompat.getDrawable(this, R.drawable.trashcanicontriggered));
@@ -200,9 +181,7 @@ public class AddQuestionActivity extends AppCompatActivity {
             deleteQuestion_AlertDialog.cancel();
         });
 
-        no_Btn.setOnClickListener(v -> {
-            deleteQuestion_AlertDialog.cancel();
-        });
+        no_Btn.setOnClickListener(v -> deleteQuestion_AlertDialog.cancel());
     }
 
     void deleteQuestion(String questionSet, int position) {
@@ -261,9 +240,7 @@ public class AddQuestionActivity extends AppCompatActivity {
                 deleteQuestionSet_AlertDialog.cancel();
             });
 
-            no_Btn.setOnClickListener(v -> {
-                deleteQuestionSet_AlertDialog.cancel();
-            });
+            no_Btn.setOnClickListener(v -> deleteQuestionSet_AlertDialog.cancel());
         } else {
             Toast.makeText(getApplicationContext(), "You cannot delete the default question set", Toast.LENGTH_SHORT).show();
         }
@@ -301,21 +278,18 @@ public class AddQuestionActivity extends AppCompatActivity {
         Button enterButton = addQuestionSet_AlertDialog.findViewById(R.id.enterButton);
         Button cancelButton = addQuestionSet_AlertDialog.findViewById(R.id.cancelButton);
 
-        enterButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // write a csv-file with the name of the new question-set
-                String fileName = "question_" + addQuestionSetEditText.getText().toString() + ".csv";
-                try {
-                    FileOutputStream fileOutputStream = openFileOutput(fileName, Context.MODE_PRIVATE);
-                    fileOutputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                addQuestionSet_AlertDialog.cancel();
-                displayAllQuestionSets(false);
+        enterButton.setOnClickListener(view -> {
+            // write a csv-file with the name of the new question-set
+            String fileName = "question_" + addQuestionSetEditText.getText().toString() + ".csv";
+            try {
+                FileOutputStream fileOutputStream = openFileOutput(fileName, Context.MODE_PRIVATE);
+                fileOutputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+
+            addQuestionSet_AlertDialog.cancel();
+            displayAllQuestionSets(false);
         });
 
         cancelButton.setOnClickListener(view -> addQuestionSet_AlertDialog.cancel());
@@ -373,12 +347,7 @@ public class AddQuestionActivity extends AppCompatActivity {
             addQuestion_AlertDialog.cancel();
         });
 
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                addQuestion_AlertDialog.cancel();
-            }
-        });
+        cancelButton.setOnClickListener(view -> addQuestion_AlertDialog.cancel());
 
     }
 
@@ -436,14 +405,6 @@ public class AddQuestionActivity extends AppCompatActivity {
 
         addQuestion_ArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, addQuestion_ArrayList);
         addQuestion_ListView.setAdapter(addQuestion_ArrayAdapter);
-        /*
-        if (delete) {
-            addQuestion_ListView.setBackgroundColor(Color.RED);
-        } else {
-            addQuestion_ListView.setBackgroundColor(Color.WHITE);
-        }
-         */
-
     }
 
     void displayAllQuestionsFromDefaultQuestionSet() {
@@ -487,21 +448,21 @@ public class AddQuestionActivity extends AppCompatActivity {
             try {
                 BufferedReader reader = new BufferedReader(new FileReader(file));
                 String line;
-                String input = "";
+                StringBuilder input = new StringBuilder();
 
                 int i = 0;
                 while ((line = reader.readLine()) != null) {
                     if (i == position) {
-                        input += newQuestion + "," + newAnswer + "\n";
+                        input.append(newQuestion).append(",").append(newAnswer).append("\n");
                     } else {
-                        input += line + "\n";
+                        input.append(line).append("\n");
                     }
                     i++;
                 }
                 reader.close();
 
                 FileOutputStream outputStream = new FileOutputStream(file);
-                outputStream.write(input.getBytes());
+                outputStream.write(input.toString().getBytes());
                 outputStream.close();
 
             } catch (IOException e) {
