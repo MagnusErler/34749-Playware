@@ -59,4 +59,6 @@
     <string name="choose_question_set">Choose a question set</string>
     <string name="select">Select</string>
     <string name="frequency">Frequency</string>
+    <string name="tiles_frequency_instruction">Change the tiles\' frequency</string>
+    <string name="frequency_hint">Frequency</string>
 </resources>

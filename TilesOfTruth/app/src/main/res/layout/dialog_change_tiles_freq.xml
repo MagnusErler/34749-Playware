@@ -1,26 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="?dialogPreferredPadding">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.05" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.95" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.05" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.95" />
+
+    <TextView
+        android:id="@+id/changeFreq_TextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif"
+        android:text="@string/tiles_frequency_instruction"
+        android:textAlignment="viewStart"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/changeFreq_EditText"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintStart_toStartOf="@+id/guideline1"
+        app:layout_constraintTop_toBottomOf="@id/guideline3"
+        app:layout_constraintVertical_chainStyle="packed" />
+
 
     <EditText
         android:id="@+id/changeFreq_EditText"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:autofillHints="name"
+        android:hint="@string/frequency_hint"
         android:inputType="number"
-        android:ems="10"
-        android:text="0" />
+        android:minHeight="48dp"
+        android:textSize="20sp"
+        android:theme="@style/Theme.playwaremax"
+        app:layout_constraintBottom_toTopOf="@id/change_freq_buttons_LinearLayout"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintStart_toStartOf="@+id/guideline1"
+        app:layout_constraintTop_toBottomOf="@+id/changeFreq_TextView" />
 
-    <Button
-        android:id="@+id/changeFreq_OK_Button"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/change_freq_buttons_LinearLayout"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="OK" />
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="@id/guideline4"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintStart_toStartOf="@+id/guideline1"
+        app:layout_constraintTop_toBottomOf="@id/changeFreq_EditText">
 
-    <Button
-        android:id="@+id/changeFreq_Cancel_Button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Cancel" />
+        <Button
+            android:id="@+id/changeFreq_Cancel_Button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:layout_weight="1"
+            android:backgroundTint="@drawable/button_selector"
+            android:paddingVertical="7.5dp"
+            android:stateListAnimator="@null"
+            android:text="@string/cancel"
+            android:textSize="20sp"
+            android:typeface="sans"
+            app:cornerRadius="15dp"
+            />
+
+        <Button
+            android:id="@+id/changeFreq_OK_Button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_weight="1"
+            android:backgroundTint="@drawable/button_selector"
+            android:paddingVertical="7.5dp"
+            android:stateListAnimator="@null"
+            android:text="@string/enter"
+            android:textSize="20sp"
+            android:typeface="sans"
+            app:cornerRadius="15dp"
+            />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
