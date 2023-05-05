@@ -274,10 +274,21 @@ public class ScoreboardActivity extends AppCompatActivity {
                         String[] parts = session.getString("device_token").split(",");
                         // Winner og a game
                         if (parts[0].equals("Winner2")) {
-                            String gameWinner_Name = parts[1];
-                            String gameWinner_Score = parts[2];
-                            int gameWinner_Difficulty = Integer.parseInt(parts[3]);
-                            String deviceToken = parts[4];
+
+                            String gameWinner_Name = "";
+                            String gameWinner_Score = "";
+                            int gameWinner_Difficulty = 0;
+                            String deviceToken = "";
+
+                            try {
+                                gameWinner_Name = parts[1];
+                                gameWinner_Score = parts[2];
+                                gameWinner_Difficulty = Integer.parseInt(parts[3]);
+                                deviceToken = parts[4];
+                            } catch (Exception e) {
+                                Log.d("tot", "onPostExecute: " + e);
+                            }
+
 
                             String difficulty_text;
                             if (gameWinner_Difficulty == 1){
