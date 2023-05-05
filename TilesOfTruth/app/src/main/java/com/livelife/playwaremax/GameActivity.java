@@ -79,7 +79,7 @@ public class GameActivity extends AppCompatActivity implements OnAntEventListene
     int baseRoundTimeEasy = 10000;
     int baseRoundTimeNormal = 7500;
     int baseRoundTimeHard = 5000;
-    int baseGameTime = 10000;       //30000
+    int baseGameTime = 30000;
 
     String questionSet = "Default Question-set";
 

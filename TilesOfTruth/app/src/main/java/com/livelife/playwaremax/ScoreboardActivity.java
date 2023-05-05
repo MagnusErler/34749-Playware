@@ -24,9 +24,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -43,7 +41,6 @@ public class ScoreboardActivity extends AppCompatActivity {
     //Database
     String endpoint = "https://centerforplayware.com/api/index.php";
     SharedPreferences sharedPref;
-    ArrayList<String> listFromJson_ArrayList = new ArrayList<>();
     int sortByDifficulty = 0;
 
     @Override
@@ -62,8 +59,6 @@ public class ScoreboardActivity extends AppCompatActivity {
         gameSessions_ArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, games_ArrayList);
         gameSessions_ListView.setAdapter(gameSessions_ArrayAdapter);
         gameSessions_ListView.setOnItemClickListener((adapterView, arg1, position, arg3) -> {
-            //Toast.makeText(this, "games_ArrayList.get(position): " + games_ArrayList.get(position), Toast.LENGTH_SHORT).show();
-            //games_ArrayList.get(position);
 
             // get text from listview at position "position" and split it into an array
             String[] gameSession = games_ArrayList.get(position).split(",");
@@ -165,21 +160,6 @@ public class ScoreboardActivity extends AppCompatActivity {
         ScoreboardActivity.Downloader downloader = new ScoreboardActivity.Downloader();
 
         downloader.execute(requestPackage);
-    }
-
-    String[] getAllQuestionSets() {
-        String[] questionSets = new String[Objects.requireNonNull(getFilesDir().listFiles()).length + 1];
-        questionSets[0] = "Default Question-set";
-        int numQuestionSets = 1;
-        File[] files = getFilesDir().listFiles();
-        assert files != null;
-        for (File file : files) {
-            if (file.getName().startsWith("question_")) {
-                questionSets[numQuestionSets] = file.getName().replace("question_", "").replace(".csv", "");
-                numQuestionSets++;
-            }
-        }
-        return Arrays.copyOf(questionSets, numQuestionSets);
     }
 
     // ------------------------------- //
@@ -325,14 +305,10 @@ public class ScoreboardActivity extends AppCompatActivity {
                             showChallenges = false;
                             if (parts[0].equals("Challenge")) {
 
-                                //"Challenge," + difficulty + "," + nameOfChallenger + "," + getDeviceToken() + "," + deviceTokenOfUserToBeChallenged);
-
                                 int challenge_difficulty = Integer.parseInt(parts[1]);
                                 String challengerName = parts[2];
                                 String challenge_deviceTokenFromChallenger = parts[3];
                                 String challenge_deviceTokenOfUserToBeChallenged = parts[4];
-
-                                //Log.d("tot", "parts[1]: " + parts[1] + " parts[2]: " + parts[2] + " parts[3]: " + challenge_deviceTokenFromChallenger);
 
                                 if (Objects.equals(challenge_deviceTokenFromChallenger, getDeviceToken())) {
                                     Toast.makeText(ScoreboardActivity.this, "You have no incoming challenges", Toast.LENGTH_SHORT).show();

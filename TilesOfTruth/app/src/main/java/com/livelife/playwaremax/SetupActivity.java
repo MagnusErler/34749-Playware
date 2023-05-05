@@ -1,6 +1,5 @@
 package com.livelife.playwaremax;
 
-import static com.livelife.motolibrary.AntData.EVENT_PRESS;
 import static com.livelife.motolibrary.AntData.LED_COLOR_GREEN;
 import static com.livelife.motolibrary.AntData.LED_COLOR_OFF;
 import static com.livelife.motolibrary.AntData.LED_COLOR_RED;
@@ -13,7 +12,6 @@ import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
@@ -23,7 +21,6 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.livelife.motolibrary.AntData;
 import com.livelife.motolibrary.MotoConnection;
 import com.livelife.motolibrary.MotoSound;
 import com.livelife.motolibrary.OnAntEventListener;
