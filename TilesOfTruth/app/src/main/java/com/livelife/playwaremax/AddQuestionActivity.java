@@ -350,11 +350,13 @@ public class AddQuestionActivity extends AppCompatActivity {
 
         addQuestion_ArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, addQuestion_ArrayList);
         addQuestion_ListView.setAdapter(addQuestion_ArrayAdapter);
+        /*
         if (delete) {
             addQuestion_ListView.setBackgroundColor(Color.RED);
         } else {
             addQuestion_ListView.setBackgroundColor(Color.WHITE);
         }
+         */
 
     }
 
