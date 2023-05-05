@@ -222,9 +222,9 @@ public class AddQuestionActivity extends AppCompatActivity {
 
             Log.d("tot", "questionSet2: " + questionSet);
 
-            AlertDialog.Builder addQuestionSet_builder = new AlertDialog.Builder(this);
-            addQuestionSet_builder.setView(R.layout.dialog_delete_question_set);
-            AlertDialog deleteQuestionSet_AlertDialog = addQuestionSet_builder.create();
+            AlertDialog.Builder deleteQuestionSet_builder = new AlertDialog.Builder(this);
+            deleteQuestionSet_builder.setView(R.layout.dialog_delete_question_set);
+            AlertDialog deleteQuestionSet_AlertDialog = deleteQuestionSet_builder.create();
             deleteQuestionSet_AlertDialog.setCancelable(false);
             deleteQuestionSet_AlertDialog.show();
 
@@ -279,8 +279,15 @@ public class AddQuestionActivity extends AppCompatActivity {
         Button cancelButton = addQuestionSet_AlertDialog.findViewById(R.id.cancelButton);
 
         enterButton.setOnClickListener(view -> {
+
+            String questionSet = addQuestionSetEditText.getText().toString();
+            if (questionSet.equals("")) {
+                Toast.makeText(getApplicationContext(), "Please enter a name for the question-set.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             // write a csv-file with the name of the new question-set
-            String fileName = "question_" + addQuestionSetEditText.getText().toString() + ".csv";
+            String fileName = "question_" + questionSet + ".csv";
             try {
                 FileOutputStream fileOutputStream = openFileOutput(fileName, Context.MODE_PRIVATE);
                 fileOutputStream.close();
