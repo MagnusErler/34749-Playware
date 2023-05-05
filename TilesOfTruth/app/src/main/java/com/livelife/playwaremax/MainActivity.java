@@ -17,12 +17,12 @@ public class MainActivity extends AppCompatActivity implements OnAntEventListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        /*MotoConnection connection = MotoConnection.getInstance();
+        MotoConnection connection = MotoConnection.getInstance();
 
         connection.startMotoConnection(this);
 
         connection.saveRfFrequency(66);
-        connection.setDeviceId(2);*/
+        connection.setDeviceId(2);
 
         Log.d("tot", "Starting app...");
 

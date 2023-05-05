@@ -88,10 +88,11 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
 
         connection = MotoConnection.getInstance();
 
-        connection.startMotoConnection(this);
+        /*connection.startMotoConnection(this);
 
         connection.saveRfFrequency(motoTilesFreq);
         connection.setDeviceId(2);
+        */
 
         challenge_accepted = getIntent().getBooleanExtra("challenge_accepted", false);
         if (challenge_accepted) {
