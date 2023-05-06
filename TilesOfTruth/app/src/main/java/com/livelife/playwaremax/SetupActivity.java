@@ -315,16 +315,17 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
             // if only the default question set is available, start the game
             if (questionSets.length == 1) {
 
-                if (numberOfPlayers > connectedTiles/2) {
+                /*if (numberOfPlayers > connectedTiles/2) {
                     Toast.makeText(this, "Not enough tiles connected", Toast.LENGTH_SHORT).show();
-                } else {
-                    Intent intent = new Intent(SetupActivity.this, GameActivity.class);
-                    Log.d("tot", "setup difficulty: " + difficulty);
-                    intent.putExtra("setup_data", new int[]{numberOfPlayers, difficulty});
-                    intent.putExtra("tile_ids", new int[]{player1_trueTile, player1_falseTile, player2_trueTile, player2_falseTile, player3_trueTile, player3_falseTile, player4_trueTile, player4_falseTile});
-                    intent.putExtra("question_set", "Default Question-set");
-                    startActivity(intent);
-                }
+                    return;
+                }*/
+
+                Intent intent = new Intent(SetupActivity.this, GameActivity.class);
+                Log.d("tot", "setup difficulty: " + difficulty);
+                intent.putExtra("setup_data", new int[]{numberOfPlayers, difficulty});
+                intent.putExtra("tile_ids", new int[]{player1_trueTile, player1_falseTile, player2_trueTile, player2_falseTile, player3_trueTile, player3_falseTile, player4_trueTile, player4_falseTile});
+                intent.putExtra("question_set", "Default Question-set");
+                startActivity(intent);
                 return;
             }
             // else show a dialog to choose the question set
@@ -346,17 +347,18 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
             Button cancelButton = chooseQuestionSet_AlertDialog.findViewById(R.id.choose_question_set_cancelButton);
 
             enterButton.setOnClickListener(view -> {
-                if (numberOfPlayers > connectedTiles/2) {
+                /*if (numberOfPlayers > connectedTiles/2) {
                     Toast.makeText(this, "Not enough tiles connected", Toast.LENGTH_SHORT).show();
-                } else {
-                    Intent intent = new Intent(SetupActivity.this, GameActivity.class);
-                    Log.d("tot", "setup difficulty: " + difficulty);
-                    intent.putExtra("setup_data", new int[]{numberOfPlayers, difficulty});
-                    intent.putExtra("tile_ids", new int[]{player1_trueTile, player1_falseTile, player2_trueTile, player2_falseTile, player3_trueTile, player3_falseTile, player4_trueTile, player4_falseTile});
-                    intent.putExtra("question_set", questionSets[picker.getValue()]);
-                    startActivity(intent);
-                    chooseQuestionSet_AlertDialog.cancel();
-                }
+                    return;
+                }*/
+
+                Intent intent = new Intent(SetupActivity.this, GameActivity.class);
+                Log.d("tot", "setup difficulty: " + difficulty);
+                intent.putExtra("setup_data", new int[]{numberOfPlayers, difficulty});
+                intent.putExtra("tile_ids", new int[]{player1_trueTile, player1_falseTile, player2_trueTile, player2_falseTile, player3_trueTile, player3_falseTile, player4_trueTile, player4_falseTile});
+                intent.putExtra("question_set", questionSets[picker.getValue()]);
+                startActivity(intent);
+                chooseQuestionSet_AlertDialog.cancel();
             });
 
             cancelButton.setOnClickListener(view -> chooseQuestionSet_AlertDialog.cancel());
