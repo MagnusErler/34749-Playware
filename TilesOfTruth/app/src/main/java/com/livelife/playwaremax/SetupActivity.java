@@ -180,6 +180,8 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
                     connection.registerListener(this);
                     connection.pairTilesStart();
                     textToSpeechSystem.speak("Turn on " + numberOfPlayers*2 + "tiles you want to use", TextToSpeech.QUEUE_FLUSH, null,"ID");
+                    textToSpeechSystem.playSilentUtterance (300, TextToSpeech.QUEUE_ADD,"ID");
+                    textToSpeechSystem.speak("Tap next when you are done", TextToSpeech.QUEUE_ADD, null,"ID");
                     pairingButton.setText("Next");
                     startGameButton.setBackgroundColor(getResources().getColor(R.color.grayed_out));
                     startGameButton.setClickable(false);
@@ -188,6 +190,8 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
                 case 2:
 
                     textToSpeechSystem.speak("Press the " + numberOfPlayers*2 + "tiles", TextToSpeech.QUEUE_FLUSH, null,"ID");
+                    textToSpeechSystem.playSilentUtterance (300, TextToSpeech.QUEUE_ADD,"ID");
+                    textToSpeechSystem.speak("Tap next when you are done", TextToSpeech.QUEUE_ADD, null,"ID");
                     pairingButton.setText("Next");
 
                     setupMode = 3;
@@ -197,7 +201,8 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
                     connection.pairTilesStop();
 
                     textToSpeechSystem.speak("Make sure the " + numberOfPlayers*2 + " tiles have been connected", TextToSpeech.QUEUE_FLUSH, null,"ID");
-
+                    textToSpeechSystem.playSilentUtterance (300, TextToSpeech.QUEUE_ADD,"ID");
+                    textToSpeechSystem.speak("Tap next when you are done", TextToSpeech.QUEUE_ADD, null,"ID");
                     pairingButton.setText("Next");
                     setupMode = 4;
                     break;
@@ -205,9 +210,9 @@ public class SetupActivity extends AppCompatActivity implements OnAntEventListen
                     setupTilesPosition(numberOfPlayers);
 
                     textToSpeechSystem.speak("Place the " + numberOfPlayers*2 + " tiles 3 meters apart and stand between them", TextToSpeech.QUEUE_FLUSH, null,"ID");
-
+                    textToSpeechSystem.playSilentUtterance (300, TextToSpeech.QUEUE_ADD,"ID");
+                    textToSpeechSystem.speak("Tap next when you are done", TextToSpeech.QUEUE_ADD, null,"ID");
                     pairingButton.setText("Next");
-
                     setupMode = 5;
                     break;
                 case 5:
